@@ -1,0 +1,11 @@
+#!/usr/bin/python
+# Copyright 2009 James P Goodwin less replacement based on ped
+# This is a tiny editor created by James
+
+import sys
+import os
+
+if __name__ == '__main__':
+    args = sys.argv
+    args.append("-r")
+    os.execvp("ped",args)

@@ -1,0 +1,5 @@
+#!/bin/sh
+cp -v ~/mytrunk/editor/*.py /afs/metacarta.com/user/jgoodwin/ped
+cp -v ~/mytrunk/editor/ped /afs/metacarta.com/user/jgoodwin/ped
+cp -v ~/mytrunk/editor/pless /afs/metacarta.com/user/jgoodwin/ped
+cp -v ~/mytrunk/editor/pyfind /afs/metacarta.com/user/jgoodwin/ped
