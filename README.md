@@ -9,7 +9,13 @@ Background
 
 I wrote ped over the last 6-7 years basically for my own use. I wanted an editor that emulated Brief(TM) and that I could easily extend and that would run in terminals on linux or other places that curses was available. I had been using a Brief(TM) emulation macro in emacs, but that was very limited and emacs is complicated to extend because of all of the mass of features and variants that exist. At the time I was working in python almost exclusively, and I realized that a lot of sophisticated features would be made relatively easy because python packages existed for them, so I embarked on writing my own editor.
 
-I guess this was an act of vanity, stupidity, or stubborness, but it was fun and I got what I wanted in the end and have been using the editor and extending it since then. I don't expect that this will be anyone's favorite editor but mine, but there might be some snippets of code or modules that others find useful, so please use the code as you like.
+I guess this was an act of vanity, stupidity, or stubbornness, but it was fun and I got what I wanted in the end and have been using the editor and extending it since then. I don't expect that this will be anyone's favorite editor but mine, but there might be some snippets of code or modules that others find useful, so please use the code as you like.
+
+If you find bugs let me know or send me a fix I may apply it or fix the bug or not. I don't warrant that this code is good for any particular purpose. I wouldn't use it in a product without considerable hardening, re-factoring, and testing. 
+
+I'm not interested in code reviews or critiques, I know it's a hack and that many parts of it are sloppy ill-considered, inefficient, under-implemented, buggy or just dangerous, please take this as read. If you're new to programming, don't take this as an example of good coding style. If you're someone google-stalking me about a job, please understand that this is not representative of my professional work, it's something I do in moments of scarce free time and with the above caveats.
+
+**Also, I wouldn't use this editor on a Unicode file, I can't guarantee that it won't completely mangle it, and display of international text is only supported accidentally if at all.**
 
 Installation
 ============
@@ -40,4 +46,3 @@ Documentation
 =============
 
 Have a look at the wiki page for usage and configuration documentation.
-
