@@ -45,15 +45,18 @@ def redraw(editor):
         setattr(workfile,"guess_mode_tokens",tokens)
 
     if not tokens:
-        return
+        return False
 
     if not tokens.getTokens() or tokens.getModref() != workfile.getModref():
         tokens.refresh(workfile,get_lexer_for_filename(workfile.getFilename(),{}))
+        return False
         
     render(editor,tokens,
             [Token.Name.Tag,Token.Name.Decorator,Token.Keyword.Declaration,Token.Operator.Word,Token.Name.Builtin.Pseudo,Token.Keyword,Token.Keyword.Namespace],
             [Token.Text,Token.String,Token.Literal.String,Token.Literal.String.Doc],
             [Token.Comment,Token.Comment.Single])
+            
+    return True
 
 def name():
     """ hook to return this mode's human readable name """

@@ -26,7 +26,8 @@ import cmd_names
 import keytab
 import keymap
 import extension_manager
-
+import changes
+import traceback
 
 def isdebug():
     """ returns true if peddebug is set in the environment, used to turn on debugging features """
@@ -123,6 +124,8 @@ class EditFile:
         self.readonly = EditFile.default_readonly
         # undo manager
         self.undo_mgr = undo.UndoManager()
+        # change manager
+        self.change_mgr = changes.ChangeManager()
         # modification reference incremented for each change
         self.modref = 0
         # the file object
@@ -141,6 +144,7 @@ class EditFile:
         result.changed = self.changed
         result.readonly = True
         result.undo_mgr = self.undo_mgr
+        result.change_mgr = self.change_mgr
         result.modref = self.modref
         result.lines = []
         for l in self.lines:
@@ -157,6 +161,7 @@ class EditFile:
         """ make sure we close file when we are destroyed """
         del self.undo_mgr
         self.undo_mgr = None
+        self.change_mgr = None
         self.close()
         
     def set_tabs(self, tabs ):
@@ -248,6 +253,18 @@ class EditFile:
             self.lines.append(MemLine("\n"))
         self.changed = False
         self.modref = 0
+        
+    def isLineChanged(self,line,modref):
+        """ return true if a particular line is changed """
+        if self.change_mgr and line < len(self.lines):
+            return self.change_mgr.is_changed(line,modref)
+        else:
+            return True
+            
+    def flushChanges(self):
+        """ reset the change tracking for full screen redraw events """
+        if self.change_mgr:
+            self.change_mgr.flush()
 
     def _deleteLine(self,line,changed = True):
         """ delete a line """
@@ -256,6 +273,8 @@ class EditFile:
         del self.lines[line]
         self.changed = changed
         self.modref += 1
+        if self.change_mgr:
+            self.change_mgr.changed(line,len(self.lines),self.modref)
 
     def _insertLine(self,line,lineObj,changed = True):
         """ insert a line """
@@ -264,6 +283,9 @@ class EditFile:
         self.lines.insert(line,lineObj)
         self.changed = changed
         self.modref += 1
+        if self.change_mgr:
+            self.change_mgr.changed(line,len(self.lines),self.modref)
+        
 
     def _replaceLine(self,line,lineObj,changed = True):
         """ replace a line """
@@ -272,6 +294,9 @@ class EditFile:
         self.lines[line] = lineObj
         self.changed = changed
         self.modref += 1
+        if self.change_mgr:
+            self.change_mgr.changed(line,line,self.modref)
+        
 
     def _appendLine(self,lineObj,changed = True):
         """ add a line """
@@ -280,6 +305,9 @@ class EditFile:
         self.lines.append(lineObj)
         self.changed = changed
         self.modref += 1
+        if self.change_mgr:
+            self.change_mgr.changed(len(self.lines)-1,len(self.lines)-1,self.modref)
+        
                
     def length(self, line ):
         """ return the length of the line """
@@ -550,6 +578,18 @@ class Editor:
     def isChanged(self):
         """ returns true if the file we're working on has unsaved changes """
         return self.workfile.isChanged()
+        
+    def isLineChanged(self, line ):
+        """ return true if line is changed for the current revisions """
+        if self.workfile:
+            return self.workfile.isLineChanged( self.filePos(line,0)[0], self.workfile.modref )
+        else:
+            return True
+            
+    def flushChanges( self ):
+        """ flush change tracking if we're going to require a full screen redraw """
+        if self.workfile:
+            self.workfile.flushChanges()
 
     def isMark(self):  
         """ returns true if there is a mark set """
@@ -782,18 +822,24 @@ class Editor:
                 status += (self.max_x-len(status))*' '
     
             self.scr.addstr(0,0,status[0:self.max_x],curses.A_REVERSE)
-            y = 1
-            lidx = self.line
-            while lidx < self.line+(self.max_y-1):
-                try:
-                    l = self.getContent(lidx,self.left+self.max_x,True,True)
-                    self.scr.addstr(y,0,l[self.left:self.left+(self.max_x-1)])
-                except Exception,e:
-                    pass
-                y = y + 1
-                lidx = lidx + 1
+            # if the mode is rendering then don't do the default rendering as well
+            mode_redraw = False
             if self.mode:
-                self.mode.redraw(self)
+                mode_redraw = self.mode.redraw(self)
+            if not mode_redraw:
+                y = 1
+                lidx = self.line
+                while lidx < self.line+(self.max_y-1):
+                    try:            
+                        if self.isLineChanged(lidx):
+                            l = self.getContent(lidx,self.left+self.max_x,True,True)
+                            self.scr.addstr(y,0,l[self.left:self.left+(self.max_x-1)])
+                    except Exception,e:
+#                        if isdebug():
+#                            print >>open("ped.log","a"),traceback.format_exc()
+                        pass
+                    y = y + 1
+                    lidx = lidx + 1
             self.draw_mark()
         except:
             log = open(os.path.expanduser("~/ped.log"),"a")
@@ -872,18 +918,22 @@ class Editor:
         elif line < self.line:
             self.line = line
             self.vpos = 0
+            self.flushChanges()
         elif line > self.line+(self.max_y-2):
             self.line = line - (self.max_y-2)
             self.vpos = (self.max_y-2)
+            self.flushChanges()
                   
         if pos >= self.left and pos < self.left+(self.max_x-1):
             self.pos = pos - self.left
         elif pos >= self.left+(self.max_x-1):
             self.left = pos-(self.max_x-1)
             self.pos = self.max_x-1
+            self.flushChanges()
         else:
             self.left = pos
             self.pos = 0
+            self.flushChanges()
 
     def endln(self):
         """ go to the end of a line """
@@ -903,6 +953,7 @@ class Editor:
     def endfile(self):
         """ go to the end of the file """
         self.pushUndo()
+        self.flushChanges()
         
         ldisp = (self.numLines(True)-1)-self.line
         if ldisp < self.max_y-2:
@@ -944,20 +995,24 @@ class Editor:
         elif self.home_count == 1:
             self.vpos = 0
         elif self.home_count == 2:
-            self.line = 0
+            self.line = 0  
+            self.flushChanges()
 
     def pageup(self):
         """ go back one page in the file """
         self.pushUndo()
+        self.flushChanges()
         
         offset = self.line - (self.max_y-2)
         if offset < 0:
             offset = 0
         self.line = offset
+        
 
     def pagedown(self):
         """ go forward one page in the file """
         self.pushUndo()
+        self.flushChanges()
         
         offset = self.line + (self.max_y-2)
         if offset > self.numLines(True)-1:
@@ -966,6 +1021,7 @@ class Editor:
         ldisp = (self.numLines(True)-1)-self.line
         if self.vpos > ldisp:
             self.vpos = ldisp
+        
 
     def cup(self):
         """ go back one line in the file """
@@ -975,6 +1031,7 @@ class Editor:
             self.vpos -= 1
         elif self.line:
             self.line -= 1
+            self.flushChanges()
             
         self.goto(self.getLine(),self.getPos())
         
@@ -986,7 +1043,8 @@ class Editor:
             if self.vpos < min((self.numLines(True)-1)-self.line,(self.max_y-2)):
                 self.vpos += 1
             elif self.line <= self.numLines(True)-self.max_y:
-                self.line += 1
+                self.line += 1 
+                self.flushChanges()
             rept = rept - 1
             
         self.goto(self.getLine(),self.getPos())
@@ -1059,12 +1117,14 @@ class Editor:
     def scroll_left(self):
         """ scroll the page left without moving the current cursor position """
         self.pushUndo()
+        self.flushChanges()
         if self.left:
             self.left -= 1
 
     def scroll_right(self):
         """ scroll the page right without moving the current cursor position """
         self.pushUndo()
+        self.flushChanges()
         self.left += 1
             
     def searchagain(self):  
@@ -1418,16 +1478,19 @@ class Editor:
         if choices and choices["file"]:
             self.workfile.save(os.path.join(choices["dir"],choices["file"]))
         self.undo_mgr.flush_undo()
+        self.flushChanges()
         gc.collect()
 
     def save(self):
         """ save the current buffer """
         self.workfile.save()
         self.undo_mgr.flush_undo()
+        self.flushChanges()
         gc.collect()
 
     def prmt_search(self,down=True):
         """ prompt for a search string then search for it and either put up a message that it was not found or position the cursor to the occurrance """
+        self.flushChanges()
         if down:
             title = "Search Forward"
         else:
@@ -1439,6 +1502,7 @@ class Editor:
 
     def prmt_replace(self):
         """ prompt for search pattern and replacement string, then confirm replacment or replace all for the occurrences until no more are found """
+        self.flushChanges()
         (pattern,rep) = replace(self.parent)
         if pattern and rep:
             found = self.search(pattern)
@@ -1474,6 +1538,7 @@ class Editor:
                 
     def prmt_searchagain(self):
         """ search again and put up a message if no more are found """
+        self.flushChanges()
         if not self.searchagain():
             if self.isMark():
                 self.mark_span()
@@ -1522,6 +1587,7 @@ class Editor:
         if self.rect_mark:
             return           
         self.pushUndo()
+        self.flushChanges()
         oline = self.getLine()
         opos = self.getPos()
         self.wrap = not self.wrap

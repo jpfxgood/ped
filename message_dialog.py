@@ -5,6 +5,7 @@ import curses.ascii
 import sys
 import os
 import dialog
+import traceback
 
 class MessageDialog(dialog.Dialog):
     """ dialog subclass to implement a simple message popup that either comes and goes or blocks waiting for done button to be pressed """
@@ -14,26 +15,32 @@ class MessageDialog(dialog.Dialog):
         max_y, max_x = scr.getmaxyx()
         min_y, min_x = scr.getbegyx()
         dw = max_x - 4
-        dh = max_y
+        dh = 5
 
         if blocking:
             dialog.Dialog.__init__(self,scr,"MessageDialog",dh,dw, [ dialog.Frame(title),
                                               dialog.StaticText("message",max(1,(dw/2)-(len(message)/2)),(dh/2-2)+2,message,0),
                                               dialog.Button("done",1,(dw/2)-(6/2),(dh/2-2)+3,"DONE",dialog.Component.CMP_KEY_OK)],min_y,min_x)
         else:
-            dialog.Dialog.__init__(self,scr,"MessageDialog",5,dw, [ dialog.Frame(title),
+            dialog.Dialog.__init__(self,scr,"MessageDialog",dh,dw, [ dialog.Frame(title),
                                               dialog.StaticText("message",max(1,(dw/2)-(len(message)/2)),(dh/2-2)+2,message,0)],min_y,min_x)
             
 
 def message( scr, title = "Message", message = "A message!", blocking=True ):
     """ wrapper function to launch a message dialog, takes curses window to pop up over, title, message, and blocking == True
     to show button and wait, or False to just display and leave """
-    d = MessageDialog(scr,title,message,blocking)
-    if blocking:
-        d.main()
-    else:
-        d.focus()
-        d.render()
+    
+    try:
+        d = MessageDialog(scr,title,message,blocking)
+        if blocking:
+            d.main()
+        else:
+            d.focus()
+            d.render()
+    except Exception,e:
+        print >>open("message_dialog.log","a"),d.height,d.width,d.max_y,d.max_x
+        print >>open("message_dialog.log","a"),traceback.format_exc()
+        raise
     
 
 def main(stdscr):

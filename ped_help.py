@@ -54,8 +54,8 @@ F4:                     next window
 F7:                     transfer clipboard to x clipboard (if xclip is installed)
 F8:                     transfer clipboard from x clipboard (if xclip is installed)
 F9:                     toggle recording of keyboard macro
-F11:                    play back keyboard macro
-F1:                     this help page is inserted in a buffer
+alt-a,F11:                    play back keyboard macro
+alt-i,F1:               this help page is inserted in a buffer
 
 Usage: {cmd |} ped [options] {files to edit}
 

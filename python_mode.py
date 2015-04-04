@@ -25,6 +25,8 @@ def detect_mode(editor):
 def handle(editor,ch):
     """ hook called for each keystroke, can be used for auto-indent or auto-complete """
     if ch == 10:
+        old_left = editor.left
+        old_line = editor.line
         editor.cr()
         wf = editor.getWorkfile()
         line = editor.line + editor.vpos
@@ -37,6 +39,8 @@ def handle(editor,ch):
             match = re.match("^\s*(\S+)",above)
             if match:
                 editor.insert(match.start(1)*' ')
+        if editor.left != old_left or editor.line != old_line:
+            editor.flushChanges()
         return 0
         
     return ch
@@ -57,15 +61,18 @@ def redraw(editor):
         setattr(workfile,"python_mode_tokens",tokens)
 
     if not tokens:
-        return
+        return False
 
     if not tokens.getTokens() or tokens.getModref() != workfile.getModref():
         tokens.refresh(workfile,PythonLexer())
+        return False
 
     render(editor, tokens,
     [Token.Operator.Word,Token.Name.Builtin.Pseudo,Token.Keyword,Token.Keyword.Namespace],
     [Token.Text,Token.String,Token.Literal.String,Token.Literal.String.Doc],
-    [Token.Comment])
+    [Token.Comment])     
+    
+    return True
 
 def name():
     """ hook to return this mode's human readable name """

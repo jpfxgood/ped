@@ -22,6 +22,7 @@ keymap_manager = {
     keytab.KEYTAB_ALTX: (cmd_names.CMD_SAVEEXIT,keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_ALTS: (cmd_names.CMD_BROWSESVN,keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_F01: (cmd_names.CMD_HELP, keytab.KEYTAB_NOKEY),
+    keytab.KEYTAB_ALTI: (cmd_names.CMD_HELP, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_F10: (cmd_names.CMD_SHELLCMD, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_CTRLO: (cmd_names.CMD_OPENEDITOR, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_ALTE: (cmd_names.CMD_OPENEDITOR, keytab.KEYTAB_NOKEY),
@@ -90,6 +91,7 @@ keymap_editor = {
     keytab.KEYTAB_F17:         (cmd_names.CMD_PRMTSEARCHBACK,  keytab.KEYTAB_REFRESH),  # SHIFT F5
     keytab.KEYTAB_F03:         (cmd_names.CMD_SEARCHAGAIN,     keytab.KEYTAB_REFRESH),  # F3
     keytab.KEYTAB_F09:         (cmd_names.CMD_TOGGLERECORD,    keytab.KEYTAB_NOKEY),    # F9
+    keytab.KEYTAB_ALTA:        (cmd_names.CMD_PLAYBACK,        keytab.KEYTAB_NOKEY),   # alt-a
     keytab.KEYTAB_F11:         (cmd_names.CMD_PLAYBACK,        keytab.KEYTAB_NOKEY),    # F11
     }
 

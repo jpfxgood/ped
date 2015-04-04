@@ -49,7 +49,7 @@ def finish(editor):
 
 def redraw(editor):
     """ redraw the colorization based on the current token set, regenerate it if needed """
-    pass
+    return False
     
 def name():
     """ hook to return this mode's human readable name """

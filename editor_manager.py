@@ -107,6 +107,8 @@ class EditorFrame ( BaseFrame ):
             self.editor.setWin(self.win)
             modRef = self.editor.getWorkfile().getModref()
             if modRef != self.chgseq or force:
+                if force:
+                    self.editor.flushChanges()
                 self.editor.redraw()
                 self.win.leaveok(1)
                 self.win.refresh()
