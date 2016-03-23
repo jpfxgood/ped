@@ -1,0 +1,66 @@
+#!/usr/bin/python -u
+import ssh_mod
+import os
+import sys
+import re
+import traceback
+from optparse import OptionParser
+from StringIO import StringIO
+
+
+def main(options, args):
+    """ the main driver for collect """
+    def get_config():
+        return { "ssh_username":options.username, "ssh_password":options.password }
+        
+    paths = []
+    paths.append(options.source)
+    
+    while ( paths ):
+        path = paths.pop()
+        print path
+        if options.exclude and re.search(options.exclude,path):
+            print "skipping path",path
+            continue
+        dir_list = ssh_mod.ssh_ls(path,False,get_config,options.verbose)
+        for item in StringIO(dir_list):
+            item = item.strip()
+            if item.startswith("DIR"):
+                print item
+                paths.append(item[4:])
+                continue
+            (date,time,size,path) = re.split("\s+",item,3)
+            for pat in args:
+                if re.match(pat,path):
+                    print date,time,size,path
+                    (host,port,fpath) = ssh_mod.split_hostpath(path)
+                    parts = fpath.split("/")
+                    out_path = os.path.join( options.destination, "/".join(parts[-3:]))
+                    print out_path
+                    if os.path.exists( out_path ):
+                        break
+                    ssh_mod.ssh_get( path, out_path, get_config )
+                    break
+                
+        
+    
+
+if __name__ == '__main__':                                             
+    parser = OptionParser(usage="usage: %prog [options]", description="A script to collect files matching a given pattern into one target directory")
+    parser.add_option("-u","--username", dest="username", help="ssh username for source")
+    parser.add_option("-v","--verbose", dest="verbose", action="store_true", default=False, help="Log all activity to console")
+    parser.add_option("-p","--password", dest="password", help="ssh password for source")
+    parser.add_option("-s","--source", dest="source",default=None, help="source path in the form ssh://server/path")
+    parser.add_option("-x","--exclude", dest="exclude", default=None, help="pattern to exclude paths")
+    parser.add_option("-d","--destination", dest="destination",default=None,help="destinaion path to store files")
+    
+    (options,args) = parser.parse_args()
+                           
+    try:
+        ret = main(options,args)
+    except:
+        tb = traceback.format_exc()
+        print >>sys.stderr, tb
+        exit(1)
+        
+    exit(ret)
