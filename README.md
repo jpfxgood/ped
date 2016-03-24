@@ -38,6 +38,8 @@ Notes
 
 A recent addition is the sftp browser bound to Shift-F10 which allows browsing an SFTP site, downloading or uploading files, or opening a file from the SFTP site. This is still a work in progress, some of the UI is a little quirky as yet.
 
+Also there is a stand alone script called collect which uses the ssh module to scan a remote directory for a particular file pattern and copy all matching files to a local subdirectory structure. I used it to consolidate lots of different archived old machines and my collections of mp3 files into one folder recently. You may find other uses for it. It is sort of tangential to this editor ;-)
+
 I plan to move additional features out of the core editor and into extensions so that it will be easy to pare the editor down as needed. Candidates are svn browsing, and news reading, but I could probably also move file find/browse as well.
 
 I'll probaby work on writing some automated tests, since right now I just try a bunch of things that I do all the time to make sure they still work and that's it. So there are often regressions that I only fix when I finally run into them.
