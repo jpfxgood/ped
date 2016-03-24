@@ -36,7 +36,7 @@ If you are going to use the im extension: twisted
 Notes
 =====
 
-At the moment I'm working on optimizing the display rendering to not display more than it needs to, this reduces screen flash and on big displays improves editing performance. This is still a work in progress so there are some display artifacts that I'm still fixing.
+A recent addition is the sftp browser bound to Shift-F10 which allows browsing an SFTP site, downloading or uploading files, or opening a file from the SFTP site. This is still a work in progress, some of the UI is a little quirky as yet.
 
 I plan to move additional features out of the core editor and into extensions so that it will be easy to pare the editor down as needed. Candidates are svn browsing, and news reading, but I could probably also move file find/browse as well.
 
