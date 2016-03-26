@@ -499,6 +499,7 @@ class Editor:
         self.unwrap_lines = []
         self.wrap_modref = -1
         self.wrap_width = -1
+        self.display_modref = -1
         curses.raw()
         curses.meta(1)
 
@@ -558,10 +559,15 @@ class Editor:
         """ undo the last transaction, actually undoes the open transaction and the prior closed one """
         self.undo_mgr.undo_transaction() # undo the one we're in... probably empty
         self.undo_mgr.undo_transaction() # undo the previous one... probably not empty
+        self.flushChanges()
 
     def setWin(self,win):
         """ install a new window to render to """
-        self.scr = win
+        self.scr = win                     
+        
+    def getModref(self):
+        """ return the current display modref of this editor """
+        return self.display_modref
 
     def getWorkfile(self):
         """ return the workfile that this editor is attached to """
@@ -582,7 +588,7 @@ class Editor:
     def isLineChanged(self, line ):
         """ return true if line is changed for the current revisions """
         if self.workfile:
-            return self.workfile.isLineChanged( self.filePos(line,0)[0], self.workfile.modref )
+            return self.workfile.isLineChanged( self.filePos(line,0)[0], self.display_modref )
         else:
             return True
             
@@ -841,6 +847,7 @@ class Editor:
                     y = y + 1
                     lidx = lidx + 1
             self.draw_mark()
+            self.display_modref = self.workfile.modref
         except:
             log = open(os.path.expanduser("~/ped.log"),"a")
             print >>log,"Editor:redraw error state"
@@ -1209,6 +1216,7 @@ class Editor:
             self.mark_line_start = self.getLine()
         else:
             self.span_mark = False
+            self.flushChanges()
 
     def mark_rect(self):
         """ mark a rectangular or column selection across lines """
@@ -1227,6 +1235,7 @@ class Editor:
             self.mark_line_start = self.getLine()
         else:
             self.rect_mark = False
+            self.flushChanges()
 
     def mark_lines(self):
         """ mark whole lines """
@@ -1240,6 +1249,7 @@ class Editor:
             self.mark_line_start = self.getLine()
         else:
             self.line_mark = False
+            self.flushChanges()
 
     def get_marked(self, delete=False, nocopy = False):
         """ returns marked text as tuple ( cliptype, [list of clipped] ) returns () if no mark """
@@ -1596,122 +1606,141 @@ class Editor:
     def handle(self,ch):               
         """ main character handler dispatches keystrokes to execute editor commands returns characters meant to be processed
             by containing manager or dialog """
-        if self.clear_mark and self.isMark():
-            self.mark_span()
-            self.clear_mark = False
-                    
-        self.prev_cmd = self.cmd_id
-        if isinstance(ch,int):
-            self.cmd_id, ret = keymap.mapkey( self.scr, keymap.keymap_editor, ch )
+            
+        mark_state = self.isMark()
+        top_line = self.line
+        if mark_state:
+            mark_minline = min(self.mark_line_start,self.getLine())
+            mark_maxline = max(self.mark_line_start,self.getLine())
         else:
-            self.cmd_id, ret = keymap.mapseq( keymap.keymap_editor, ch )
+            mark_minline = self.getLine()
+            mark_maxline = self.getLine()
             
-        if extension_manager.is_extension(self.cmd_id):
-            if not extension_manager.invoke_extension( self.cmd_id, self, ch ):
-                return ret
-
-        if self.cmd_id == cmd_names.CMD_RETURNKEY:
-            if ret in [keytab.KEYTAB_NOKEY,keytab.KEYTAB_REFRESH,keytab.KEYTAB_RESIZE]:
-                self.cmd_id = self.prev_cmd
-        elif self.cmd_id == cmd_names.CMD_INSERT:
-            self.insert(chr(ret))
-            ret = keytab.KEYTAB_NOKEY
-        elif self.cmd_id == cmd_names.CMD_MARKSPAN:
-            self.mark_span()
-        elif self.cmd_id == cmd_names.CMD_MARKRECT:
-            self.mark_rect()
-        elif self.cmd_id == cmd_names.CMD_COPYMARKED:
-            self.copy_marked()
-        elif self.cmd_id == cmd_names.CMD_PRMTGOTO:
-            self.prmt_goto()
-        elif self.cmd_id == cmd_names.CMD_BACKSPACE:
-            self.backspace()
-        elif self.cmd_id == cmd_names.CMD_FILENAME:
-            if self.getFilename():
-                message(self.parent,"Filename",self.getFilename())
-        elif self.cmd_id == cmd_names.CMD_CUTMARKED:
-            self.copy_marked(True)
-        elif self.cmd_id == cmd_names.CMD_PASTE:
-            self.paste()
-        elif self.cmd_id == cmd_names.CMD_MARKLINES:
-            self.mark_lines()
-        elif self.cmd_id == cmd_names.CMD_CR:
-            self.cr()
-        elif self.cmd_id == cmd_names.CMD_TAB:
-            self.tab()
-        elif self.cmd_id == cmd_names.CMD_SAVE:
-            self.save()
-        elif self.cmd_id == cmd_names.CMD_SAVEAS:
-            self.saveas()
-        elif self.cmd_id == cmd_names.CMD_UNDO:
-            self.undo()
-        elif self.cmd_id == cmd_names.CMD_TOGGLEWRAP:
-            self.toggle_wrap()
-        elif self.cmd_id == cmd_names.CMD_MARKCOPYLINE:
-            if not self.isMark():
+        try:
+            if self.clear_mark and self.isMark():
+                self.mark_span()
+                self.clear_mark = False
+    
+            self.prev_cmd = self.cmd_id
+            if isinstance(ch,int):
+                self.cmd_id, ret = keymap.mapkey( self.scr, keymap.keymap_editor, ch )
+            else:
+                self.cmd_id, ret = keymap.mapseq( keymap.keymap_editor, ch )
+    
+            if extension_manager.is_extension(self.cmd_id):
+                if not extension_manager.invoke_extension( self.cmd_id, self, ch ):
+                    return ret
+    
+            if self.cmd_id == cmd_names.CMD_RETURNKEY:
+                if ret in [keytab.KEYTAB_NOKEY,keytab.KEYTAB_REFRESH,keytab.KEYTAB_RESIZE]:
+                    self.cmd_id = self.prev_cmd
+            elif self.cmd_id == cmd_names.CMD_INSERT:
+                self.insert(chr(ret))
+                ret = keytab.KEYTAB_NOKEY
+            elif self.cmd_id == cmd_names.CMD_MARKSPAN:
+                self.mark_span()
+            elif self.cmd_id == cmd_names.CMD_MARKRECT:
+                self.mark_rect()
+            elif self.cmd_id == cmd_names.CMD_COPYMARKED:
+                self.copy_marked()
+            elif self.cmd_id == cmd_names.CMD_PRMTGOTO:
+                self.prmt_goto()
+            elif self.cmd_id == cmd_names.CMD_BACKSPACE:
+                self.backspace()
+            elif self.cmd_id == cmd_names.CMD_FILENAME:
+                if self.getFilename():
+                    message(self.parent,"Filename",self.getFilename())
+            elif self.cmd_id == cmd_names.CMD_CUTMARKED:
+                self.copy_marked(True)
+            elif self.cmd_id == cmd_names.CMD_PASTE:
+                self.paste()
+            elif self.cmd_id == cmd_names.CMD_MARKLINES:
                 self.mark_lines()
-            self.copy_marked()
-        elif self.cmd_id == cmd_names.CMD_MARKCUTLINE:
-            if not self.isMark():
-                self.mark_lines()
-            self.copy_marked(True)
-        elif self.cmd_id == cmd_names.CMD_BTAB:
-            self.btab()
-        elif self.cmd_id == cmd_names.CMD_PREVWORD:
-            self.prev_word()
-        elif self.cmd_id == cmd_names.CMD_NEXTWORD:
-            self.next_word()
-        elif self.cmd_id == cmd_names.CMD_HOME1:
-            self.pushUndo()
-            self.prev_cmd = cmd_names.CMD_HOME
-            self.cmd_id = cmd_names.CMD_HOME
-            self.home_count = 0
-            self.home()
-            self.home()
-            self.home()
-        elif self.cmd_id == cmd_names.CMD_END1:
-            self.pushUndo()
-            self.prev_cmd = cmd_names.CMD_END
-            self.cmd_id = cmd_names.CMD_END
-            self.end_count = 0
-            self.end()
-            self.end()
-            self.end()
-        elif self.cmd_id == cmd_names.CMD_UP:
-            self.cup()
-        elif self.cmd_id == cmd_names.CMD_DOWN:
-            self.cdown()
-        elif self.cmd_id == cmd_names.CMD_LEFT:
-            self.cleft()
-        elif self.cmd_id == cmd_names.CMD_RIGHT:
-            self.cright()
-        elif self.cmd_id == cmd_names.CMD_DELC:
-            self.delc()
-        elif self.cmd_id == cmd_names.CMD_HOME:
-            self.home()
-        elif self.cmd_id == cmd_names.CMD_END:
-            self.end()
-        elif self.cmd_id == cmd_names.CMD_PAGEUP:
-            self.pageup()
-        elif self.cmd_id == cmd_names.CMD_PAGEDOWN:
-            self.pagedown()
-        elif self.cmd_id == cmd_names.CMD_PRMTSEARCH:
-            self.prmt_search()
-        elif self.cmd_id == cmd_names.CMD_PRMTREPLACE:
-            self.prmt_replace()
-        elif self.cmd_id == cmd_names.CMD_TRANSFERCLIPIN:
-            self.transfer_clipboard(False)
-        elif self.cmd_id == cmd_names.CMD_TRANSFERCLIPOUT:
-            self.transfer_clipboard(True)
-        elif self.cmd_id == cmd_names.CMD_PRMTSEARCHBACK:
-            self.prmt_search(False)
-        elif self.cmd_id == cmd_names.CMD_SEARCHAGAIN:
-            self.prmt_searchagain()
-        elif self.cmd_id == cmd_names.CMD_TOGGLERECORD:
-            keymap.toggle_recording()
-        elif self.cmd_id == cmd_names.CMD_PLAYBACK:
-            keymap.start_playback()
-            
+            elif self.cmd_id == cmd_names.CMD_CR:
+                self.cr()
+            elif self.cmd_id == cmd_names.CMD_TAB:
+                self.tab()
+            elif self.cmd_id == cmd_names.CMD_SAVE:
+                self.save()
+            elif self.cmd_id == cmd_names.CMD_SAVEAS:
+                self.saveas()
+            elif self.cmd_id == cmd_names.CMD_UNDO:
+                self.undo()
+            elif self.cmd_id == cmd_names.CMD_TOGGLEWRAP:
+                self.toggle_wrap()
+            elif self.cmd_id == cmd_names.CMD_MARKCOPYLINE:
+                if not self.isMark():
+                    self.mark_lines()
+                self.copy_marked()
+            elif self.cmd_id == cmd_names.CMD_MARKCUTLINE:
+                if not self.isMark():
+                    self.mark_lines()
+                self.copy_marked(True)
+            elif self.cmd_id == cmd_names.CMD_BTAB:
+                self.btab()
+            elif self.cmd_id == cmd_names.CMD_PREVWORD:
+                self.prev_word()
+            elif self.cmd_id == cmd_names.CMD_NEXTWORD:
+                self.next_word()
+            elif self.cmd_id == cmd_names.CMD_HOME1:
+                self.pushUndo()
+                self.prev_cmd = cmd_names.CMD_HOME
+                self.cmd_id = cmd_names.CMD_HOME
+                self.home_count = 0
+                self.home()
+                self.home()
+                self.home()
+            elif self.cmd_id == cmd_names.CMD_END1:
+                self.pushUndo()
+                self.prev_cmd = cmd_names.CMD_END
+                self.cmd_id = cmd_names.CMD_END
+                self.end_count = 0
+                self.end()
+                self.end()
+                self.end()
+            elif self.cmd_id == cmd_names.CMD_UP:
+                self.cup()
+            elif self.cmd_id == cmd_names.CMD_DOWN:
+                self.cdown()
+            elif self.cmd_id == cmd_names.CMD_LEFT:
+                self.cleft()
+            elif self.cmd_id == cmd_names.CMD_RIGHT:
+                self.cright()
+            elif self.cmd_id == cmd_names.CMD_DELC:
+                self.delc()
+            elif self.cmd_id == cmd_names.CMD_HOME:
+                self.home()
+            elif self.cmd_id == cmd_names.CMD_END:
+                self.end()
+            elif self.cmd_id == cmd_names.CMD_PAGEUP:
+                self.pageup()
+            elif self.cmd_id == cmd_names.CMD_PAGEDOWN:
+                self.pagedown()
+            elif self.cmd_id == cmd_names.CMD_PRMTSEARCH:
+                self.prmt_search()
+            elif self.cmd_id == cmd_names.CMD_PRMTREPLACE:
+                self.prmt_replace()
+            elif self.cmd_id == cmd_names.CMD_TRANSFERCLIPIN:
+                self.transfer_clipboard(False)
+            elif self.cmd_id == cmd_names.CMD_TRANSFERCLIPOUT:
+                self.transfer_clipboard(True)
+            elif self.cmd_id == cmd_names.CMD_PRMTSEARCHBACK:
+                self.prmt_search(False)
+            elif self.cmd_id == cmd_names.CMD_SEARCHAGAIN:
+                self.prmt_searchagain()
+            elif self.cmd_id == cmd_names.CMD_TOGGLERECORD:
+                keymap.toggle_recording()
+            elif self.cmd_id == cmd_names.CMD_PLAYBACK:
+                keymap.start_playback()
+        finally:
+            if mark_state or self.isMark():
+                if self.line == top_line:
+                    mark_minline = min(mark_minline,self.getLine())
+                else:
+                    mark_minline = self.line
+                mark_maxline = max(mark_maxline,self.getLine())
+                if self.workfile and self.workfile.change_mgr:
+                    self.workfile.change_mgr.changed(mark_minline,mark_maxline,self.workfile.modref)
         return ret
 
     def main(self,blocking = True, start_ch = None):

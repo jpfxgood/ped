@@ -17,6 +17,7 @@ import file_find
 import traceback
 import buffer_dialog
 from svn_browse import browsesvn, get_file_revision
+from ssh_dialog import sftpDialog
 import news_browse
 import keytab
 import cmd_names
@@ -105,8 +106,8 @@ class EditorFrame ( BaseFrame ):
         BaseFrame.redraw( self, force )
         if self.editor:
             self.editor.setWin(self.win)
-            modRef = self.editor.getWorkfile().getModref()
-            if modRef != self.chgseq or force:
+            modRef = self.editor.getModref()
+            if modRef > self.chgseq or force:
                 if force:
                     self.editor.flushChanges()
                 self.editor.redraw()
@@ -395,6 +396,16 @@ class EditorManager:
             return True
         return False
 
+    def sftpDialog( self , title="SFTP FileManager", remote_path="", ssh_username="", ssh_password="", local_path="."):
+        """ launch the file find dialog box """
+        result = sftpDialog(self.scr, title = "SFTP File Manager", remote_path=remote_path, ssh_username=ssh_username, ssh_password=ssh_password, local_path=local_path )
+        if result:
+            editor = editor_common.Editor(self.scr,None,result)
+            editor.goto(0,0)
+            self.addEditor(editor)
+            return True
+        return False
+
     def newsBrowse( self ):
         """ launch the news browser """
         news_browse.newsbrowse( self.scr )
@@ -456,7 +467,7 @@ class EditorManager:
         from the current frame, only the key events that are released """
         force = False
         
-        curses.mousemask( curses.BUTTON1_PRESSED| curses.BUTTON1_RELEASED| curses.BUTTON1_CLICKED| curses.BUTTON2_PRESSED| curses.BUTTON2_RELEASED| curses.BUTTON2_CLICKED| curses.BUTTON2_DOUBLE_CLICKED )
+        curses.mousemask( curses.BUTTON1_PRESSED| curses.BUTTON1_RELEASED| curses.BUTTON1_CLICKED)
         
         while len(self.editors):
             for f in self.frames:
@@ -500,6 +511,8 @@ class EditorManager:
                 self.bufferList()
             elif cmd_id == cmd_names.CMD_FILEFIND:
                 self.fileFind()
+            elif cmd_id == cmd_names.CMD_SFTP:
+                self.sftpDialog()
             elif cmd_id == cmd_names.CMD_SAVEEXIT:
                 for e in self.editors:
                     if e.isChanged():

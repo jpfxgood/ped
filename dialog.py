@@ -634,6 +634,30 @@ class Prompt(Component):
         
         return Component.CMP_KEY_NOP
 
+class PasswordPrompt(Prompt):
+    def __init__(self, name, order, x, y, prompt, width, value=""):
+        Prompt.__init__(self, name, order, x, y, prompt, width, value)
+        
+    def render(self):
+        win = self.getparent()
+        if self.isfocus:
+            pattr = curses.A_BOLD
+            fattr = curses.A_REVERSE
+        else:
+            pattr = curses.A_NORMAL
+            fattr = curses.A_NORMAL
+            
+        if win:
+            if self.width < 0:
+                (max_y,max_x) = win.getmaxyx()
+                self.width = max_x - (self.x+len(self.prompt)+2)
+
+            win.addstr(self.y,self.x,self.prompt,pattr)
+            win.addstr(self.y,self.x+len(self.prompt),pad(len(self.value)*"*",self.width),fattr)
+            if self.isfocus:
+                win.move(self.y,self.x+len(self.prompt)+self.pos)
+                
+        self.isfocus = False
 
 class Dialog(Component):
     history = {}
@@ -807,7 +831,7 @@ class Dialog(Component):
         pass
 
     def main(self,blocking = True):
-        curses.mousemask( curses.BUTTON1_PRESSED| curses.BUTTON1_RELEASED| curses.BUTTON1_CLICKED| curses.BUTTON2_PRESSED| curses.BUTTON2_RELEASED| curses.BUTTON2_CLICKED| curses.BUTTON2_DOUBLE_CLICKED )
+        curses.mousemask( curses.BUTTON1_PRESSED| curses.BUTTON1_RELEASED| curses.BUTTON1_CLICKED)
         self.win.nodelay(1)
         self.win.notimeout(1)
         self.win.timeout(0)

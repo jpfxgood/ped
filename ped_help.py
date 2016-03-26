@@ -45,6 +45,7 @@ ctrl-left arrow:        move to the start of the previous (or current) word
 home:                   once beginning of line, twice top of window, three times top of file
 end:                    once end of line, twice end of window, three times end of file
 F10:                    run shell command capture output in a buffer
+Shift F10:              open files from sftp
 F2:                     refresh the screen
 F5:                     search forward
 Shift F5:               search backward

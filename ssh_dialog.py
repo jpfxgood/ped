@@ -14,6 +14,7 @@ from message_dialog import message
 import traceback
 
 def get_dir_ssh( path, ssh_username, ssh_password, showhidden=False ):
+    """ get a directory listing of a ssh remote path, for a particular username and password """
     def get_config():
         return { "ssh_username":ssh_username, "ssh_password":ssh_password }
         
@@ -73,7 +74,7 @@ class SSHFileDialog(dialog.Dialog):
         y = 2
         self.ssh_username = dialog.Prompt("ssh_username",1,2,y,"SSH Username: ",dw-18,ssh_username)
         y += 1
-        self.ssh_password = dialog.Prompt("ssh_password",2,2,y,"SSH Password: ",dw-18,ssh_password)
+        self.ssh_password = dialog.PasswordPrompt("ssh_password",2,2,y,"SSH Password: ",dw-18,ssh_password)
         y += 1
         self.ssh_current_dir = dialog.Prompt("ssh_dir",3,2,y,"SSH Path: ",dw-18,remote_path)
         y += 1
@@ -150,7 +151,9 @@ class SSHFileDialog(dialog.Dialog):
         focus_index = self.current
         focus_field = self.focus_list[self.current][1]
         ret_ch = dialog.Dialog.handle(self,ch)
-        if ch in [keytab.KEYTAB_SPACE,keytab.KEYTAB_CR]:
+        if ch in [keytab.KEYTAB_TAB, keytab.KEYTAB_BACKTAB]:
+            self.refresh()
+        elif ch in [keytab.KEYTAB_SPACE,keytab.KEYTAB_CR]:
             if focus_field == self.file_list:
                 (selection, items) = focus_field.getvalue()
                 choice = items[selection]
@@ -222,6 +225,7 @@ class SSHFileDialog(dialog.Dialog):
                 except:
                     print >>open("ssh_dialog.log","a"),traceback.format_exc()
                     confirm(self.win, "SSH Error! Try Again ?")
+             
              
                     
         return ret_ch
