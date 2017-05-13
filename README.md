@@ -15,7 +15,6 @@ If you find bugs let me know or send me a fix I may apply it or fix the bug or n
 
 I'm not interested in code reviews or critiques, I know it's a hack and that many parts of it are sloppy ill-considered, inefficient, under-implemented, buggy or just dangerous, please take this as read. If you're new to programming, don't take this as an example of good coding style. If you're someone google-stalking me about a job, please understand that this is not representative of my professional work, it's something I do in moments of scarce free time and with the above caveats.
 
-**Also, I wouldn't use this editor on a Unicode file, I can't guarantee that it won't completely mangle it, and display of international text is only supported accidentally if at all.**
 
 Installation
 ============
@@ -28,7 +27,7 @@ Requires python 2.4 or better.
 
 Requires a terminal that works with the python curses module.
 
-Requires the following python modules: pygments, pexpect, beautiful soup v4
+Requires the following python modules: pygments, pexpect, beautiful soup v4, paramiko
 
 If you are going to use the xref extension: whoosh
 If you are going to use the im extension: twisted
