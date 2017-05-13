@@ -28,6 +28,10 @@ import keymap
 import extension_manager
 import changes
 import traceback
+import locale
+
+locale.setlocale(locale.LC_ALL,'')
+def_encoding = locale.getpreferredencoding()
 
 def isdebug():
     """ returns true if peddebug is set in the environment, used to turn on debugging features """
@@ -74,7 +78,8 @@ class FileLine(EditLine):
         """ gets the file from its parent, seeks to position, reads line and returns it """
         working = self.parent.getWorking()
         working.seek(self.pos,0)
-        return working.readline()
+        txt = working.readline().decode("utf-8")
+        return txt
 
     def __del__(self):
         self.parent = None
@@ -226,6 +231,7 @@ class EditFile:
         if not self.readonly:
             self.setReadOnly(not os.access(os.path.abspath(self.filename),os.W_OK))
         self.filename = self.working.name
+        self.working.seek(0L,0)
 
     def close(self):
         """ close the file """
@@ -239,18 +245,21 @@ class EditFile:
         self.open()
         self.lines = []
         pos = 0L
+        lidx = 0
         while True:
             line = self.working.readline()
             if not line:
                 break
-            if line[-1] != '\n':
-                line = line + '\n'
+            line = line.decode("utf-8")
+            if line[-1] != u'\n':
+                line = line + u'\n'
+            lidx = lidx + 1
             self.lines.append(FileLine(self,pos,len(self.expand_tabs(line))))
             pos = self.working.tell()
         while len(self.lines) and not self.lines[-1].getContent().strip():
             del self.lines[-1]
         if not len(self.lines):
-            self.lines.append(MemLine("\n"))
+            self.lines.append(MemLine(u"\n"))
         self.changed = False
         self.modref = 0
         
@@ -321,11 +330,11 @@ class EditFile:
         if line < len(self.lines):
             orig = self.lines[line].getContent()
         else:
-            orig = "\n"
+            orig = u"\n"
         if trim:
             orig = orig.rstrip()
         if pad > len(orig):
-            orig = orig + ' '*(pad-len(orig))
+            orig = orig + u' '*(pad-len(orig))
         return self.expand_tabs(orig)
 
     def getLines( self, line_start = 0, line_end = -1):
@@ -356,7 +365,7 @@ class EditFile:
         if line >= len(self.lines):
             lidx = len(self.lines)
             while lidx <= line:
-                self._appendLine(MemLine("\n"))
+                self._appendLine(MemLine(u"\n"))
                 lidx += 1
                 
         self._insertLine(line,MemLine(content))
@@ -369,7 +378,7 @@ class EditFile:
         if line >= len(self.lines):
             lidx = len(self.lines)
             while lidx <= line:
-                self._appendLine(MemLine("\n"))
+                self._appendLine(MemLine(u"\n"))
                 lidx += 1
 
         self._replaceLine(line, MemLine(content))      
@@ -400,7 +409,8 @@ class EditFile:
             
             o = open(filename,"w")
             for l in self.lines:
-                o.write(l.getContent())
+                txt = l.getContent()
+                o.write(txt.encode("utf-8"))
             o.close()
             self.close()
             self.filename = filename
@@ -412,7 +422,8 @@ class EditFile:
                 return
             o = open(self.filename+".sav","w")
             for l in self.lines:
-                o.write(l.getContent())
+                txt = l.getContent()
+                o.write(txt.encode("utf-8"))
             o.close()
             self.working.close()
             fstat = os.stat(self.filename)           
@@ -448,9 +459,9 @@ class EditFile:
         """ expand tabs in a line """
         idx = 0
         while idx < len(content):
-            if content[idx] == '\t':
+            if content[idx] == u'\t':
                 stop = self.get_tab_stop(idx)
-                content = content[0:idx] + ' '*(stop-idx) + content[idx+1:]
+                content = content[0:idx] + u' '*(stop-idx) + content[idx+1:]
                 idx += (stop-idx)
             else:
                 idx += 1
@@ -653,7 +664,7 @@ class Editor:
                 if trim:
                     orig = orig.rstrip()
                 if pad > len(orig):
-                    orig = orig + ' '*(pad-len(orig))
+                    orig = orig + u' '*(pad-len(orig))
                 return orig
         return self.workfile.getLine(line,pad,trim)
         
@@ -679,7 +690,10 @@ class Editor:
                     self.wrap_lines.append((l,start,min(line_len,start+self.wrap_width)))
                     start += self.wrap_width
             
-    
+    def addstr(self,row,col,str,attr = curses.A_NORMAL):
+        """ write properly encoded string to screen location """
+        return self.scr.addstr(row,col,str.encode('utf_8'),attr)
+        
     def draw_mark(self):
         """ worker function to draw the marked section of the file """
         if not self.isMark():
@@ -726,7 +740,7 @@ class Editor:
         
         if s_top == s_bottom:
             if s_right > s_left:
-                self.scr.addstr(s_top,
+                self.addstr(s_top,
                                 s_left,
                                 self.getContent(mark_top,
                                                       mark_right,
@@ -737,7 +751,7 @@ class Editor:
             if mark_top < self.line:
                 mark_top = self.line
             while s_top <= s_bottom:
-                self.scr.addstr(s_top,
+                self.addstr(s_top,
                                 s_left,
                                 self.getContent(mark_top,
                                                       mark_right,
@@ -752,7 +766,7 @@ class Editor:
                 if cur_line == mark_top:
                     offset = mark_left
                     width = (self.max_x-1)-offset
-                    self.scr.addstr(s_top,
+                    self.addstr(s_top,
                                     offset,
                                     self.getContent(cur_line,
                                                           self.left+offset+width,
@@ -760,7 +774,7 @@ class Editor:
                                                           True)[self.left+offset:self.left+offset+width],
                                     curses.A_REVERSE)
                 elif cur_line == mark_bottom:
-                    self.scr.addstr(s_top,
+                    self.addstr(s_top,
                                     0,
                                     self.getContent(cur_line,
                                                           self.getPos(True),
@@ -768,7 +782,7 @@ class Editor:
                                                           True)[self.left:self.getPos(True)],
                                     curses.A_REVERSE)
                 else:
-                    self.scr.addstr(s_top,
+                    self.addstr(s_top,
                                     0,
                                     self.getContent(cur_line,
                                                           self.left+(self.max_x-1),
@@ -780,7 +794,7 @@ class Editor:
         elif self.line_mark:
             cur_line = mark_top
             while s_top <= s_bottom:
-                self.scr.addstr(s_top,
+                self.addstr(s_top,
                                 0,
                                 self.getContent(cur_line,
                                                       self.left+(self.max_x-1),
@@ -827,7 +841,7 @@ class Editor:
             if len(status) < self.max_x:
                 status += (self.max_x-len(status))*' '
     
-            self.scr.addstr(0,0,status[0:self.max_x],curses.A_REVERSE)
+            self.addstr(0,0,status[0:self.max_x],curses.A_REVERSE)
             # if the mode is rendering then don't do the default rendering as well
             mode_redraw = False
             if self.mode:
@@ -839,7 +853,7 @@ class Editor:
                     try:            
                         if self.isLineChanged(lidx):
                             l = self.getContent(lidx,self.left+self.max_x,True,True)
-                            self.scr.addstr(y,0,l[self.left:self.left+(self.max_x-1)])
+                            self.addstr(y,0,l[self.left:self.left+(self.max_x-1)])
                     except Exception,e:
 #                        if isdebug():
 #                            print >>open("ped.log","a"),traceback.format_exc()
@@ -1561,11 +1575,11 @@ class Editor:
                 clipboard.clip = []
                 clipboard.clip_type = clipboard.SPAN_CLIP
                 for line in open("/dev/clipboard","rb"):
-                    clipboard.clip.append(line)
+                    clipboard.clip.append(line.decode("utf-8"))
             else:                       
                 cld = open("/dev/clipboard","wb")
                 for line in clipboard.clip:
-                    cld.write(line)
+                    cld.write(line.encode("utf-8"))
                 cld.close()
         elif os.path.exists("/usr/bin/xclip"):
             cmd = [ "xclip", ]
@@ -1580,10 +1594,10 @@ class Editor:
                     clipboard.clip = []
                     clipboard.clip_type = clipboard.SPAN_CLIP
                     for l in proc.stdout:
-                        clipboard.clip.append(l)
+                        clipboard.clip.append(l.decode("utf-8"))
                 else:
                     for l in clipboard.clip:
-                        print >>proc.stdin, l.rstrip()
+                        print >>proc.stdin, l.rstrip().encode("utf-8")
                 proc.stdout.close()
                 proc.stdin.close()
                 proc.stderr.close()

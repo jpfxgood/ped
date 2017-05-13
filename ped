@@ -1,8 +1,10 @@
 #!/usr/bin/python
+# code=UTF-8
 # Copyright 2009 James P Goodwin ped tiny python editor
 # This is a tiny editor created by James
 import sys
 import curses
+import locale
 import traceback
 import gc
 import os
@@ -10,6 +12,8 @@ import time
 from optparse import OptionParser
 import editor_common
 import keymap
+
+locale.setlocale(locale.LC_ALL,"")
 
 def main(stdscr, piped_stdin, options, args):
     """ The main driver for the command line invocation of the editor, currently the only arguments are file names or none

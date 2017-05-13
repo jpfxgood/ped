@@ -179,7 +179,7 @@ def render( editor, tokens, keywords, strings, comments ):
                         for ch in range(0,len(t_text)):
                             if o_srow >= 0 and o_srow < editor.max_y-1 and o_scol >= 0 and o_scol < editor.max_x-1:
                                 try:
-                                    editor.scr.addstr(o_srow+1,o_scol,t_text[ch], attr)
+                                    editor.addstr(o_srow+1,o_scol,t_text[ch], attr)
                                 except:
                                     pass
                             o_scol += 1
@@ -197,13 +197,13 @@ def render( editor, tokens, keywords, strings, comments ):
                     if line_tokens and o_srow <= (editor.max_y-2):
                         while o_scol < editor.max_x-1:
                             try:
-                                editor.scr.addstr(o_srow+1,o_scol,' ', white)
+                                editor.addstr(o_srow+1,o_scol,' ', white)
                             except:
                                 pass
                             o_scol += 1
                 else:
                     l = editor.getContent(lidx,editor.left+editor.max_x,True,True)
-                    editor.scr.addstr(y,0,l[editor.left:editor.left+(editor.max_x-1)])
+                    editor.addstr(y,0,l[editor.left:editor.left+(editor.max_x-1)])
         except Exception,e:
             pass
         y = y + 1
@@ -261,7 +261,7 @@ def render( editor, tokens, keywords, strings, comments ):
 #            if o_srow >= 0 and o_srow < editor.max_y-1 and o_scol >= 0 and o_scol < editor.max_x-1:
 #                try:
 #                    if editor.isLineChanged(f_line):
-#                        editor.scr.addstr(o_srow+1,o_scol,t_text[ch], attr)
+#                        editor.addstr(o_srow+1,o_scol,t_text[ch], attr)
 #                except:
 #                    pass
 #            o_scol += 1
