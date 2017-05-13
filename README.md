@@ -32,6 +32,8 @@ Requires the following python modules: pygments, pexpect, beautiful soup v4, par
 If you are going to use the xref extension: whoosh
 If you are going to use the im extension: twisted
 
+There is a requirements.txt file, you can do: pip install -r requirements.txt
+
 Notes
 =====
 
