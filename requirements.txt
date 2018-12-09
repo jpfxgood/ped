@@ -1,5 +1,5 @@
 Pygments==2.1
-paramiko==1.16.0
+paramiko>=2.0.9
 Twisted==16.0.0
 beautifulsoup4==4.6.0
 pexpect==4.2.1
