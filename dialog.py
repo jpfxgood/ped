@@ -833,7 +833,7 @@ class Dialog(Component):
     def main(self,blocking = True):
         curses.mousemask( curses.BUTTON1_PRESSED| curses.BUTTON1_RELEASED| curses.BUTTON1_CLICKED)
         self.win.nodelay(1)
-        self.win.notimeout(1)
+        self.win.notimeout(0)
         self.win.timeout(0)
         while (1):
             if not keymap.keypending(self.win):

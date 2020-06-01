@@ -342,8 +342,9 @@ if not keydef_map:
     
 def main(stdscr):
     stdscr.nodelay(1)
-    stdscr.notimeout(1)
-    stdscr.timeout(0)
+    stdscr.notimeout(0)
+    stdscr.timeout(0)  
+    curses.raw()
     line = 0
     col = 0
     k = stdscr.getch()
@@ -371,4 +372,5 @@ def main(stdscr):
 #        stdscr.nodelay(0)
 
 if __name__ == '__main__':
+    os.environ.setdefault('ESCDELAY','25')
     curses.wrapper(main)

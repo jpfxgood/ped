@@ -1,4 +1,4 @@
-#!/usr/bin/python -u
+#!/usr/bin/env python -u
 # Copyright 2014 James P Goodwin xref utility for the ped editor
 import sys
 import os

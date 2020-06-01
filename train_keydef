@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # Copyright 2014 James P Goodwin ped tiny python editor
 import sys
 import curses
@@ -31,7 +31,7 @@ def main(stdscr,options,args):
     """ the main driver for a training program to generate a keydef file for a new platform """
     curses.raw()
     stdscr.nodelay(1)
-    stdscr.notimeout(1)
+    stdscr.notimeout(0)
     stdscr.timeout(0)
     
     new_keydefs = []

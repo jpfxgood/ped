@@ -1762,7 +1762,7 @@ class Editor:
             start_ch is a character read externally that hould be processed on startup """
         self.rewrap()
         self.scr.nodelay(1)
-        self.scr.notimeout(1)
+        self.scr.notimeout(0)
         self.scr.timeout(0)
         while (1):
             if not self.scr:

@@ -19,6 +19,8 @@ def detect_mode(editor):
         return True
     elif workfile.getLine(0).startswith("#!/usr/bin/python"):
         return True
+    elif workfile.getLine(0).startswith("#!/usr/bin/env python"):
+        return True
     else:
         return False
 
