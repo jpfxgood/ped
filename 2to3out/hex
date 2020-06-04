@@ -1,0 +1,59 @@
+#!/usr/bin/env python -u
+# Copyright 2014 James P Goodwin hex dump utility for the ped editor
+import sys
+import os
+from optparse import OptionParser
+import time     
+import string
+                    
+
+def bytes_from_file( filename, chunksize=8192 ):
+    with open(filename, "rb") as f:
+        while True:
+            chunk = f.read(chunksize)
+            if chunk:
+                for b in chunk:
+                    yield b
+            else:
+                break
+            
+
+def main( options, args ):
+    """ main processing loop for the xref command """
+    byte_count = 1
+    chunk_mod = options.numchunks * 8
+    display = ""
+    for b in bytes_from_file(args[0]):
+        sys.stdout.write("%02x "%ord(b))
+        if b in string.digits or b in string.letters or b in string.punctuation:
+            display += b
+        else:
+            display += '.'
+        if not byte_count % 8:
+            sys.stdout.write(" ")
+        if not byte_count % chunk_mod:
+            sys.stdout.write(display)
+            display = ""
+            sys.stdout.write("\n")
+        byte_count += 1
+    
+    byte_count -= 1
+    while byte_count % chunk_mod:
+        sys.stdout.write("   ")
+        if not byte_count % 8:
+            sys.stdout.write(" ")
+        byte_count += 1
+    sys.stdout.write(" ")
+    sys.stdout.write(display)
+    sys.stdout.write("\n")
+    return(0)
+    
+                    
+
+if __name__ == '__main__':
+    parser = OptionParser(usage="usage: %prog [options] {files to dump as hex}", description="A hex dump utility for ped")
+    parser.add_option("-n","--numchunks", dest="numchunks", type="int", default=4, help="Number of 8 byte chunks to display")
+    
+    (options,args) = parser.parse_args(sys.argv[1:])
+
+    exit(main(options,args))
