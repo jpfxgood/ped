@@ -12,9 +12,9 @@ def get_tabs(editor):
 def detect_mode(editor):
     """ hook called to detect if this mode should be used for a file, returns True if it should be used, False otherwise """
     workfile = editor.getWorkfile()
-    if re.search("([Mm]akefile.*$)|([Mm]akefile.*\:\(r.*\)$)",workfile.getFilename()):
+    if re.search(r"([Mm]akefile.*$)|([Mm]akefile.*\:\(r.*\)$)",workfile.getFilename()):
         return True
-    elif re.search("(\.mak$)|(\.mak\:\(r.*\)$)",workfile.getFilename()):
+    elif re.search(r"(\.mak$)|(\.mak\:\(r.*\)$)",workfile.getFilename()):
         return True
     else:
         return False
