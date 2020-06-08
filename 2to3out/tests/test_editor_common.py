@@ -1,6 +1,7 @@
 import editor_common 
 import io
 import pprint
+import os
 
 def test_memline():
     m = editor_common.MemLine( "01234567890123456789" )
@@ -90,4 +91,15 @@ def test_EditFile(testdir):
         assert(fls[line].rstrip() == lines_to_test[line])
     assert(ef.numLines() == 4)
     assert(ef.getModref() == 6)
-    assert(not ef.isChanged() )
+    assert(not ef.isChanged() )         
+    fd = str(testdir.tmpdir)
+    backup_filepath = ef.make_backup_dir( fn, fd )
+    assert(os.path.exists(os.path.dirname(backup_filepath)))
+    ef.insertLine(10,new_test_line)
+    ef.backuproot = fd
+    ef.save()
+    assert(os.path.exists(backup_filepath))
+    fls = ef.getLines()
+    for line in range(0,len(lines_to_test)):
+        assert(fls[line].rstrip() == lines_to_test[line])
+    assert(fls[9].rstrip() == new_test_line)
