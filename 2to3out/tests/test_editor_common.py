@@ -124,7 +124,8 @@ def test_EditFile(testdir):
 def test_Editor(testdir,capsys):
     with capsys.disabled():
         lines_to_test = ["This is the first line","This is the second line","This is the third line","This is the last line"]
-        testfile = testdir.makefile(".txt",lines_to_test[0],lines_to_test[1],lines_to_test[2],lines_to_test[3])
+        lines_to_test += [ ("This is line %d "%f)*20 for f in range(5,2000) ]
+        testfile = testdir.makefile(".txt",*lines_to_test)
         fn = str(testfile)
         
         def read_str( win, y, x, width ):
@@ -147,9 +148,40 @@ def test_Editor(testdir,capsys):
             ed = editor_common.Editor(stdscr,None,fn)
             ed.setWin(stdscr.subwin(ed.max_y,ed.max_x,0,0))
             ed.main(False)
-            for ix in range(0,len(lines_to_test)):
-                assert(read_str(ed.scr,ix+1,0,len(lines_to_test[ix])) == lines_to_test[ix])
+            for y in range(1,ed.max_y):
+                assert(read_str(ed.scr,y,0,ed.max_x).startswith(lines_to_test[y-1][:ed.max_x-1]))
             assert(match_attr(ed.scr,0,0,1,ed.max_x,curses.A_REVERSE))
-            time.sleep(30)
+            ef = ed.getWorkfile()
+            assert(isinstance(ef,editor_common.EditFile))
+            assert(ed.getFilename() == fn)
+            assert(isinstance(ed.getUndoMgr(),editor_common.undo.UndoManager))
+            assert(not ed.isChanged())
+            assert(ed.numLines() == 1999)
+            target_line = 1000
+            target_pos = len(lines_to_test[1000])//2
+            ed.goto(target_line,target_pos)
+            ed.main(False)
+            line = ed.getLine()
+            assert(line == target_line)
+            pos = ed.getPos()
+            assert(pos == target_pos)
+            (y,x) = ed.scrPos(line,ed.left)
+            y = (y-ed.line)+1
+            x = x-ed.left
+            compare_string = lines_to_test[1000][ed.left:target_pos]
+            assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(compare_string))
+            time.sleep(5)
+            ed.insert('X')
+            ed.main(False)
+            prev_compare_string = compare_string
+            compare_string = compare_string[1:]+'X'
+            assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(compare_string))
+            time.sleep(5)
+            ed.undo()
+            ed.main(False)
+            assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(prev_compare_string))
+            time.sleep(5)
+                          
+
     
         curses.wrapper(main)
