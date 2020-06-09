@@ -168,20 +168,31 @@ def test_Editor(testdir,capsys):
             (y,x) = ed.scrPos(line,ed.left)
             y = (y-ed.line)+1
             x = x-ed.left
-            compare_string = lines_to_test[1000][ed.left:target_pos]
+            compare_string = lines_to_test[1000][ed.left:target_pos+1]
+            print("commpare_string =",compare_string,file=open("/home/james/ped.log","a"))
             assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(compare_string))
-            time.sleep(5)
             ed.insert('X')
+            assert(ed.isChanged())
+            assert(ed.isLineChanged(target_line))
             ed.main(False)
             prev_compare_string = compare_string
-            compare_string = compare_string[1:]+'X'
+            compare_string = compare_string[1:-1] + 'X' + compare_string[-1]
+            print("commpare_string_insert =",compare_string,file=open("/home/james/ped.log","a"))
             assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(compare_string))
-            time.sleep(5)
             ed.undo()
             ed.main(False)
             assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(prev_compare_string))
-            time.sleep(5)
-                          
+            ed.delc()     
+            assert(ed.isChanged())
+            assert(ed.isLineChanged(target_line))
+            ed.main(False)
+            compare_string = lines_to_test[1000][ed.left:target_pos] + lines_to_test[1000][target_pos+1]
+            print("commpare_string_delc =",compare_string,file=open("/home/james/ped.log","a"))
+            assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(compare_string))
+            ed.undo()
+            ed.main(False)
+            assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(prev_compare_string))
+            
 
     
         curses.wrapper(main)

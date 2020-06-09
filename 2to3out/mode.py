@@ -161,7 +161,7 @@ def render( editor, tokens, keywords, strings, comments ):
                         if o_srow < 0 and o_erow < 0:
                             continue
     
-                        if (o_scol < 0 and o_ecol < 0) or (o_scol >= editor.max_x-1 and o_ecol >= editor.max_x-1):
+                        if (o_scol < 0 and o_ecol < 0) or (o_scol > editor.max_x-1 and o_ecol > editor.max_x-1):
                             continue
     
                         if o_srow > (editor.max_y-2):
@@ -177,14 +177,14 @@ def render( editor, tokens, keywords, strings, comments ):
                             attr = white
     
                         for ch in range(0,len(t_text)):
-                            if o_srow >= 0 and o_srow < editor.max_y-1 and o_scol >= 0 and o_scol < editor.max_x-1:
+                            if o_srow >= 0 and o_srow < editor.max_y-1 and o_scol >= 0 and o_scol <= editor.max_x-1:
                                 try:
                                     editor.addstr(o_srow+1,o_scol,t_text[ch], attr)
                                 except:
                                     pass
                             o_scol += 1
                             if editor.wrap:
-                                if o_scol >= editor.max_x-1:
+                                if o_scol > editor.max_x-1:
                                     o_srow += 1
                                     f_line += 1
                                     o_scol = 0
@@ -195,7 +195,7 @@ def render( editor, tokens, keywords, strings, comments ):
                             break
 
                     if line_tokens and o_srow <= (editor.max_y-2):
-                        while o_scol < editor.max_x-1:
+                        while o_scol <= editor.max_x-1:
                             try:
                                 editor.addstr(o_srow+1,o_scol,' ', white)
                             except:
@@ -203,7 +203,7 @@ def render( editor, tokens, keywords, strings, comments ):
                             o_scol += 1
                 else:
                     l = editor.getContent(lidx,editor.left+editor.max_x,True,True)
-                    editor.addstr(y,0,l[editor.left:editor.left+(editor.max_x-1)])
+                    editor.addstr(y,0,l[editor.left:editor.left+editor.max_x])
         except Exception as e:
             pass
         y = y + 1

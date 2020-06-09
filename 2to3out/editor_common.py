@@ -853,7 +853,7 @@ class Editor:
                     try:            
                         if self.isLineChanged(lidx):
                             l = self.getContent(lidx,self.left+self.max_x,True,True)
-                            self.addstr(y,0,l[self.left:self.left+(self.max_x-1)])
+                            self.addstr(y,0,l[self.left:self.left+self.max_x])
                     except Exception as e:
 #                        if isdebug():
 #                            print >>open("ped.log","a"),traceback.format_exc()
