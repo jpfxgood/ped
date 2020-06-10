@@ -135,7 +135,11 @@ def render( editor, tokens, keywords, strings, comments ):
     cyan = curses.color_pair(3)
     white = curses.color_pair(4)
 
-    tokens = tokens.getTokens()
+    if tokens:
+        tokens = tokens.getTokens()
+    else:
+        tokens = {}
+        
     y = 1
     lidx = editor.line
     while lidx < editor.line+(editor.max_y-1):

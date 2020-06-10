@@ -1,4 +1,6 @@
 # Copyright 2009 James P Goodwin ped tiny python editor
+from mode import render
+
 """ module to implement a default mode for the ped editor no colorizing just sets tabs """
 import editor_common
 
@@ -21,7 +23,8 @@ def finish(editor):
 
 def redraw(editor):
     """ redraw the colorization based on the current token set, regenerate it if needed """
-    return False
+    render(editor,None,[],[],[])
+    return True
 
 def name():
     """ hook to return this mode's human readable name """

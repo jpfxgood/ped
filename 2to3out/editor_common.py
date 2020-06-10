@@ -317,7 +317,12 @@ class EditFile:
         if self.change_mgr:
             self.change_mgr.changed(len(self.lines)-1,len(self.lines)-1,self.modref)
         
-               
+    def touchLine(self, line_start, line_end):
+        """ touch a line so it will redraw"""
+        if self.change_mgr:  
+            self.modref += 1
+            self.change_mgr.changed(min(line_start,line_end),max(line_start,line_end),self.modref)
+            
     def length(self, line ):
         """ return the length of the line """
         if line < len(self.lines):
@@ -571,6 +576,7 @@ class Editor:
         self.undo_mgr.undo_transaction() # undo the one we're in... probably empty
         self.undo_mgr.undo_transaction() # undo the previous one... probably not empty
         self.flushChanges()
+        self.invalidate_all()
 
     def setWin(self,win):
         """ install a new window to render to """
@@ -607,7 +613,8 @@ class Editor:
         """ flush change tracking if we're going to require a full screen redraw """
         if self.workfile:
             self.workfile.flushChanges()
-
+        self.invalidate_all()
+        
     def isMark(self):  
         """ returns true if there is a mark set """
         return (self.line_mark or self.span_mark or self.rect_mark)
@@ -692,12 +699,16 @@ class Editor:
             
     def addstr(self,row,col,str,attr = curses.A_NORMAL):
         """ write properly encoded string to screen location """
-        return self.scr.addstr(row,col,codecs.encode(str,"utf-8"),attr)
+        try:
+            return self.scr.addstr(row,col,codecs.encode(str,"utf-8"),attr)
+        except:
+            return 0
         
     def draw_mark(self):
         """ worker function to draw the marked section of the file """
         if not self.isMark():
             return
+        
         
         (mark_top,mark_left) = self.scrPos(self.mark_line_start,self.mark_pos_start)
         mark_line_start = mark_top
@@ -725,16 +736,16 @@ class Editor:
         s_left = mark_left - self.left
         s_left = max(0,s_left)
         s_right = mark_right - self.left
-        s_right = min(self.max_x-1,s_right)
+        s_right = min(self.max_x,s_right)
         s_top = (mark_top - self.line)+1
         s_top = max(1,s_top)
         s_bottom = (mark_bottom - self.line)+1
         s_bottom = min(self.max_y-1,s_bottom)
         mark_left = max(mark_left,self.left)
-        mark_right = min(mark_right,self.left+(self.max_x-1))
+        mark_right = min(mark_right,self.left+self.max_x)
 
         if self.line_mark:
-            s_right = self.max_x-1
+            s_right = self.max_x
             mark_right = self.left+s_right
             mark_left = max(mark_left,self.left)
         
@@ -765,7 +776,7 @@ class Editor:
             while s_top <= s_bottom:
                 if cur_line == mark_top:
                     offset = mark_left
-                    width = (self.max_x-1)-offset
+                    width = self.max_x-offset
                     self.addstr(s_top,
                                     offset,
                                     self.getContent(cur_line,
@@ -785,9 +796,9 @@ class Editor:
                     self.addstr(s_top,
                                     0,
                                     self.getContent(cur_line,
-                                                          self.left+(self.max_x-1),
+                                                          self.left+self.max_x,
                                                           True,
-                                                          True)[self.left:self.left+(self.max_x-1)],
+                                                          True)[self.left:self.left+self.max_x],
                                     curses.A_REVERSE)
                 s_top += 1
                 cur_line += 1
@@ -797,9 +808,9 @@ class Editor:
                 self.addstr(s_top,
                                 0,
                                 self.getContent(cur_line,
-                                                      self.left+(self.max_x-1),
+                                                      self.left+self.max_x,
                                                       True,
-                                                      True)[self.left:self.left+(self.max_x-1)],
+                                                      True)[self.left:self.left+self.max_x],
                                 curses.A_REVERSE)
                 s_top += 1
                 cur_line += 1
@@ -809,6 +820,7 @@ class Editor:
         if self.scr:
             self.max_y,self.max_x = self.scr.getmaxyx()
             self.rewrap()
+            self.invalidate_all()
             bottom_y = min((self.numLines(True)-1)-self.line,(self.max_y-2))
             if self.vpos > bottom_y:
                 self.vpos = bottom_y
@@ -861,7 +873,8 @@ class Editor:
                     y = y + 1
                     lidx = lidx + 1
             self.draw_mark()
-            self.display_modref = self.workfile.modref
+            if mode_redraw:
+                self.display_modref = self.workfile.modref
         except:
             log = open(os.path.expanduser("~/ped.log"),"a")
             print("Editor:redraw error state", file=log)
@@ -931,6 +944,7 @@ class Editor:
         """ goto a line in the file and position the cursor to pos offset in the line """
         self.pushUndo()
         self.rewrap()
+        self.invalidate_mark()
         
         (line,pos) = self.scrPos(line,pos)
         
@@ -959,6 +973,7 @@ class Editor:
     def endln(self):
         """ go to the end of a line """
         self.pushUndo()
+        self.invalidate_mark()
         
         orig = self.getContent(self.getLine()).rstrip()
         offset = len(orig)             
@@ -967,6 +982,7 @@ class Editor:
     def endpg(self):
         """ go to the end of a page """
         self.pushUndo()
+        self.invalidate_mark()
         
         ldisp = (self.numLines(True)-1)-self.line
         self.vpos = min(self.max_y-2,ldisp)
@@ -1004,6 +1020,7 @@ class Editor:
     def home(self):
         """ once to to start of line, twice start of page, thrice start of file """
         self.pushUndo()
+        self.invalidate_mark()
         
         if self.cmd_id == cmd_names.CMD_HOME and self.prev_cmd == cmd_names.CMD_HOME:
             self.home_count += 1
@@ -1047,6 +1064,7 @@ class Editor:
     def cup(self):
         """ go back one line in the file """
         self.pushUndo()
+        self.invalidate_mark()
         
         if self.vpos:
             self.vpos -= 1
@@ -1059,6 +1077,7 @@ class Editor:
     def cdown(self,rept = 1):  
         """ go forward one or rept lines in the file """
         self.pushUndo()
+        self.invalidate_mark()
         
         while rept:
             if self.vpos < min((self.numLines(True)-1)-self.line,(self.max_y-2)):
@@ -1151,6 +1170,7 @@ class Editor:
     def searchagain(self):  
         """ repeat the previous search if any """
         self.pushUndo()
+        self.invalidate_mark()
         if self.isMark():
             if not self.last_search_dir:
                 self.goto(self.mark_line_start,self.mark_pos_start)
@@ -1163,6 +1183,7 @@ class Editor:
     def search(self, pattern, down = True, next = True):
         """ search for a regular expression forward or back if next is set then skip one before matching """
         self.pushUndo()
+        self.invalidate_mark()
         
         self.last_search = pattern
         self.last_search_dir = down
@@ -1217,11 +1238,21 @@ class Editor:
                     return True
                 line -= 1
         return False
-            
+
+    def invalidate_mark(self):
+        """ touch the marked lines so that they'll redraw when we change the shape of the mark or do a copy or paste """
+        if self.isMark():
+            self.workfile.touchLine(self.mark_line_start, self.getLine())
+                   
+    def invalidate_all(self):
+        """ touch all the lines in the file so everything will redraw """
+        self.workfile.touchLine(0,self.workfile.numLines())
+        
     def mark_span(self):
         """ mark a span of characters that can start and end in the middle of a line """
         self.pushUndo()
         
+        self.invalidate_mark()
         if not self.span_mark:
             self.span_mark = True
             self.rect_mark = False
@@ -1230,7 +1261,6 @@ class Editor:
             self.mark_line_start = self.getLine()
         else:
             self.span_mark = False
-            self.flushChanges()
 
     def mark_rect(self):
         """ mark a rectangular or column selection across lines """
@@ -1241,6 +1271,7 @@ class Editor:
             
         self.pushUndo()
         
+        self.invalidate_mark()
         if not self.rect_mark:
             self.rect_mark = True
             self.span_mark = False
@@ -1249,12 +1280,12 @@ class Editor:
             self.mark_line_start = self.getLine()
         else:
             self.rect_mark = False
-            self.flushChanges()
 
     def mark_lines(self):
         """ mark whole lines """
         self.pushUndo()
         
+        self.invalidate_mark()
         if not self.line_mark:
             self.line_mark = True
             self.span_mark = False
@@ -1263,7 +1294,6 @@ class Editor:
             self.mark_line_start = self.getLine()
         else:
             self.line_mark = False
-            self.flushChanges()
 
     def get_marked(self, delete=False, nocopy = False):
         """ returns marked text as tuple ( cliptype, [list of clipped] ) returns () if no mark """
@@ -1272,6 +1302,7 @@ class Editor:
         
         self.pushUndo()
         
+        self.invalidate_mark()
         mark_pos_start = self.mark_pos_start
         mark_line_start = self.mark_line_start
         mark_pos_end = self.getPos()
@@ -1291,6 +1322,7 @@ class Editor:
 
         clip = []
         clip_type = clipboard.LINE_CLIP
+        
         
         line_idx = mark_line_start
         if self.line_mark:
