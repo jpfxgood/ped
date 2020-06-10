@@ -1,1 +1,5 @@
-Non
+Pygments==2.1
+Twisted>=19.7.0
+paramiko>=2.0.9
+beautifulsoup4==4.6.0
+pexpect==4.2.1

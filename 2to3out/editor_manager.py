@@ -41,13 +41,30 @@ class BaseFrame:
         self.win = parent.subwin(height,width,y,x)
         self.changed = True
         self.lborder = lborder
-    
-    def __cmp__(self,other):
-        """ sort frames first in y then in x """
-        c1 = cmp(self.y,other.y)
-        if not c1:
-            c1 = cmp(self.x,other.x)
-        return c1
+
+    def __lt__(self, other):
+        if self.y == other.y:
+            return self.x < other.x
+        else:
+            return self.y < other.y
+        
+    def __gt__(self, other):
+        if self.y == other.y:
+            return self.x > other.x
+        else:
+            return self.y > other.y
+        
+    def __eq__(self, other):
+        return (self.y == other.y) and (self.x == other.x)
+        
+    def __le__(self, other):
+        return self.__lt__(other) or self.__eq__(other)
+
+    def __ge__(self, other):
+        return self.__gt__(other) or self.__eq__(other)
+        
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __del__(self):
         """ clean up our subwindow when we close """
