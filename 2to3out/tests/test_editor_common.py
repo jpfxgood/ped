@@ -157,42 +157,80 @@ def test_Editor(testdir,capsys):
             assert(isinstance(ed.getUndoMgr(),editor_common.undo.UndoManager))
             assert(not ed.isChanged())
             assert(ed.numLines() == 1999)
-            target_line = 1000
-            target_pos = len(lines_to_test[1000])//2
-            ed.goto(target_line,target_pos)
-            ed.main(False)
-            line = ed.getLine()
-            assert(line == target_line)
-            pos = ed.getPos()
-            assert(pos == target_pos)
-            (y,x) = ed.scrPos(line,ed.left)
-            y = (y-ed.line)+1
-            x = x-ed.left
-            compare_string = lines_to_test[1000][ed.left:target_pos+1]
-            print("commpare_string =",compare_string,file=open("/home/james/ped.log","a"))
-            assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(compare_string))
-            ed.insert('X')
-            assert(ed.isChanged())
-            assert(ed.isLineChanged(target_line))
-            ed.main(False)
-            prev_compare_string = compare_string
-            compare_string = compare_string[1:-1] + 'X' + compare_string[-1]
-            print("commpare_string_insert =",compare_string,file=open("/home/james/ped.log","a"))
-            assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(compare_string))
-            ed.undo()
-            ed.main(False)
-            assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(prev_compare_string))
-            ed.delc()     
-            assert(ed.isChanged())
-            assert(ed.isLineChanged(target_line))
-            ed.main(False)
-            compare_string = lines_to_test[1000][ed.left:target_pos] + lines_to_test[1000][target_pos+1]
-            print("commpare_string_delc =",compare_string,file=open("/home/james/ped.log","a"))
-            assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(compare_string))
-            ed.undo()
-            ed.main(False)
-            assert(read_str(ed.scr,y,x,ed.max_x-x).startswith(prev_compare_string))
-            
+            main.target_line = 1000
+            main.target_pos = len(lines_to_test[main.target_line])//2
+            def do_edit_tests( relative = False ):
+                if relative:
+                    target_line = ed.getLine()
+                    target_pos = ed.getPos()
+                else:
+                    target_line = main.target_line
+                    target_pos = main.target_pos
+                    ed.goto(target_line,target_pos)
+                ed.main(False)
+                line = ed.getLine()
+                assert(line == target_line)
+                pos = ed.getPos()
+                assert(pos == target_pos)
+                (y,x) = ed.scrPos(line,ed.left)
+                y = (y-ed.line)+1
+                x = x-ed.left
+                compare_string = lines_to_test[target_line][ed.left:ed.left+ed.max_x]
+                assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
+                ed.insert('X')
+                assert(ed.isChanged())
+                assert(ed.isLineChanged(target_line))
+                ed.main(False)
+                prev_compare_string = compare_string
+                compare_string = lines_to_test[target_line][ed.left:pos] + 'X' + lines_to_test[target_line][pos]
+                assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
+                ed.undo()
+                ed.main(False)
+                assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
+                ed.delc()
+                cur_line = ed.getLine()
+                cur_pos = ed.getPos()
+                if cur_line < ed.numLines()-1 and cur_pos < len(lines_to_test[cur_line]):
+                    assert(ed.isChanged())
+                    assert(ed.isLineChanged(target_line))
+                    ed.main(False)
+                    if pos+1 < len(lines_to_test[target_line]):
+                        compare_string = lines_to_test[target_line][ed.left:pos] + lines_to_test[target_line][pos+1]
+                    elif pos == len(lines_to_test[target_line]) and target_line+1 < len(lines_to_test):
+                        compare_string = lines_to_test[target_line][ed.left:pos] + lines_to_test[target_line+1][0]
+                    else:
+                        compare_string = lines_to_test[target_line][ed.left:pos]
+                    assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
+                    ed.undo()
+                    ed.main(False)
 
+                assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
+                ed.backspace()
+                assert(ed.isChanged())
+                assert(ed.isLineChanged(target_line))
+                ed.main(False)
+                if pos+1 < len(lines_to_test[target_line]):
+                    compare_string = lines_to_test[target_line][ed.left:pos-1] + lines_to_test[target_line][pos:pos+1]
+                else:
+                    compare_string = lines_to_test[target_line][ed.left:pos-1]
+                    
+                assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
+                ed.undo()
+                ed.main(False)
+                assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
+            do_edit_tests()
+            main.target_pos = 5
+            do_edit_tests()
+            ed.endln()
+            assert(ed.getPos() == len(lines_to_test[main.target_line])-1)
+            do_edit_tests(True)
+            ed.endfile()
+            assert(ed.getLine() == ed.numLines()-1)
+            do_edit_tests(True)
+            ed.goto(0,0)
+            ed.endpg()
+            ed.endln()
+            assert(ed.getLine() == ed.max_y-2)
+            do_edit_tests(True)
     
         curses.wrapper(main)

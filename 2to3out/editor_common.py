@@ -954,7 +954,12 @@ class Editor:
         self.pushUndo()
         self.rewrap()
         self.invalidate_mark()
-        
+                                     
+        if line < 0:
+            line = 0
+        if pos < 0:
+            pos = 0
+            
         (line,pos) = self.scrPos(line,pos)
         
         if line >= self.line and line <= self.line+(self.max_y-2):
