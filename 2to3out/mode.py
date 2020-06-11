@@ -205,6 +205,8 @@ def render( editor, tokens, keywords, strings, comments ):
                             except:
                                 pass
                             o_scol += 1
+                    y =  o_srow+1
+                    lidx = f_line
                 else:
                     l = editor.getContent(lidx,editor.left+editor.max_x,True,True)
                     editor.addstr(y,0,l[editor.left:editor.left+editor.max_x])

@@ -46,7 +46,7 @@ keymap_editor = {
     keytab.KEYTAB_CTRLK:       (cmd_names.CMD_MARKSPAN,        keytab.KEYTAB_NOKEY),    # CTRL-K
     keytab.KEYTAB_CTRLR:       (cmd_names.CMD_MARKRECT,        keytab.KEYTAB_NOKEY),    # CTRL-R
     keytab.KEYTAB_CTRLC:       (cmd_names.CMD_COPYMARKED,      keytab.KEYTAB_NOKEY),    # CTRL-C
-    keytab.KEYTAB_CTRLG:       (cmd_names.CMD_PRMTGOTO,        keytab.KEYTAB_NOKEY),    # CTRL-G
+    keytab.KEYTAB_CTRLG:       (cmd_names.CMD_PRMTGOTO,        keytab.KEYTAB_REFRESH),    # CTRL-G
     keytab.KEYTAB_BACKSPACE:   (cmd_names.CMD_BACKSPACE,       keytab.KEYTAB_NOKEY),    # CTRL-H
     keytab.KEYTAB_CTRLF:       (cmd_names.CMD_FILENAME,        keytab.KEYTAB_REFRESH),    # CTRL-F
     keytab.KEYTAB_CTRLX:       (cmd_names.CMD_CUTMARKED,       keytab.KEYTAB_NOKEY),    # CTRL-X
@@ -61,7 +61,7 @@ keymap_editor = {
     keytab.KEYTAB_ALTC:        (cmd_names.CMD_MARKRECT,        keytab.KEYTAB_NOKEY),    # alt-C
     keytab.KEYTAB_ALTW:        (cmd_names.CMD_SAVE,            keytab.KEYTAB_NOKEY),    # alt-W
     keytab.KEYTAB_ALTo:        (cmd_names.CMD_SAVEAS,          keytab.KEYTAB_REFRESH),  # alt-o
-    keytab.KEYTAB_ALTG:        (cmd_names.CMD_PRMTGOTO,        keytab.KEYTAB_NOKEY),    # alt-G
+    keytab.KEYTAB_ALTG:        (cmd_names.CMD_PRMTGOTO,        keytab.KEYTAB_REFRESH),    # alt-G
     keytab.KEYTAB_ALTU:        (cmd_names.CMD_UNDO,            keytab.KEYTAB_NOKEY),    # alt-U
     keytab.KEYTAB_ALTJ:        (cmd_names.CMD_TOGGLEWRAP,      keytab.KEYTAB_NOKEY),    # alt-J
     keytab.KEYTAB_KEYPADPLUS:  (cmd_names.CMD_MARKCOPYLINE,    keytab.KEYTAB_NOKEY),    # keypad +

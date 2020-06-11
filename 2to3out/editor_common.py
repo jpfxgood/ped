@@ -640,7 +640,7 @@ class Editor:
 
     def filePos(self, line, pos ):
         """ translate display line, pos to file line, pos """
-        if self.wrap:
+        if self.wrap and line < len(self.wrap_lines):
             return (self.wrap_lines[line][0],self.wrap_lines[line][1]+pos)
         else:
             return (line,pos)
@@ -657,7 +657,7 @@ class Editor:
                     return (sline,pos-self.wrap_lines[sline][1])
                 sline = sline + 1
             else:
-                return (sline-1,self.wrap_lines[sline-1][2] - self.wrap_lines[sline-1][1] - 1)
+                return (sline-1,pos - self.wrap_lines[sline-1][1])
         else:
             return (line,pos)
             
@@ -672,8 +672,13 @@ class Editor:
                     orig = orig.rstrip()
                 if pad > len(orig):
                     orig = orig + ' '*(pad-len(orig))
-                return orig
-        return self.workfile.getLine(line,pad,trim)
+                if isdebug():
+                    print("getContent (wrap,display) =", line,pad,trim,display,self.wrap,"return =",orig,file=open("/home/james/ped.log","a"))
+                return orig        
+        orig = self.workfile.getLine(line,pad,trim)
+        if isdebug():
+            print("getContent (not wrap) =", line,pad,trim,display,self.wrap,"return =",orig,file=open("/home/james/ped.log","a"))
+        return orig
         
     def numLines(self,display=False):
         """ get the number of lines in the editor """
@@ -686,7 +691,7 @@ class Editor:
         """ compute the wrapped line array """
         if self.wrap and (force or self.workfile.getModref() != self.wrap_modref or self.wrap_width != self.max_x-1):
             self.wrap_modref = self.workfile.getModref()
-            self.wrap_width = self.max_x-1
+            self.wrap_width = self.max_x
             self.wrap_lines = []
             self.unwrap_lines = []
             for l in range(0,self.workfile.numLines()):
@@ -699,9 +704,13 @@ class Editor:
             
     def addstr(self,row,col,str,attr = curses.A_NORMAL):
         """ write properly encoded string to screen location """
-        try:
+        try: 
+            if isdebug():
+                print("addstr =",row,col,str,attr, file=open("/home/james/ped.log","a"))
             return self.scr.addstr(row,col,codecs.encode(str,"utf-8"),attr)
         except:
+            if isdebug():
+                print("addstr exception =",row,col,str,attr, file=open("/home/james/ped.log","a"))
             return 0
         
     def draw_mark(self):

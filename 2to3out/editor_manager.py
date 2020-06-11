@@ -469,6 +469,7 @@ class EditorManager:
                 pos = f.editor.left + ox
     
                 if mtype & (curses.BUTTON1_CLICKED | curses.BUTTON1_PRESSED | curses.BUTTON1_RELEASED):
+                    (line,pos) = f.editor.filePos(line,pos)
                     f.editor.goto(line,pos)
                     self.current_frame = cf
     
