@@ -1104,14 +1104,12 @@ class Editor:
         orig = self.getContent(self.getLine())
         
         pos = self.getPos()
-        print("prev_word pos=",pos,file=open("/home/james/ped.log","a"))
         if pos:
             pos -= 1
             while pos and orig[pos] == ' ':
                 pos -= 1
             while pos and orig[pos-1] != ' ':
                 pos -= 1
-            print("prev_word at goto pos=",pos,file=open("/home/james/ped.log","a"))
             self.goto(self.getLine(),pos)
                     
     def next_word( self ):
@@ -1120,7 +1118,6 @@ class Editor:
         orig = self.getContent(self.getLine())
                                          
         pos = self.getPos()
-        print("next_word pos=",pos,file=open("/home/james/ped.log","a"))
         if pos < len(orig):
             if pos < self.max_x-1:
                 pos += 1
@@ -1128,7 +1125,6 @@ class Editor:
                 pos += 1
             while pos < len(orig)-1 and orig[pos+1] != ' ':
                 pos += 1
-            print("next_word at goto pos=",pos,file=open("/home/james/ped.log","a"))
             self.goto(self.getLine(),pos)
     
             
@@ -1685,7 +1681,6 @@ class Editor:
                 self.cmd_id, ret = keymap.mapkey( self.scr, keymap.keymap_editor, ch )
             else:
                 self.cmd_id, ret = keymap.mapseq( keymap.keymap_editor, ch )
-            print("key entered =",self.cmd_id,ret,file=open("/home/james/ped.log","a"))
             if extension_manager.is_extension(self.cmd_id):
                 if not extension_manager.invoke_extension( self.cmd_id, self, ch ):
                     return ret
