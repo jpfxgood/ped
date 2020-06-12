@@ -56,9 +56,6 @@ class XrefRefreshThread( threading.Thread ):
     
             cmd = "%s/xref -v %s -p %s -e %s -d %s -n %s"%(self.cwd,'-r' if recurse else '',pattern,exclude,directory,numthreads)
             xref_out = subprocess.Popen(cmd,encoding="utf-8",shell=True,bufsize=1024,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout
-            log = open("xref_extension.log","a")
-            for l in xref_out:
-                print(l, file=log)
             
         return
         

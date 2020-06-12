@@ -21,7 +21,6 @@ keymap_manager = {
     keytab.KEYTAB_ALTF: (cmd_names.CMD_FILEFIND,keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_F22: (cmd_names.CMD_SFTP,keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_ALTX: (cmd_names.CMD_SAVEEXIT,keytab.KEYTAB_NOKEY),
-    keytab.KEYTAB_ALTS: (cmd_names.CMD_BROWSESVN,keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_F01: (cmd_names.CMD_HELP, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_ALTI: (cmd_names.CMD_HELP, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_F10: (cmd_names.CMD_SHELLCMD, keytab.KEYTAB_NOKEY),
@@ -37,7 +36,6 @@ keymap_manager = {
     keytab.KEYTAB_ALTD: (cmd_names.CMD_DELEDITOR, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_ESC: (cmd_names.CMD_EXITNOSAVE, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_DLGCANCEL: (cmd_names.CMD_EXITNOSAVE, keytab.KEYTAB_NOKEY),
-    keytab.KEYTAB_ALTR: (cmd_names.CMD_READNEWS, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_MOUSE: (cmd_names.CMD_MOUSE, keytab.KEYTAB_NOKEY),
     }
 
