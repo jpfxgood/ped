@@ -16,9 +16,7 @@ import ped_help
 import file_find
 import traceback
 import buffer_dialog
-from svn_browse import browsesvn, get_file_revision
 from ssh_dialog import sftpDialog
-import news_browse
 import keytab
 import cmd_names
 import keymap
@@ -428,22 +426,7 @@ class EditorManager:
             return True
         return False
 
-    def newsBrowse( self ):
-        """ launch the news browser """
-        news_browse.newsbrowse( self.scr )
-        
-    def browseSVN( self, path=".", filename="", revision="" ):
-        """ launch  the browse svn dialog """
-        values = browsesvn(self.scr,filename=filename,path=path, revision=revision)
-        if "path" in values:
-            if values["path"]:
-                self.addEditor(editor_common.StreamEditor(self.scr,
-                                                            None,
-                                                            values["path"]+":(r%s)"%values["revision"],
-                                                            get_file_revision( values["revision"],values["path"] )))
-                return True
-        return False
-        
+       
     def mouseEvent( self ):
         """ handle mouse events """
         try:
@@ -538,9 +521,6 @@ class EditorManager:
                     if e.isChanged():
                         e.save()
                 return seq
-            elif cmd_id == cmd_names.CMD_BROWSESVN:
-                (path,filename ) = os.path.split(os.path.abspath(self.editors[self.current].getWorkfile().getFilename()))
-                self.browseSVN( path=path, filename=filename )
             elif cmd_id == cmd_names.CMD_HELP:
                 self.addEditor(editor_common.StreamEditor(self.scr,None,
                                                             "Help",
@@ -586,7 +566,5 @@ class EditorManager:
                         return keytab.KEYTAB_ESC
                 else:
                     return keytab.KEYTAB_ESC
-            elif cmd_id == cmd_names.CMD_READNEWS: # alt-r read news
-                self.newsBrowse()
             else:
                 force = False        

@@ -7,7 +7,11 @@ import keymap
 import keytab
 
 extensions = {}
-ext_dir = os.path.expanduser( "~/.pedextension" )    
+ped_extension_path = "~/.pedextension"
+if "PED_EXTENSION_PATH" in os.environ:
+    ped_extension_path = os.environ["PED_EXTENSION_PATH"]
+    
+ext_dir = os.path.expanduser( ped_extension_path )
 
 # extension modules are python modules with the following two entry points
 # ped_ext_info which takes no arguments and returns a tuple ( cmd_name, keymap_name {"EDITOR","DIALOG","MANAGER"}, keytab_key_name, keytab_key_name_ret, ext_name )
@@ -19,16 +23,19 @@ ext_dir = os.path.expanduser( "~/.pedextension" )
 
 def register_extensions():
     """ search the directory ~/.pedextension for python modules that implement ped_ext_info, ped_ext_invoke methods """
+    print("register_extension ext_dir = ",ext_dir,file=open("./extension_manager.log","a"))
     if os.path.exists(ext_dir) and os.path.isdir(ext_dir):
         pwd = os.getcwd()
         os.chdir(ext_dir)
         sys_path = list(sys.path)
         sys.path.append(ext_dir)
         for f in os.listdir(ext_dir):
+            print("register_extension examining = ",f,file=open("./extension_manager.log","a"))
             if f.endswith(".py"):
                 ext_mod = __import__(f[:-3])
                 if hasattr(ext_mod,"ped_ext_info") and hasattr(ext_mod,"ped_ext_invoke"):
                     cm_name, km_name, km_key, km_ret_key, ex_name  = ext_mod.ped_ext_info()
+                    print("register_extension =",cm_name,km_name,km_key,km_ret_key,ex_name,file=open("./extension_manager.log","a"))
                     if cm_name in cmd_names.name_to_cmd:
                             extensions[cm_name] = ext_mod
                     else:

@@ -166,7 +166,7 @@ class Frame(Component):
                 y = 0
                 my,mx = win.getmaxyx()
                 
-            rect(win, x, y, mx, my, self.title, curses.A_NORMAL)
+            rect(win, x, y, mx, my, self.title, curses.A_NORMAL, False)
             if self.title:
                 win.addstr(y,x+(mx//2)-(len(self.title)//2),self.title)
 
@@ -730,7 +730,7 @@ class Dialog(Component):
         if self.focus_list:
             self.focus_list[self.current][1].focus()
             self.focus_list[self.current][1].render()
-#        self.win.nooutrefresh()
+        self.win.refresh()
 
     def focus(self):
         self.focus_list = []

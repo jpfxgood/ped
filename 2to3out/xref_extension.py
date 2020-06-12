@@ -24,6 +24,7 @@ class XrefRefreshThread( threading.Thread ):
         self.refresh = xref_dialog.config['refresh'][0]
         self.refresh_time = float(xref_dialog.config['interval'])
         self.last_refresh = 0.0
+        self.cwd = os.getcwd()
         threading.Thread.__init__(self)
         self.daemon = True
         
@@ -53,8 +54,8 @@ class XrefRefreshThread( threading.Thread ):
             exclude = sh_escape(config['exclude'])
             numthreads = int(config['numthreads'].strip())
     
-            cmd = "xref -v %s -p %s -e %s -d %s -n %s"%('-r' if recurse else '',pattern,exclude,directory,numthreads)
-            xref_out = subprocess.Popen(cmd,shell=True,bufsize=1024,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout
+            cmd = "%s/xref -v %s -p %s -e %s -d %s -n %s"%(self.cwd,'-r' if recurse else '',pattern,exclude,directory,numthreads)
+            xref_out = subprocess.Popen(cmd,encoding="utf-8",shell=True,bufsize=1024,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout
             log = open("xref_extension.log","a")
             for l in xref_out:
                 print(l, file=log)
@@ -101,6 +102,7 @@ class XrefDialog(dialog.Dialog):
         self.files = []
         self.lines = {}
         self.config = {}
+        self.cwd = os.getcwd()
         self.load_config()
         max_y,max_x = scr.getmaxyx()
         pw = (max_x - 4)
@@ -148,13 +150,11 @@ class XrefDialog(dialog.Dialog):
                 print(p, file=pls)
                 pidx += 1
 
-        def cmp_line( x, y ):
-            return int(x[0])-int(y[0])
-            
+           
         fidx = 0
         fline = 0     
         if self.fname and self.fname in self.lines:
-            for lineno,rest in sorted(self.lines[self.fname],cmp_line):
+            for lineno,rest in sorted(self.lines[self.fname],key=lambda x: x[0]):
                 if int(lineno) == self.line:
                     fline = fidx
                 print("%5s | %s"%(lineno,rest), file=lls)
@@ -183,7 +183,7 @@ class XrefDialog(dialog.Dialog):
         
     def do_query( self, query ):
         """ perform the query and set up the fields """
-        xref_out = subprocess.Popen("xref -q %s"%(sh_escape(query)),shell=True,bufsize=1024,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout
+        xref_out = subprocess.Popen("%s/xref -q %s"%(self.cwd,sh_escape(query)),encoding="utf-8",shell=True,bufsize=1024,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout
         self.files = []
         self.lines = {}
         for res in xref_out:

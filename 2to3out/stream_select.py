@@ -72,12 +72,15 @@ class StreamSelectComponent(dialog.Component):
                 self.ewin = win.subwin(self.height-2,self.width-2,self.y+1,self.x+1)
             if not self.editor:
                 self.editor = editor_common.StreamEditor(win,self.ewin,self.name,self.stream,select=True,line_re = self.line_re)
+                self.editor.invalidate_all()
+                self.editor.main(False)
+             
             if self.isfocus:
                 attr = curses.A_BOLD
             else:
                 attr = curses.A_NORMAL
 
-            dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr)
+            dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr,False)
             self.editor.redraw()
         self.isfocus = False
 

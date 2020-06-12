@@ -21,9 +21,12 @@ def detect_mode(editor):
         filename = workfile.getFilename()
         if filename:
             lexer = get_lexer_for_filename(filename,{})
+        else:
+            lexer = get_lexer_for_filename("unknown.txt",{})
         return True
     except Exception as e:
-        return False
+        lexer = get_lexer_for_filename("unknown.txt",{})
+        return True
 
 def handle(editor,ch):
     """ hook called for each keystroke, can be used for auto-indent or auto-complete """
@@ -48,7 +51,8 @@ def redraw(editor):
         return False
 
     if not tokens.getTokens() or tokens.getModref() != workfile.getModref():
-        tokens.refresh(workfile,get_lexer_for_filename(workfile.getFilename(),{}))
+        detect_mode(editor)
+        tokens.refresh(workfile,lexer)
         return False
         
     render(editor,tokens,
