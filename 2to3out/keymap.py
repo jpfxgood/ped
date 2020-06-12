@@ -347,20 +347,15 @@ def main(stdscr):
     curses.raw()
     line = 0
     col = 0
-    k = stdscr.getch()
+    k = mapseq(keymap_editor,get_keyseq(stdscr, getch(stdscr)))
     while True:
-        stdscr.addstr(line,col,"%4d               "%(k), curses.A_REVERSE)
-#        line += 1
-        col += 4  
-        line = line % 10
-        if k < 0: 
-            col = 0
-            while (k < 0):
-                k = stdscr.getch()
-        else:
-            k = stdscr.getch()
-        if col == 0 and k == 32:
+        if k[1] == 32:
             break
+        if k[1] != '\x00':
+            stdscr.addstr(line,col,"%s               "%(str(k)), curses.A_REVERSE)
+            line += 1
+            line = line % 10
+        k = mapseq(keymap_editor,get_keyseq(stdscr, getch(stdscr)))
     stdscr.nodelay(0)
 #        altch = stdscr.getch()
 #        stdscr.nodelay(1)
