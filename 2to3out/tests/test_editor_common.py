@@ -232,5 +232,55 @@ def test_Editor(testdir,capsys):
             ed.endln()
             assert(ed.getLine() == ed.max_y-2)
             do_edit_tests(True)
+            ed.endfile()
+            ed.endln()                                                   
+            assert(ed.getLine() == ed.numLines(True)-1)
+            do_edit_tests(True)
+            start_line = ed.getLine()
+            ed.pageup()
+            assert(ed.getLine() == start_line - (ed.max_y-2))
+            do_edit_tests(True)
+            ed.pagedown()
+            assert(ed.getLine() == start_line)
+            do_edit_tests(True)
+            ed.cup()
+            assert(ed.getLine() == start_line -1 )
+            do_edit_tests(True)
+            ed.cdown()
+            assert(ed.getLine() == start_line )
+            do_edit_tests(True)
+            word_pos = []                        
+            in_word = False
+            for i in range(0,len(lines_to_test[main.target_line])-1):
+                if lines_to_test[main.target_line][i] != ' ':
+                    if not in_word:
+                        word_pos.append(i)
+                        in_word = True
+                else:
+                    in_word = False
+            word_pos.append(len(lines_to_test[main.target_line])-1)
+            for rfunc,lfunc in [(ed.next_word,ed.prev_word),(ed.cright,ed.cleft),(ed.scroll_right,ed.scroll_left)]:
+                ed.goto(main.target_line,0)
+                ed.main(False)
+                prev_pos = ed.getPos()
+                while ed.getPos() < len(lines_to_test[main.target_line])-1:
+                    rfunc()
+                    if rfunc == ed.next_word:
+                        assert(ed.getPos() in word_pos)
+                    assert(ed.getPos() > prev_pos)
+                    prev_pos = ed.getPos()
+                    assert(ed.getPos() >= ed.left and ed.getPos() < ed.left+ed.max_x)
+                    ed.main(False)
+                    assert(read_str(ed.scr,(main.target_line-ed.line)+1,0,ed.max_x).startswith(lines_to_test[main.target_line][ed.left:ed.left+ed.max_x]))
+    
+                while ed.getPos() > 0:
+                    lfunc()
+                    if lfunc == ed.prev_word:
+                        assert(ed.getPos() in word_pos)
+                    assert(ed.getPos() < prev_pos)
+                    prev_pos = ed.getPos()
+                    assert(ed.getPos() >= ed.left and ed.getPos() < ed.left+ed.max_x)
+                    ed.main(False)
+                    assert(read_str(ed.scr,(main.target_line-ed.line)+1,0,ed.max_x).startswith(lines_to_test[main.target_line][ed.left:ed.left+ed.max_x]))
     
         curses.wrapper(main)

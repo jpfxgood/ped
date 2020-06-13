@@ -1106,31 +1106,41 @@ class Editor:
     def prev_word( self ):
         """ scan left until you get to the previous word """
         self.pushUndo()
-        orig = self.getContent(self.getLine())
+        orig = self.getContent(self.getLine()).rstrip()
         
         pos = self.getPos()
-        if pos:
+        if pos >= len(orig):
+            pos = len(orig)-1
+        if pos and  pos < len(orig):
             pos -= 1
             while pos and orig[pos] == ' ':
                 pos -= 1
             while pos and orig[pos-1] != ' ':
-                pos -= 1
-            self.goto(self.getLine(),pos)
+                pos -= 1         
+        elif pos >= len(orig):
+            pos = len(orig)
+        else:
+            pos = 0
+        self.goto(self.getLine(),pos)
                     
     def next_word( self ):
         """ scan left until you get to the previous word """
         self.pushUndo()
-        orig = self.getContent(self.getLine())
+        orig = self.getContent(self.getLine()).rstrip()
                                          
         pos = self.getPos()
         if pos < len(orig):
-            if pos < self.max_x-1:
-                pos += 1
-            while pos < len(orig) and orig[pos] == ' ':
-                pos += 1
-            while pos < len(orig)-1 and orig[pos+1] != ' ':
-                pos += 1
-            self.goto(self.getLine(),pos)
+            if orig[pos] == ' ':
+                while pos < len(orig) and orig[pos] == ' ':
+                    pos += 1
+            else:
+                while pos < len(orig) and orig[pos] != ' ':
+                    pos += 1
+                while pos < len(orig) and orig[pos] == ' ':
+                    pos += 1
+        else:
+            pos = len(orig)
+        self.goto(self.getLine(),pos)
     
             
     def cleft(self,rept = 1):
