@@ -5,6 +5,7 @@ import os
 import curses
 import curses.ascii
 import time
+import re
 
 def test_memline():
     m = editor_common.MemLine( "01234567890123456789" )
@@ -282,5 +283,25 @@ def test_Editor(testdir,capsys):
                     assert(ed.getPos() >= ed.left and ed.getPos() < ed.left+ed.max_x)
                     ed.main(False)
                     assert(read_str(ed.scr,(main.target_line-ed.line)+1,0,ed.max_x).startswith(lines_to_test[main.target_line][ed.left:ed.left+ed.max_x]))
+            ed.search("This is line 1010",True,False)
+            assert(ed.getLine() == 1009 and ed.getPos() == 16) 
+            ed.main(False)
+            assert(read_str(ed.scr,(ed.getLine()-ed.line)+1,0,ed.max_x).startswith(lines_to_test[ed.getLine()][ed.left:ed.left+ed.max_x]))
+            ed.search("This is line 990",False,False)
+            assert(ed.getLine() == 989 and ed.getPos() == 338)
+            ed.main(False)
+            assert(read_str(ed.scr,(ed.getLine()-ed.line)+1,0,ed.max_x).startswith(lines_to_test[ed.getLine()][ed.left:ed.left+ed.max_x]))
+            
+            success_count = 0
+            search_succeeded = ed.search("This is line 100[0,1,2]",down = True, next = False)
+            while search_succeeded:
+                success_count += 1
+                ed.main(False)
+                found_str = read_str(ed.scr,(ed.getLine()-ed.line)+1,ed.mark_pos_start-ed.left,(ed.getPos()-ed.mark_pos_start)+1)
+                assert(re.match("This is line 100[0,1,2]",found_str))
+                print("search loop =",ed.getLine(),ed.getPos(),found_str,success_count,search_succeeded,file=open("/home/james/ped.log","a"))
+                search_succeeded = ed.searchagain()
+            assert(success_count == 60)
+            
     
         curses.wrapper(main)
