@@ -6,6 +6,7 @@ import curses
 import curses.ascii
 import time
 import re
+import keymap
 
 def test_memline():
     m = editor_common.MemLine( "01234567890123456789" )
@@ -303,5 +304,18 @@ def test_Editor(testdir,capsys):
                 search_succeeded = ed.searchagain()
             assert(success_count == 60)
             
-    
+            def play_macro( macro ):
+                keymap.start_recording()
+                for seq in macro:
+                    keymap.record_seq(seq)
+                keymap.stop_recording()
+                keymap.start_playback()
+                while keymap.is_playback():
+                    ed.main(False)
+
+            ed.goto(0,0)
+            ed.main(False)
+            play_macro( [ 'fk06','down','l','i','n','e',' ','3','0','8','\t','l','i','n','e',' ','6','6','6','\t','\n','\x00','\t','\t','\n','\x00','\n','refresh' ] )
+#WIP Need to add assertion after the macro execution...
+                      
         curses.wrapper(main)

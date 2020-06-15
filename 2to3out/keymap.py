@@ -174,7 +174,7 @@ def stop_playback():
 def record_seq( seq ):
     """ record a key sequence into the buffer """
     global macro
-    if len(seq) == 1 and seq[0] == -1:
+    if (len(seq) == 1 and seq[0] == -1) or seq == '\x00':
         return
     macro.append(seq)
     
@@ -344,16 +344,19 @@ def main(stdscr):
     stdscr.timeout(0)  
     curses.raw()
     line = 0
-    col = 0
-    k = mapseq(keymap_editor,get_keyseq(stdscr, getch(stdscr)))
+    col = 0                    
+    seq = get_keyseq(stdscr, getch(stdscr))
+    k = mapseq(keymap_editor,seq)
     while True:
         if k[1] == 32:
             break
-        if k[1] != '\x00':
-            stdscr.addstr(line,col,"%s               "%(str(k)), curses.A_REVERSE)
+        if seq != '\x00':
+            stdscr.addstr(line,col,"%s == %s               "%(seq,str(k)), curses.A_REVERSE)
             line += 1
-            line = line % 10
-        k = mapseq(keymap_editor,get_keyseq(stdscr, getch(stdscr)))
+            line = line % 10     
+        seq = get_keyseq(stdscr, getch(stdscr))
+        k = mapseq(keymap_editor,seq)
+         
     stdscr.nodelay(0)
 #        altch = stdscr.getch()
 #        stdscr.nodelay(1)

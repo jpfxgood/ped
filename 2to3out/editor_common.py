@@ -508,7 +508,7 @@ class Editor:
         self.last_search = None
         self.last_search_dir = True
         self.mode = None
-        self.clear_mark = False
+#        self.clear_mark = False
         self.showname = showname
         self.wrap = wrap
         self.wrap_lines = []
@@ -547,7 +547,7 @@ class Editor:
                                                              self.last_search_dir,
                                                              clipboard.clip,
                                                              clipboard.clip_type,
-                                                             self.clear_mark,
+#                                                             self.clear_mark,
                                                              self.wrap))
     def applyUndo(self,*args):
         """ called by undo to unwind one undo action """
@@ -568,7 +568,7 @@ class Editor:
         self.last_search_dir,
         clipboard.clip,
         clipboard.clip_type,
-        self.clear_mark,
+#        self.clear_mark,
         self.wrap ) = args
 
     def undo(self):
@@ -1232,7 +1232,7 @@ class Editor:
                     self.goto(line,match.start()+offset)
                     self.mark_span()
                     self.goto(line,match.end()+offset-1)
-                    self.clear_mark = True
+#                    self.clear_mark = True
                     return True
                 line += 1
         else:
@@ -1258,7 +1258,7 @@ class Editor:
                     self.goto(line,last_match.start()+last_offset)
                     self.mark_span()
                     self.goto(line,last_match.end()+last_offset-1)
-                    self.clear_mark = True
+#                    self.clear_mark = True
                     return True
                 line -= 1
         return False
@@ -1591,6 +1591,7 @@ class Editor:
             self.scr.leaveok(1)
             while found:
                 self.redraw()
+                self.scr.refresh()
                 if not replace_all:
                     answer = confirm_replace(self.parent)
                     if answer == 1:
@@ -1602,6 +1603,7 @@ class Editor:
                     elif answer == 4:
                         message(self.parent,"Canceled","Replace canceled.")
                         self.redraw()
+                        self.scr.refresh()
                         self.scr.leaveok(0)
                         self.scr.move(self.vpos+1,self.pos)
                         return
@@ -1613,6 +1615,7 @@ class Editor:
             else:
                 message(self.parent,"Replace","Pattern not found.")
                 self.redraw()
+                self.scr.refresh()
                 self.scr.leaveok(0)
                 self.scr.move(self.vpos+1,self.pos)
                 
@@ -1687,9 +1690,9 @@ class Editor:
             mark_maxline = self.getLine()
             
         try:
-            if self.clear_mark and self.isMark():
-                self.mark_span()
-                self.clear_mark = False
+#            if self.clear_mark and self.isMark():
+#                self.mark_span()
+#                self.clear_mark = False
     
             self.prev_cmd = self.cmd_id
             if isinstance(ch,int):
