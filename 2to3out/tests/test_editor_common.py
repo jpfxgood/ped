@@ -7,6 +7,7 @@ import curses.ascii
 import time
 import re
 import keymap
+import clipboard
 
 def test_memline():
     m = editor_common.MemLine( "01234567890123456789" )
@@ -316,6 +317,61 @@ def test_Editor(testdir,capsys):
             ed.goto(0,0)
             ed.main(False)
             play_macro( [ 'fk06','down','l','i','n','e',' ','3','0','8','\t','l','i','n','e',' ','6','6','6','\t','\n','\x00','\t','\t','\n','\x00','\n','refresh' ] )
-#WIP Need to add assertion after the macro execution...
+            ed.goto(307,0)
+            ed.main(False)
+            assert(read_str(ed.scr,(ed.getLine()-ed.line)+1,0,ed.max_x).startswith(lines_to_test[307].replace('line 308','line 666')[0:ed.max_x]))
+            
+            ed.goto(main.target_line,0)
+            ed.main(False)
+            ed.mark_span()
+            ed.goto(main.target_line,15)
+            ed.main(False)
+            assert(match_attr(ed.scr,(main.target_line-ed.line)+1,0,1,15,curses.A_REVERSE))
+            assert(ed.get_marked() == ( clipboard.SPAN_CLIP, [ lines_to_test[main.target_line][0:16] ] ))
+            ed.goto(main.target_line,15)
+            ed.main(False)
+            ed.mark_span()
+            ed.goto(main.target_line+5,25)
+            ed.main(False)
+            assert(match_attr(ed.scr,(main.target_line-ed.line)+1,15,1,ed.max_x-15,curses.A_REVERSE))
+            assert(match_attr(ed.scr,(main.target_line-ed.line)+2,0,4,ed.max_x,curses.A_REVERSE))
+            assert(match_attr(ed.scr,(main.target_line-ed.line)+6,0,1,25,curses.A_REVERSE))
+            match_tuple = ( clipboard.SPAN_CLIP, [  lines_to_test[main.target_line][15:]+'\n',
+                                                                lines_to_test[main.target_line+1]+'\n',
+                                                                lines_to_test[main.target_line+2]+'\n',
+                                                                lines_to_test[main.target_line+3]+'\n',
+                                                                lines_to_test[main.target_line+4]+'\n',
+                                                                lines_to_test[main.target_line+5][0:26]] )
+            assert(ed.get_marked() == match_tuple)
+            ed.goto(main.target_line,15)
+            ed.main(False)
+            ed.mark_lines()
+            ed.goto(main.target_line+5,25)
+            ed.main(False)
+            assert(match_attr(ed.scr,(main.target_line-ed.line)+1,0,5,ed.max_x,curses.A_REVERSE))
+            match_tuple = ( clipboard.LINE_CLIP, [  lines_to_test[main.target_line]+'\n',
+                                                    lines_to_test[main.target_line+1]+'\n',
+                                                    lines_to_test[main.target_line+2]+'\n',
+                                                    lines_to_test[main.target_line+3]+'\n',
+                                                    lines_to_test[main.target_line+4]+'\n',
+                                                    lines_to_test[main.target_line+5]+'\n'] )
+            assert(ed.get_marked() == match_tuple )   
+            
+            ed.goto(main.target_line,0)
+            ed.main(False)
+            ed.goto(main.target_line,15)
+            ed.main(False)
+            ed.mark_rect()
+            ed.goto(main.target_line+5,25)
+            ed.main(False)
+            assert(match_attr(ed.scr,(main.target_line-ed.line)+1,15,5,11,curses.A_REVERSE))
+            match_tuple = ( clipboard.RECT_CLIP, [  lines_to_test[main.target_line][15:26],
+                                                    lines_to_test[main.target_line+1][15:26],
+                                                    lines_to_test[main.target_line+2][15:26],
+                                                    lines_to_test[main.target_line+3][15:26],
+                                                    lines_to_test[main.target_line+4][15:26],
+                                                    lines_to_test[main.target_line+5][15:26]] )
+            assert(ed.get_marked() == match_tuple )
+            
                       
         curses.wrapper(main)
