@@ -725,7 +725,7 @@ class Editor:
         mark_right = self.getPos(True)
         mark_bottom = self.getLine(True)
 
-        if mark_left > mark_right:
+        if (self.rect_mark or self.line_mark) and mark_left > mark_right:
             mark = mark_left
             mark_left = mark_right
             mark_right = mark
@@ -784,7 +784,7 @@ class Editor:
             cur_line = mark_top
             while s_top <= s_bottom:
                 if cur_line == mark_top:
-                    offset = mark_left
+                    offset = s_left
                     width = self.max_x-offset
                     self.addstr(s_top,
                                     offset,
@@ -799,7 +799,7 @@ class Editor:
                                     self.getContent(cur_line,
                                                           self.getPos(True),
                                                           True,
-                                                          True)[self.left:self.getPos(True)],
+                                                          True)[self.left:self.getPos(True)+1],
                                     curses.A_REVERSE)
                 else:
                     self.addstr(s_top,
@@ -1385,7 +1385,7 @@ class Editor:
                     while line_idx <= mark_line_end:
                         self.workfile.deleteLine(mark_line_start)
                         line_idx += 1
-                    self.workfile.insertLine(mark_line_start,first_line[0:mark_pos_start] + last_line[mark_pos_end:])
+                    self.workfile.insertLine(mark_line_start,first_line[0:mark_pos_start] + last_line[mark_pos_end+1:])
             self.span_mark = False
         elif self.rect_mark:
             if not nocopy:

@@ -345,6 +345,22 @@ def test_Editor(testdir,capsys):
             assert(ed.get_marked() == match_tuple)
             ed.goto(main.target_line,15)
             ed.main(False)
+            ed.mark_span()
+            ed.goto(main.target_line+5,ed.max_x)
+            ed.cright()
+            ed.main(False)
+            assert(match_attr(ed.scr,(main.target_line-ed.line)+1,14,1,ed.max_x-14,curses.A_REVERSE))
+            assert(match_attr(ed.scr,(main.target_line-ed.line)+2,0,5,ed.max_x,curses.A_REVERSE))
+            match_tuple = ( clipboard.SPAN_CLIP, [  lines_to_test[main.target_line][15:]+'\n',
+                                                                lines_to_test[main.target_line+1]+'\n',
+                                                                lines_to_test[main.target_line+2]+'\n',
+                                                                lines_to_test[main.target_line+3]+'\n',
+                                                                lines_to_test[main.target_line+4]+'\n',
+                                                                lines_to_test[main.target_line+5][0:ed.getPos()+1]] )
+            assert(ed.get_marked() == match_tuple)
+
+            ed.goto(main.target_line,15)
+            ed.main(False)
             ed.mark_lines()
             ed.goto(main.target_line+5,25)
             ed.main(False)
