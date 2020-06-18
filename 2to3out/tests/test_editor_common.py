@@ -155,6 +155,12 @@ def test_Editor(testdir,capsys):
                 assert(read_str(ed.scr,y,0,ed.max_x).startswith(lines_to_test[y-1][:ed.max_x-1]))
             assert(match_attr(ed.scr,0,0,1,ed.max_x,curses.A_REVERSE))
             ef = ed.getWorkfile()
+
+            def undo_all():
+                while ed.isChanged():
+                    ed.undo()
+                    ed.main(False)
+                    
             assert(isinstance(ef,editor_common.EditFile))
             assert(ed.getFilename() == fn)
             assert(isinstance(ed.getUndoMgr(),editor_common.undo.UndoManager))
@@ -187,8 +193,7 @@ def test_Editor(testdir,capsys):
                 prev_compare_string = compare_string
                 compare_string = lines_to_test[target_line][ed.left:pos] + 'X' + lines_to_test[target_line][pos]
                 assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
-                ed.undo()
-                ed.main(False)
+                undo_all()
                 assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
                 ed.delc()
                 cur_line = ed.getLine()
@@ -204,8 +209,7 @@ def test_Editor(testdir,capsys):
                     else:
                         compare_string = lines_to_test[target_line][ed.left:pos]
                     assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
-                    ed.undo()
-                    ed.main(False)
+                    undo_all()
 
                 assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
                 ed.backspace()
@@ -218,8 +222,7 @@ def test_Editor(testdir,capsys):
                     compare_string = lines_to_test[target_line][ed.left:pos-1]
                     
                 assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
-                ed.undo()
-                ed.main(False)
+                undo_all()
                 assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
             do_edit_tests()
             main.target_pos = 5
@@ -358,6 +361,41 @@ def test_Editor(testdir,capsys):
                                                                 lines_to_test[main.target_line+4]+'\n',
                                                                 lines_to_test[main.target_line+5][0:ed.getPos()+1]] )
             assert(ed.get_marked() == match_tuple)
+            ed.goto(main.target_line,15)
+            ed.main(False)
+            ed.mark_span()
+            ed.goto(main.target_line+5,ed.max_x)
+            ed.cright()
+            ed.main(False)
+            ed.copy_marked()
+            ed.goto(main.target_line+25,0)
+            ed.paste()
+            ed.main(False)
+            for line in range(0,5):
+                assert(ed.getContent(main.target_line+25+line) == match_tuple[1][line])
+            assert(ed.getContent(main.target_line+25+5).startswith(match_tuple[1][5]))
+            undo_all()
+            for line in range(0,6):
+                assert(ed.getContent(main.target_line+25+line).startswith(lines_to_test[main.target_line+25+line]))
+            ed.goto(main.target_line,15)
+            ed.main(False)
+            ed.mark_span()
+            ed.goto(main.target_line+5,ed.max_x)
+            ed.cright()
+            ed.main(False)
+            ed.copy_marked(True,False)
+            ed.main(False)
+            assert(ed.getLine()==main.target_line and ed.getPos()==15)
+            assert(ed.getContent(main.target_line).startswith(lines_to_test[main.target_line][0:15]+lines_to_test[main.target_line+5][ed.left+ed.max_x:]))
+            ed.goto(main.target_line+25,0)
+            ed.paste()
+            ed.main(False)
+            for line in range(0,5):
+                assert(ed.getContent(main.target_line+25+line) == match_tuple[1][line])
+            assert(ed.getContent(main.target_line+25+5).startswith(match_tuple[1][5]))
+            undo_all()
+            for line in range(0,6):
+                assert(ed.getContent(main.target_line+25+line).startswith(lines_to_test[main.target_line+25+line]))
 
             ed.goto(main.target_line,15)
             ed.main(False)
