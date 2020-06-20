@@ -7,6 +7,7 @@ import curses.ascii
 import time
 import re
 import keymap
+import keytab
 import clipboard
 
 def test_memline():
@@ -159,7 +160,7 @@ def test_Editor(testdir,capsys):
             def undo_all():
                 while ed.isChanged():
                     ed.undo()
-                    ed.main(False)
+                ed.main(False)
                     
             assert(isinstance(ef,editor_common.EditFile))
             assert(ed.getFilename() == fn)
@@ -427,5 +428,63 @@ def test_Editor(testdir,capsys):
                                                     lines_to_test[main.target_line+5][15:26]] )
             assert(ed.get_marked() == match_tuple )
             
+            ed.goto(main.target_line,15)
+            ed.main(False)
+            ed.cr()
+            ed.main(False)
+            first_line = ed.getContent(main.target_line)
+            second_line = ed.getContent(main.target_line+1)
+            assert(len(first_line)==16 and first_line == lines_to_test[main.target_line][0:15]+'\n')
+            assert(second_line == lines_to_test[main.target_line][15:].rstrip()+'\n')
+            undo_all()
+                                                                               
+            ed.goto(main.target_line,0)
+            ed.main(False)
+            ed.mark_lines()
+            ed.goto(main.target_line+5,0)
+            ed.main(False)
+            ed.tab()
+            ed.main(False)
+            for line in range(0,6):
+                assert(ed.getContent(main.target_line+line).startswith(' '*ed.workfile.get_tab_stop(0)))
+            ed.btab()
+            ed.main(False)
+            for line in range(0,6):
+                assert(ed.getContent(main.target_line+line).startswith(lines_to_test[main.target_line+line].rstrip()))
+            undo_all()
+            while ed.isMark():
+                ed.mark_lines()
+            
+            play_macro( [ keytab.KEYTAB_ALTO ,'\t',keytab.KEYTAB_DOWN,'s','a','v','e','a','s','.','t','x','t','\n','\n',keytab.KEYTAB_REFRESH ] )
+            new_fn = ed.getWorkfile().getFilename()
+            assert(new_fn.endswith('saveas.txt'))
+            lidx = 0
+            for line in open(new_fn,'r'):
+                assert(line.startswith(lines_to_test[lidx].rstrip()))
+                lidx += 1
+
+            ed.invalidate_all()
+            ed.goto(main.target_line,15)
+            ed.main(False)
+            ed.insert('A test change')
+            ed.main(False)
+            ed.save()
+            
+            lidx = 0
+            for line in open(new_fn,'r'):
+                if lidx == main.target_line:
+                    assert(line[15:].startswith('A test change'))
+                else:
+                    assert(line.startswith(lines_to_test[lidx].rstrip()))
+                lidx += 1
+            
+            cur_line = ed.getLine()
+            cur_pos = ed.getPos()
+            play_macro( [ keytab.KEYTAB_CR ] )
+            assert(ed.getLine() == cur_line+1 and ed.getPos() == 0)
+            play_macro( [ keytab.KEYTAB_ALTM, keytab.KEYTAB_DOWN,keytab.KEYTAB_DOWN, keytab.KEYTAB_DOWN, keytab.KEYTAB_DOWN, keytab.KEYTAB_RIGHT, keytab.KEYTAB_RIGHT, keytab.KEYTAB_RIGHT, keytab.KEYTAB_CTRLC ] )
+            assert(clipboard.clip_type == clipboard.SPAN_CLIP and len(clipboard.clip) == 5)
+            play_macro( [ keytab.KEYTAB_ALTG, '4','0','0','\n'] )
+            assert(ed.getLine() == 400 )
                       
         curses.wrapper(main)
