@@ -1270,9 +1270,9 @@ class Editor:
         """ touch the marked lines so that they'll redraw when we change the shape of the mark or do a copy or paste """
         if self.isMark():
             self.workfile.touchLine(self.mark_line_start, self.getLine())
-            if self.search_mark:
-                self.span_mark = False
-                self.search_mark = False
+        if self.search_mark:
+            self.span_mark = False
+            self.search_mark = False
                    
     def invalidate_all(self):
         """ touch all the lines in the file so everything will redraw """
