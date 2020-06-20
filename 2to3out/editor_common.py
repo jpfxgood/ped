@@ -503,6 +503,7 @@ class Editor:
         self.line_mark = False
         self.span_mark = False
         self.rect_mark = False
+        self.search_mark = False
         self.mark_pos_start = 0
         self.mark_line_start = 0
         self.last_search = None
@@ -541,6 +542,7 @@ class Editor:
                                                              self.line_mark,
                                                              self.span_mark,
                                                              self.rect_mark,
+                                                             self.search_mark,
                                                              self.mark_pos_start,
                                                              self.mark_line_start,
                                                              self.last_search,
@@ -562,6 +564,7 @@ class Editor:
         self.line_mark,
         self.span_mark,
         self.rect_mark,
+        self.search_mark,
         self.mark_pos_start,
         self.mark_line_start,
         self.last_search,
@@ -1232,7 +1235,7 @@ class Editor:
                     self.goto(line,match.start()+offset)
                     self.mark_span()
                     self.goto(line,match.end()+offset-1)
-#                    self.clear_mark = True
+                    self.search_mark = True
                     return True
                 line += 1
         else:
@@ -1258,7 +1261,7 @@ class Editor:
                     self.goto(line,last_match.start()+last_offset)
                     self.mark_span()
                     self.goto(line,last_match.end()+last_offset-1)
-#                    self.clear_mark = True
+                    self.search_mark = True
                     return True
                 line -= 1
         return False
@@ -1267,6 +1270,9 @@ class Editor:
         """ touch the marked lines so that they'll redraw when we change the shape of the mark or do a copy or paste """
         if self.isMark():
             self.workfile.touchLine(self.mark_line_start, self.getLine())
+            if self.search_mark:
+                self.span_mark = False
+                self.search_mark = False
                    
     def invalidate_all(self):
         """ touch all the lines in the file so everything will redraw """
@@ -1326,7 +1332,6 @@ class Editor:
         
         self.pushUndo()
         
-        self.invalidate_mark()
         mark_pos_start = self.mark_pos_start
         mark_line_start = self.mark_line_start
         mark_pos_end = self.getPos()
@@ -1406,6 +1411,7 @@ class Editor:
                                  
         # sync the x clipboard 
         self.transfer_clipboard()
+        self.invalidate_mark()
         return (clip_type, clip)
         
     def copy_marked(self,delete=False,nocopy = False):

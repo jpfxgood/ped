@@ -148,7 +148,6 @@ def render( editor, tokens, keywords, strings, comments ):
                 if lidx in tokens:        
                     line_tokens = tokens[lidx]
                     for (t_type, t_text, (t_srow,t_scol), (t_erow,t_ecol), t_line) in line_tokens:
-                        f_line = t_srow 
                         o_srow = t_srow
                         o_erow = t_erow
                         o_scol = t_scol
@@ -190,7 +189,6 @@ def render( editor, tokens, keywords, strings, comments ):
                             if editor.wrap:
                                 if o_scol > editor.max_x-1:
                                     o_srow += 1
-                                    f_line += 1
                                     o_scol = 0
                             if o_srow > (editor.max_y-2):
                                 break
@@ -206,7 +204,6 @@ def render( editor, tokens, keywords, strings, comments ):
                                 pass
                             o_scol += 1
                     y =  o_srow+1
-                    lidx = f_line
                 else:
                     l = editor.getContent(lidx,editor.left+editor.max_x,True,True)
                     editor.addstr(y,0,l[editor.left:editor.left+editor.max_x])
