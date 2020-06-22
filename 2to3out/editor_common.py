@@ -37,17 +37,17 @@ def_encoding = locale.getpreferredencoding()
 def isdebug():
     """ returns true if peddebug is set in the environment, used to turn on debugging features """
     return "peddebug" in os.environ
-        
+
 class EditLine:
     """ Interface for each editable line in a file, a fly-weight object """
     def __init__(self):
         """ should initialize any content or references to external objects """
         pass
-        
+
     def length(self):
         """ return the length of the line """
         pass
-        
+
     def flush(self):
         """ flush cached length if you have one """
         pass
@@ -64,17 +64,17 @@ class FileLine(EditLine):
         self.parent = parent
         self.pos = pos
         self.len = len
-                         
+
     def length(self):
         """ return length of line """
         if self.len < 0:
             self.len = len(self.parent.expand_tabs(self.getContent()))
         return self.len
-        
+
     def flush(self):
         """ flush cached length """
         self.len = -1
-        
+
     def getContent(self):
         """ gets the file from its parent, seeks to position, reads line and returns it """
         working = self.parent.getWorking()
@@ -91,11 +91,11 @@ class MemLine(EditLine):
         """ MemLine(s) are in memory strings that represent a line that has been edited, it is initialized from the original file content"""
         EditLine.__init__(self)
         self.content = content
-        
+
     def length(self):
         """ return the length of the content """
         return len(self.content)
-        
+
     def flush(self):
         """ flush cached length """
         pass
@@ -112,10 +112,10 @@ class EditFile:
     """ Object that manages one file that is open for editing,
     lines are either pointers to lines on disk, or in-memory copies
     for edited lines """
-        
+
     default_readonly = False
     default_backuproot = "~"
-    
+
     def __init__(self, filename=None ):
         """ takes an optional filename to either load or create """
         # store the filename
@@ -162,21 +162,21 @@ class EditFile:
         if self.working:
             result.working = open(self.working.name,"r",buffering=1,encoding="utf-8")
         return result
-    
+
     def __del__(self):
         """ make sure we close file when we are destroyed """
         del self.undo_mgr
         self.undo_mgr = None
         self.change_mgr = None
         self.close()
-        
+
     def set_tabs(self, tabs ):
         """ set the tab stops for this file to something new """
         if tabs != self.tabs:
             self.tabs = tabs
             for l in self.lines:
                 l.flush()
-        
+
     def get_tabs(self):
         """ return the list of tab stops """
         return self.tabs
@@ -188,15 +188,15 @@ class EditFile:
     def getModref(self):
         """ modref is a serial number that is incremented for each change to a file, used to detect changes externally """
         return self.modref
-    
+
     def setUndoMgr(self,undo_mgr):
         """ sets the undo manager object for this EditFile, undo manager is used to record undo records to enable undo in the editor """
         self.undo_mgr = undo_mgr
 
-    def getUndoMgr(self): 
+    def getUndoMgr(self):
         """ returns our undo_manager """
         return self.undo_mgr
-        
+
     def isChanged(self):
         """ true if there are unsaved changes, false otherwise """
         return self.changed
@@ -217,7 +217,7 @@ class EditFile:
         """ set the filename for this object """
         self.filename = filename
 
-    def numLines(self): 
+    def numLines(self):
         """ get the number of lines in this file """
         return len(self.lines)
 
@@ -238,7 +238,7 @@ class EditFile:
         """ close the file """
         if self.working:
             self.working.close()
-        self.working = None 
+        self.working = None
         self.lines = None
 
     def load(self):
@@ -250,7 +250,7 @@ class EditFile:
         while True:
             line = self.working.readline()
             if not line:
-                break 
+                break
             line = line.rstrip()
             lidx = lidx + 1
             self.lines.append(FileLine(self,pos,len(self.expand_tabs(line))))
@@ -261,14 +261,14 @@ class EditFile:
             self.lines.append(MemLine(""))
         self.changed = False
         self.modref = 0
-        
+
     def isLineChanged(self,line,modref):
         """ return true if a particular line is changed """
         if self.change_mgr and line < len(self.lines):
             return self.change_mgr.is_changed(line,modref)
         else:
             return True
-            
+
     def flushChanges(self):
         """ reset the change tracking for full screen redraw events """
         if self.change_mgr:
@@ -293,7 +293,7 @@ class EditFile:
         self.modref += 1
         if self.change_mgr:
             self.change_mgr.changed(line,len(self.lines),self.modref)
-        
+
 
     def _replaceLine(self,line,lineObj,changed = True):
         """ replace a line """
@@ -304,7 +304,7 @@ class EditFile:
         self.modref += 1
         if self.change_mgr:
             self.change_mgr.changed(line,line,self.modref)
-        
+
 
     def _appendLine(self,lineObj,changed = True):
         """ add a line """
@@ -315,20 +315,20 @@ class EditFile:
         self.modref += 1
         if self.change_mgr:
             self.change_mgr.changed(len(self.lines)-1,len(self.lines)-1,self.modref)
-        
+
     def touchLine(self, line_start, line_end):
         """ touch a line so it will redraw"""
-        if self.change_mgr:  
+        if self.change_mgr:
             self.modref += 1
             self.change_mgr.changed(min(line_start,line_end),max(line_start,line_end),self.modref)
-            
+
     def length(self, line ):
         """ return the length of the line """
         if line < len(self.lines):
             return self.lines[line].length()
         else:
             return 0
-            
+
     def getLine( self, line, pad = 0, trim = False ):
         """ get a line """
         if line < len(self.lines):
@@ -357,7 +357,7 @@ class EditFile:
         """ delete a line, high level interface """
         if self.isReadOnly():
             raise ReadOnlyError()
-        
+
         if line < len(self.lines):
             self._deleteLine(line)
 
@@ -365,28 +365,28 @@ class EditFile:
         """ insert a line, high level interface """
         if self.isReadOnly():
             raise ReadOnlyError()
-        
+
         if line >= len(self.lines):
             lidx = len(self.lines)
             while lidx <= line:
                 self._appendLine(MemLine(""))
                 lidx += 1
-                
+
         self._insertLine(line,MemLine(content))
 
     def replaceLine( self, line, content ):
         """ replace a line, high level interface """
         if self.isReadOnly():
             raise ReadOnlyError()
-        
+
         if line >= len(self.lines):
             lidx = len(self.lines)
             while lidx <= line:
                 self._appendLine(MemLine(""))
                 lidx += 1
 
-        self._replaceLine(line, MemLine(content))      
-        
+        self._replaceLine(line, MemLine(content))
+
     def make_backup_dir( self, filename, base = "~" ):
         """ make a backup directory under ~/.pedbackup for filename and return it's name """
         base = os.path.expanduser(base)
@@ -395,14 +395,14 @@ class EditFile:
         pedbackup = os.path.join(base,".pedbackup")
         if not os.path.exists(pedbackup):
             os.mkdir(pedbackup)
-            
+
         (filepath,rest) = os.path.split(os.path.abspath(filename))
         for part in filepath.split("/"):
             if part:
                 pedbackup = os.path.join(pedbackup,part)
                 if not os.path.exists(pedbackup):
                     os.mkdir(pedbackup)
-                
+
         return os.path.join(pedbackup,rest)
 
     def save( self, filename = None ):
@@ -410,7 +410,7 @@ class EditFile:
         if filename:
             if filename == self.filename and self.isReadOnly():
                 raise ReadOnlyError()
-            
+
             o = open(filename,"w",buffering=1,encoding="utf-8")
             for l in self.lines:
                 txt = l.getContent()+'\n'
@@ -430,8 +430,8 @@ class EditFile:
                 o.write(txt)
             o.close()
             self.working.close()
-            fstat = os.stat(self.filename)           
-            
+            fstat = os.stat(self.filename)
+
             backup_path = self.make_backup_dir(self.filename,self.backuproot)
             retval = shutil.move(self.filename,backup_path)
             os.rename(self.filename+".sav",self.filename)
@@ -582,8 +582,8 @@ class Editor:
 
     def setWin(self,win):
         """ install a new window to render to """
-        self.scr = win                     
-        
+        self.scr = win
+
     def getModref(self):
         """ return the current display modref of this editor """
         return self.display_modref
@@ -591,53 +591,53 @@ class Editor:
     def getWorkfile(self):
         """ return the workfile that this editor is attached to """
         return self.workfile
-        
+
     def getFilename(self):
         """ return the filename for this editor """
         return self.workfile.getWorking().name
-        
-    def getUndoMgr(self): 
+
+    def getUndoMgr(self):
         """ get the undo manager that we're using """
         return self.undo_mgr
-    
+
     def isChanged(self):
         """ returns true if the file we're working on has unsaved changes """
         return self.workfile.isChanged()
-        
+
     def isLineChanged(self, line ):
         """ return true if line is changed for the current revisions """
         if self.workfile:
             return self.workfile.isLineChanged( self.filePos(line,0)[0], self.display_modref )
         else:
             return True
-            
+
     def flushChanges( self ):
         """ flush change tracking if we're going to require a full screen redraw """
         if self.workfile:
             self.workfile.flushChanges()
         self.invalidate_all()
-        
-    def isMark(self):  
+
+    def isMark(self):
         """ returns true if there is a mark set """
         return (self.line_mark or self.span_mark or self.rect_mark or self.search_mark)
 
     def getCurrentLine(self,display=False):
         """ returns the current line in the file """
         return self.getContent(self.getLine(display),display)
-        
+
     def getPos(self,display=False):
         """ get the character position in the current line that we're at """
         if self.wrap:
             if not display:
                 return self.wrap_lines[self.line+self.vpos][1] + (self.left+self.pos)
         return self.left+self.pos
-        
+
     def getLine(self,display=False):
         """ get the line that we're on in the current file """
         if self.wrap:
             if not display:
                 return self.wrap_lines[self.line+self.vpos][0]
-       
+
         return self.line+self.vpos
 
     def filePos(self, line, pos ):
@@ -646,7 +646,7 @@ class Editor:
             return (self.wrap_lines[line][0],self.wrap_lines[line][1]+pos)
         else:
             return (line,pos)
-            
+
     def scrPos(self, line, pos ):
         """ translate file pos to screen pos """
         if self.wrap:
@@ -662,11 +662,11 @@ class Editor:
                 return (sline-1,pos - self.wrap_lines[sline-1][1])
         else:
             return (line,pos)
-            
+
     def getContent(self, line, pad = 0, trim= False, display=False ):
         """ get a line from the file """
         if self.wrap:
-            if display:                        
+            if display:
                 orig = ""
                 if line < len(self.wrap_lines):
                     orig = self.workfile.getLine(self.wrap_lines[line][0])[self.wrap_lines[line][1]:self.wrap_lines[line][2]]
@@ -676,19 +676,19 @@ class Editor:
                     orig = orig + ' '*(pad-len(orig))
                 if isdebug():
                     print("getContent (wrap,display) =", line,pad,trim,display,self.wrap,"return =",orig,file=open("/home/james/ped.log","a"))
-                return orig        
+                return orig
         orig = self.workfile.getLine(line,pad,trim)
         if isdebug():
             print("getContent (not wrap) =", line,pad,trim,display,self.wrap,"return =",orig,file=open("/home/james/ped.log","a"))
         return orig
-        
+
     def numLines(self,display=False):
         """ get the number of lines in the editor """
         if self.wrap and display:
             return len(self.wrap_lines)
-           
+
         return self.workfile.numLines()
-        
+
     def rewrap(self, force = False):
         """ compute the wrapped line array """
         if self.wrap and (force or self.workfile.getModref() != self.wrap_modref or self.wrap_width != self.max_x-1):
@@ -703,10 +703,10 @@ class Editor:
                 while start < line_len:
                     self.wrap_lines.append((l,start,min(line_len,start+self.wrap_width)))
                     start += self.wrap_width
-            
+
     def addstr(self,row,col,str,attr = curses.A_NORMAL):
         """ write properly encoded string to screen location """
-        try: 
+        try:
             if isdebug():
                 print("addstr =",row,col,str,attr, file=open("/home/james/ped.log","a"))
             return self.scr.addstr(row,col,codecs.encode(str,"utf-8"),attr)
@@ -714,13 +714,13 @@ class Editor:
             if isdebug():
                 print("addstr exception =",row,col,str,attr, file=open("/home/james/ped.log","a"))
             return 0
-        
+
     def draw_mark(self):
         """ worker function to draw the marked section of the file """
         if not self.isMark():
             return
-        
-        
+
+
         (mark_top,mark_left) = self.scrPos(self.mark_line_start,self.mark_pos_start)
         mark_line_start = mark_top
         mark_pos_start = mark_left
@@ -759,7 +759,7 @@ class Editor:
             s_right = self.max_x
             mark_right = self.left+s_right
             mark_left = max(mark_left,self.left)
-        
+
         if s_top == s_bottom:
             if s_right > s_left:
                 self.addstr(s_top,
@@ -825,7 +825,7 @@ class Editor:
                                 curses.A_REVERSE)
                 s_top += 1
                 cur_line += 1
-                
+
     def resize(self):
         """ resize the editor to fill the window """
         if self.scr:
@@ -845,7 +845,7 @@ class Editor:
         try:
             if not self.scr or keymap.is_playback():
                 return
-    
+
             self.max_y,self.max_x = self.scr.getmaxyx()
             self.scr.keypad(1)
             if self.workfile.isChanged():
@@ -854,7 +854,7 @@ class Editor:
                 changed = "R"
             else:
                 changed = " "
-    
+
             if self.mode:
                 changed = changed + " " + self.mode.name()
             filename = self.workfile.getFilename()
@@ -863,7 +863,7 @@ class Editor:
             status = "%d : %d : %d : %s : %s : %s"%(self.numLines(),self.getLine(),self.getPos(),changed,filename, "REC" if keymap.is_recording() else "PBK" if keymap.is_playback() else "   " )
             if len(status) < self.max_x:
                 status += (self.max_x-len(status))*' '
-    
+
             self.addstr(0,0,status[0:self.max_x],curses.A_REVERSE)
             # if the mode is rendering then don't do the default rendering as well
             mode_redraw = False
@@ -873,7 +873,7 @@ class Editor:
                 y = 1
                 lidx = self.line
                 while lidx < self.line+(self.max_y-1):
-                    try:            
+                    try:
                         if self.isLineChanged(lidx):
                             l = self.getContent(lidx,self.left+self.max_x,True,True)
                             self.addstr(y,0,l[self.left:self.left+self.max_x])
@@ -896,10 +896,10 @@ class Editor:
     def insert(self, c ):
         """ insert a character or string at the cursor position """
         self.pushUndo()
-        
+
         if self.isMark():
             self.copy_marked(True,True) # delete the marked block first then insert
-        
+
         orig = self.getContent(self.getLine()).rstrip()
         offset = self.getPos()
         pad = ""
@@ -912,11 +912,11 @@ class Editor:
     def delc(self):
         """ deletes one character at the cursor position """
         self.pushUndo()
-        
+
         if self.isMark():
             self.copy_marked(True,True) # delete the marked block instead and return
             return
-        
+
         orig = self.getContent(self.getLine())
         offset = self.getPos()
         if offset > len(orig):
@@ -936,11 +936,11 @@ class Editor:
     def backspace(self):
         """ delete a character at the cursor and move back one character """
         self.pushUndo()
-        
+
         if self.isMark():
             self.copy_marked(True,True) # delete the marked block instead and return
             return
-                 
+
         line = self.getLine()
         pos = self.getPos()
         if pos:
@@ -956,14 +956,14 @@ class Editor:
         self.pushUndo()
         self.rewrap()
         self.invalidate_mark()
-                                     
+
         if line < 0:
             line = 0
         if pos < 0:
             pos = 0
-            
+
         (line,pos) = self.scrPos(line,pos)
-        
+
         if line >= self.line and line <= self.line+(self.max_y-2):
             self.vpos = line - self.line
         elif line < self.line:
@@ -974,7 +974,7 @@ class Editor:
             self.line = line - (self.max_y-2)
             self.vpos = (self.max_y-2)
             self.flushChanges()
-                  
+
         if pos >= self.left and pos < self.left+(self.max_x-1):
             self.pos = pos - self.left
         elif pos >= self.left+(self.max_x-1):
@@ -990,16 +990,16 @@ class Editor:
         """ go to the end of a line """
         self.pushUndo()
         self.invalidate_mark()
-        
+
         orig = self.getContent(self.getLine())
-        offset = len(orig)             
+        offset = len(orig)
         self.goto(self.getLine(),offset)
 
     def endpg(self):
         """ go to the end of a page """
         self.pushUndo()
         self.invalidate_mark()
-        
+
         ldisp = (self.numLines(True)-1)-self.line
         self.vpos = min(self.max_y-2,ldisp)
 
@@ -1007,17 +1007,17 @@ class Editor:
         """ go to the end of the file """
         self.pushUndo()
         self.flushChanges()
-        
+
         ldisp = (self.numLines(True)-1)-self.line
         if ldisp < self.max_y-2:
             return
         self.line = (self.numLines(True)-1) - (self.max_y-2)
         self.vpos = min(self.max_y-2,ldisp)
-        
+
     def end(self):
         """ once go to end of line, twice end of page, thrice end of file """
         self.pushUndo()
-        
+
         if self.cmd_id == cmd_names.CMD_END and self.prev_cmd == cmd_names.CMD_END:
             self.end_count += 1
             self.end_count = self.end_count % 3
@@ -1037,7 +1037,7 @@ class Editor:
         """ once to to start of line, twice start of page, thrice start of file """
         self.pushUndo()
         self.invalidate_mark()
-        
+
         if self.cmd_id == cmd_names.CMD_HOME and self.prev_cmd == cmd_names.CMD_HOME:
             self.home_count += 1
             self.home_count = self.home_count % 3
@@ -1049,25 +1049,27 @@ class Editor:
         elif self.home_count == 1:
             self.vpos = 0
         elif self.home_count == 2:
-            self.line = 0  
+            self.line = 0
             self.flushChanges()
 
     def pageup(self):
         """ go back one page in the file """
         self.pushUndo()
         self.flushChanges()
-        
+        self.invalidate_mark()
+
         offset = self.line - (self.max_y-2)
         if offset < 0:
             offset = 0
         self.line = offset
-        
+
 
     def pagedown(self):
         """ go forward one page in the file """
         self.pushUndo()
         self.flushChanges()
-        
+        self.invalidate_mark()
+
         offset = self.line + (self.max_y-2)
         if offset > self.numLines(True)-1:
             return
@@ -1075,41 +1077,41 @@ class Editor:
         ldisp = (self.numLines(True)-1)-self.line
         if self.vpos > ldisp:
             self.vpos = ldisp
-        
+
 
     def cup(self):
         """ go back one line in the file """
         self.pushUndo()
         self.invalidate_mark()
-        
+
         if self.vpos:
             self.vpos -= 1
         elif self.line:
             self.line -= 1
             self.flushChanges()
-            
+
         self.goto(self.getLine(),self.getPos())
-        
-    def cdown(self,rept = 1):  
+
+    def cdown(self,rept = 1):
         """ go forward one or rept lines in the file """
         self.pushUndo()
         self.invalidate_mark()
-        
+
         while rept:
             if self.vpos < min((self.numLines(True)-1)-self.line,(self.max_y-2)):
                 self.vpos += 1
             elif self.line <= self.numLines(True)-self.max_y:
-                self.line += 1 
+                self.line += 1
                 self.flushChanges()
             rept = rept - 1
-            
+
         self.goto(self.getLine(),self.getPos())
 
     def prev_word( self ):
         """ scan left until you get to the previous word """
         self.pushUndo()
         orig = self.getContent(self.getLine()).rstrip()
-        
+
         pos = self.getPos()
         if pos >= len(orig):
             pos = len(orig)-1
@@ -1118,18 +1120,18 @@ class Editor:
             while pos and orig[pos] == ' ':
                 pos -= 1
             while pos and orig[pos-1] != ' ':
-                pos -= 1         
+                pos -= 1
         elif pos >= len(orig):
             pos = len(orig)
         else:
             pos = 0
         self.goto(self.getLine(),pos)
-                    
+
     def next_word( self ):
         """ scan left until you get to the previous word """
         self.pushUndo()
         orig = self.getContent(self.getLine()).rstrip()
-                                         
+
         pos = self.getPos()
         if pos < len(orig):
             if orig[pos] == ' ':
@@ -1143,12 +1145,12 @@ class Editor:
         else:
             pos = len(orig)
         self.goto(self.getLine(),pos)
-    
-            
+
+
     def cleft(self,rept = 1):
         """ go back one or rept characters in the current line """
         self.pushUndo()
-        
+
         pos = self.getPos()
         line = self.getLine()
         if pos >= rept:
@@ -1165,7 +1167,7 @@ class Editor:
     def cright(self,rept = 1):
         """ go forward one or rept characters in the current line """
         self.pushUndo()
-        
+
         pos = self.getPos()
         line = self.getLine()
         if self.wrap:
@@ -1192,8 +1194,8 @@ class Editor:
         self.pushUndo()
         self.flushChanges()
         self.left += 1
-            
-    def searchagain(self):  
+
+    def searchagain(self):
         """ repeat the previous search if any """
         self.pushUndo()
         self.invalidate_mark()
@@ -1205,12 +1207,12 @@ class Editor:
             return self.search(self.last_search,self.last_search_dir,True)
         else:
             return False
-    
+
     def search(self, pattern, down = True, next = True):
         """ search for a regular expression forward or back if next is set then skip one before matching """
         self.pushUndo()
         self.invalidate_mark()
-        
+
         self.last_search = pattern
         self.last_search_dir = down
         first_line = self.getLine()
@@ -1272,15 +1274,15 @@ class Editor:
         if self.search_mark:
             self.span_mark = False
             self.search_mark = False
-                   
+
     def invalidate_all(self):
         """ touch all the lines in the file so everything will redraw """
         self.workfile.touchLine(0,self.workfile.numLines())
-        
+
     def mark_span(self):
         """ mark a span of characters that can start and end in the middle of a line """
         self.pushUndo()
-        
+
         self.invalidate_mark()
         if not self.span_mark:
             self.span_mark = True
@@ -1293,13 +1295,13 @@ class Editor:
 
     def mark_rect(self):
         """ mark a rectangular or column selection across lines """
-        
+
         # no column cut in wrapped mode, it doesn't make sense
         if self.wrap:
             return
-            
+
         self.pushUndo()
-        
+
         self.invalidate_mark()
         if not self.rect_mark:
             self.rect_mark = True
@@ -1313,7 +1315,7 @@ class Editor:
     def mark_lines(self):
         """ mark whole lines """
         self.pushUndo()
-        
+
         self.invalidate_mark()
         if not self.line_mark:
             self.line_mark = True
@@ -1328,7 +1330,7 @@ class Editor:
         """ returns marked text as tuple ( cliptype, [list of clipped] ) returns () if no mark """
         if not self.isMark():
             return ()
-        
+
         self.pushUndo()
 
         mark_pos_start = self.mark_pos_start
@@ -1350,8 +1352,8 @@ class Editor:
 
         clip = []
         clip_type = clipboard.LINE_CLIP
-        
-        
+
+
         line_idx = mark_line_start
         if self.line_mark:
             if not nocopy:
@@ -1404,37 +1406,37 @@ class Editor:
                     self.workfile.replaceLine(line_idx,orig[0:mark_pos_start]+orig[mark_pos_end+1:])
                     line_idx += 1
             self.rect_mark = False
-            
+
         if delete:
             self.goto(mark_line_start,mark_pos_start)
-                                 
-        # sync the x clipboard 
+
+        # sync the x clipboard
         self.transfer_clipboard()
         self.invalidate_mark()
 
         return (clip_type, clip)
-        
+
     def copy_marked(self,delete=False,nocopy = False):
         """ copy the marked text to the clipboard, delete== True means cut, nocopy == True will just delete """
         if not self.isMark():
             return
-        
+
         self.pushUndo()
-        
+
         cp = self.get_marked(delete,nocopy)
         if cp:
             clipboard.clip_type = cp[0]
             clipboard.clip = cp[1]
-        
+
 
     def paste(self):
         """ paste the current clip at the cursor position """
-        if clipboard.clip:                                             
+        if clipboard.clip:
             # no column cut or paste when in wrap mode
             if self.wrap and clipboard.clip_type == clipboard.RECT_CLIP:
                 return
             self.pushUndo()
-        
+
             if clipboard.clip_type == clipboard.LINE_CLIP:
                 target = self.getLine()
                 pos = self.getPos()
@@ -1473,7 +1475,7 @@ class Editor:
                 for line in clipboard.clip:
                     orig = self.getContent(target,self.getPos(),True)
                     self.workfile.replaceLine(target,orig[0:self.getPos()]+line+orig[self.getPos():])
-                    target += 1    
+                    target += 1
                 self.goto(target,pos)
 
     def cr(self):
@@ -1483,7 +1485,7 @@ class Editor:
         self.workfile.replaceLine(self.getLine(),orig[0:self.getPos()])
         self.workfile.insertLine(self.getLine()+1,orig[self.getPos():])
         self.goto(self.getLine()+1,0)
-        
+
     def instab(self, line, pos, move_cursor = True ):
         """ insert a tab at a line and position """
         orig = self.getContent(line,pos,True)
@@ -1495,7 +1497,7 @@ class Editor:
 
     def tab(self):
         """ tab in the correct distance to the next tab stop """
-        self.pushUndo()      
+        self.pushUndo()
         if self.isMark() and self.line_mark:
             oline = self.getLine()
             opos = self.getPos()
@@ -1558,7 +1560,7 @@ class Editor:
         if goto_line:
             self.goto(int(goto_line),self.getPos())
 
-    def saveas(self):                                  
+    def saveas(self):
         """ open the file dialog and enter or point to a file and then save this buffer to that path """
         f = file_dialog.FileDialog(self.parent,"Save file as")
         choices = f.main()
@@ -1617,7 +1619,7 @@ class Editor:
 
                 if do_replace or replace_all:
                     self.insert(rep)
-                    
+
                 found = self.searchagain()
             else:
                 message(self.parent,"Replace","Pattern not found.")
@@ -1625,7 +1627,7 @@ class Editor:
                 self.scr.refresh()
                 self.scr.leaveok(0)
                 self.scr.move(self.vpos+1,self.pos)
-                
+
     def prmt_searchagain(self):
         """ search again and put up a message if no more are found """
         self.flushChanges()
@@ -1633,7 +1635,7 @@ class Editor:
             if self.isMark():
                 self.mark_span()
             message(self.parent,"Search","Pattern not found.")
-            
+
     def transfer_clipboard(self, from_xclip = False):
         """ use xclip to transfer out clipboard to x or vice/versa """
         if os.path.exists("/dev/clipboard"):
@@ -1642,7 +1644,7 @@ class Editor:
                 clipboard.clip_type = clipboard.SPAN_CLIP
                 for line in open("/dev/clipboard","r",buffering=1,encoding="utf-8"):
                     clipboard.clip.append(line)
-            else:                       
+            else:
                 cld = open("/dev/clipboard","w",buffering=0,encoding="utf-8")
                 for line in clipboard.clip:
                     cld.write(line)
@@ -1653,7 +1655,7 @@ class Editor:
                 cmd += ["-out","-selection","clipboard"]
             else:
                 cmd += ["-in","-selection","clipboard"]
-                
+
             try:
                 proc = subprocess.Popen( cmd, encoding="utf-8", stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
                 if from_xclip:
@@ -1675,18 +1677,18 @@ class Editor:
         """ toggle wrapping for this editor """
         # don't toggle wrapping while we're marking a rectangle
         if self.rect_mark:
-            return           
+            return
         self.pushUndo()
         self.flushChanges()
         oline = self.getLine()
         opos = self.getPos()
         self.wrap = not self.wrap
         self.goto(oline,opos)
-        
-    def handle(self,ch):               
+
+    def handle(self,ch):
         """ main character handler dispatches keystrokes to execute editor commands returns characters meant to be processed
             by containing manager or dialog """
-            
+
         mark_state = self.isMark()
         top_line = self.line
         if mark_state:
@@ -1695,12 +1697,12 @@ class Editor:
         else:
             mark_minline = self.getLine()
             mark_maxline = self.getLine()
-            
+
         try:
 #            if self.clear_mark and self.isMark():
 #                self.mark_span()
 #                self.clear_mark = False
-    
+
             self.prev_cmd = self.cmd_id
             if isinstance(ch,int):
                 self.cmd_id, ret = keymap.mapkey( self.scr, keymap.keymap_editor, ch )
@@ -1709,7 +1711,7 @@ class Editor:
             if extension_manager.is_extension(self.cmd_id):
                 if not extension_manager.invoke_extension( self.cmd_id, self, ch ):
                     return ret
-    
+
             if self.cmd_id == cmd_names.CMD_RETURNKEY:
                 if ret in [keytab.KEYTAB_NOKEY,keytab.KEYTAB_REFRESH,keytab.KEYTAB_RESIZE]:
                     self.cmd_id = self.prev_cmd
@@ -1823,7 +1825,7 @@ class Editor:
         return ret
 
     def main(self,blocking = True, start_ch = None):
-        """ main driver loop for editor, if blocking = False exits on each keystroke to allow embedding, 
+        """ main driver loop for editor, if blocking = False exits on each keystroke to allow embedding,
             start_ch is a character read externally that hould be processed on startup """
         self.rewrap()
         self.scr.nodelay(1)
@@ -1832,7 +1834,7 @@ class Editor:
         while (1):
             if not self.scr:
                 return 27
-            
+
             if not self.mode:
                 for m in Editor.modes:
                     if m.detect_mode(self):
@@ -1841,13 +1843,13 @@ class Editor:
                         break
                 else:
                     self.mode = None
-            
+
             self.redraw()
             try:
                 self.scr.move(self.vpos+1,self.pos)
             except Exception as e:
                 pass
-                
+
             if start_ch:
                 ch = start_ch
                 start_ch = None
@@ -1899,7 +1901,7 @@ class StreamFile(EditFile):
             self.stream.close()
             self.stream = None
         EditFile.close(self)
-    
+
 class StreamEditor(Editor):
     """ this is a read only editor that wraps a stream it has a select
         option for use when embedding in a control to select lines
@@ -1912,11 +1914,11 @@ class StreamEditor(Editor):
         self.line_re = line_re
         sfile = StreamFile(name,stream)
         Editor.__init__(self, par, scr, name, sfile)
-        
+
     def getFilename(self):
         """ override getFilename so we can return None to indicate no file stuff should be done """
         return None
-                 
+
     def redraw(self):
         """ hook the redraw so we can show the marked line """
         if self.select and not self.isMark():
@@ -1924,11 +1926,11 @@ class StreamEditor(Editor):
         Editor.redraw(self)
         if self.select and self.isMark():
             self.mark_lines()
-        
+
     def handle(self,ch):
         """ override normal keystroke handling if in select mode
         and move about doing selection and return on enter """
-        
+
         if not self.select:
             return Editor.handle(self,ch)
 
@@ -1939,7 +1941,7 @@ class StreamEditor(Editor):
             ch = keymap.get_keyseq( self.scr, ch )
         ret_ch = keytab.KEYTAB_NOKEY
         direction = 0
-            
+
         if ch in [keytab.KEYTAB_F02,keytab.KEYTAB_F04,keytab.KEYTAB_F10,keytab.KEYTAB_F01,keytab.KEYTAB_RESIZE, keytab.KEYTAB_CR, keytab.KEYTAB_BTAB, keytab.KEYTAB_TAB, keytab.KEYTAB_ESC]:
             ret_ch = ch
         elif ch == keytab.KEYTAB_UP:
@@ -1966,7 +1968,7 @@ class StreamEditor(Editor):
             self.endfile()
             direction = -1
         elif ch == keytab.KEYTAB_PAGEUP:
-            self.pageup() 
+            self.pageup()
             direction = -1
         elif ch == keytab.KEYTAB_PAGEDOWN:
             self.pagedown()
@@ -2033,10 +2035,10 @@ class ReadonlyEditor(Editor):
 
     def handle(self,ch):
         """ handle override to only do read only actions to the file """
-        
+
         if self.isMark():
             self.mark_lines()
-            
+
         if isinstance(ch,int):
             ch = keymap.get_keyseq( self.scr, ch )
         ret_ch = keytab.KEYTAB_NOKEY
@@ -2100,7 +2102,7 @@ Da23456789b23456789c23456789d23456789d23456789e23456789f23456789g23456789h234567
 Ea23456789b23456789c23456789d23456789d23456789e23456789f23456789g23456789h23456789E
 Fa23456789b23456789c23456789d23456789d23456789e23456789f23456789g23456789h23456789F
 Ga23456789b23456789c23456789d23456789d23456789e23456789f23456789g23456789h23456789G
-    asdkfjlkjaslkfjj                                                               
+    asdkfjlkjaslkfjj
     asfdkljsa;dfkljas;dflksajdf;laskdfjas;kfdljas;dlkfjas safkjsf;kljsf
     askdfj;sa asdkfj as;lkfjs fksadfjs;lkfj asdjdfkljsaf
     al;slkfdj asdlkfj asdlfkj asldkfj asdf;lkj as;lkdfj
