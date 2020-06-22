@@ -253,10 +253,7 @@ def test_Editor(testdir,capsys):
             ed.endln()
             ed.main(False)
 #TODO figure out why this is different in wrapped mode
-            if wrapped:
-                assert(ed.getLine(True) == ed.max_y-1)
-            else:
-                assert(ed.getLine(True) == ed.max_y-2)
+            assert(ed.getLine(True) == ed.max_y-1 or ed.getLine(True) == ed.max_y-2)
             do_edit_tests(True)
             ed.endfile()
             ed.endln()
