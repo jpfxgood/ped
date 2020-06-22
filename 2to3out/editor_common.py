@@ -53,7 +53,7 @@ class EditLine:
         pass
 
     def getContent(self):
-        """ should return a \n terminated line representing this line in the source file """
+        """ should return line representing this line in the source file """
         pass
 
 class FileLine(EditLine):
@@ -79,7 +79,7 @@ class FileLine(EditLine):
         """ gets the file from its parent, seeks to position, reads line and returns it """
         working = self.parent.getWorking()
         working.seek(self.pos,0)
-        txt = working.readline()
+        txt = working.readline().rstrip()
         return txt
 
     def __del__(self):
@@ -250,16 +250,15 @@ class EditFile:
         while True:
             line = self.working.readline()
             if not line:
-                break
-            if line[-1] != '\n':
-                line = line + '\n'
+                break 
+            line = line.rstrip()
             lidx = lidx + 1
             self.lines.append(FileLine(self,pos,len(self.expand_tabs(line))))
             pos = self.working.tell()
         while len(self.lines) and not self.lines[-1].getContent().strip():
             del self.lines[-1]
         if not len(self.lines):
-            self.lines.append(MemLine("\n"))
+            self.lines.append(MemLine(""))
         self.changed = False
         self.modref = 0
         
@@ -335,7 +334,7 @@ class EditFile:
         if line < len(self.lines):
             orig = self.lines[line].getContent()
         else:
-            orig = "\n"
+            orig = ""
         if trim:
             orig = orig.rstrip()
         if pad > len(orig):
@@ -370,7 +369,7 @@ class EditFile:
         if line >= len(self.lines):
             lidx = len(self.lines)
             while lidx <= line:
-                self._appendLine(MemLine("\n"))
+                self._appendLine(MemLine(""))
                 lidx += 1
                 
         self._insertLine(line,MemLine(content))
@@ -383,7 +382,7 @@ class EditFile:
         if line >= len(self.lines):
             lidx = len(self.lines)
             while lidx <= line:
-                self._appendLine(MemLine("\n"))
+                self._appendLine(MemLine(""))
                 lidx += 1
 
         self._replaceLine(line, MemLine(content))      
@@ -414,7 +413,7 @@ class EditFile:
             
             o = open(filename,"w",buffering=1,encoding="utf-8")
             for l in self.lines:
-                txt = l.getContent()
+                txt = l.getContent()+'\n'
                 o.write(txt)
             o.close()
             self.close()
@@ -427,7 +426,7 @@ class EditFile:
                 return
             o = open(self.filename+".sav","w",buffering=1,encoding="utf-8")
             for l in self.lines:
-                txt = l.getContent()
+                txt = l.getContent()+'\n'
                 o.write(txt)
             o.close()
             self.working.close()
@@ -620,7 +619,7 @@ class Editor:
         
     def isMark(self):  
         """ returns true if there is a mark set """
-        return (self.line_mark or self.span_mark or self.rect_mark)
+        return (self.line_mark or self.span_mark or self.rect_mark or self.search_mark)
 
     def getCurrentLine(self,display=False):
         """ returns the current line in the file """
@@ -906,7 +905,7 @@ class Editor:
         pad = ""
         if offset > len(orig):
             pad = " "*(offset - len(orig))
-        orig = orig[0:offset] + pad + c + orig[offset:] + "\n"
+        orig = orig[0:offset] + pad + c + orig[offset:]
         self.workfile.replaceLine(self.getLine(),orig)
         self.goto(self.getLine(),offset+len(c))
 
@@ -920,9 +919,9 @@ class Editor:
         
         orig = self.getContent(self.getLine())
         offset = self.getPos()
-        if offset >= len(orig):
+        if offset > len(orig):
             return
-        elif orig[offset] == "\n":
+        elif offset == len(orig):
             next_idx = self.getLine()+1
             if next_idx > self.numLines():
                 return
@@ -992,7 +991,7 @@ class Editor:
         self.pushUndo()
         self.invalidate_mark()
         
-        orig = self.getContent(self.getLine()).rstrip()
+        orig = self.getContent(self.getLine())
         offset = len(orig)             
         self.goto(self.getLine(),offset)
 
@@ -1331,7 +1330,7 @@ class Editor:
             return ()
         
         self.pushUndo()
-        
+
         mark_pos_start = self.mark_pos_start
         mark_line_start = self.mark_line_start
         mark_pos_end = self.getPos()
@@ -1372,10 +1371,10 @@ class Editor:
                 if line_idx == mark_line_end:
                     clip.append(self.getContent(line_idx)[mark_pos_start:mark_pos_end+1])
                 else:
-                    clip.append(self.getContent(line_idx)[mark_pos_start:])
+                    clip.append(self.getContent(line_idx)[mark_pos_start:]+'\n')
                     line_idx += 1
                     while line_idx < mark_line_end:
-                        clip.append(self.getContent(line_idx))
+                        clip.append(self.getContent(line_idx)+'\n')
                         line_idx += 1
                     clip.append(self.getContent(line_idx)[0:mark_pos_end+1])
             if delete:
@@ -1402,7 +1401,7 @@ class Editor:
                 line_idx = mark_line_start
                 while line_idx <= mark_line_end:
                     orig = self.getContent(line_idx,mark_pos_end,True)
-                    self.workfile.replaceLine(line_idx,orig[0:mark_pos_start]+orig[mark_pos_end+1:]+'\n')
+                    self.workfile.replaceLine(line_idx,orig[0:mark_pos_start]+orig[mark_pos_end+1:])
                     line_idx += 1
             self.rect_mark = False
             
@@ -1412,6 +1411,7 @@ class Editor:
         # sync the x clipboard 
         self.transfer_clipboard()
         self.invalidate_mark()
+
         return (clip_type, clip)
         
     def copy_marked(self,delete=False,nocopy = False):
@@ -1449,9 +1449,10 @@ class Editor:
                 for line in clipboard.clip:
                     orig = self.getContent(target,pos,True)
                     if (not line) or line[-1] == '\n':
+                        line = line.rstrip()
                         if not idx:
                             self.workfile.replaceLine(target,orig[0:pos]+line)
-                            self.workfile.insertLine(target+1,orig[pos:]+'\n')
+                            self.workfile.insertLine(target+1,orig[pos:])
                             self.goto(target, pos+len(line))
                             target += 1
                         else:
@@ -1460,10 +1461,10 @@ class Editor:
                             target += 1
                     else:
                         if not idx:
-                            self.workfile.replaceLine(target,orig[0:pos]+line+orig[pos:]+'\n')
+                            self.workfile.replaceLine(target,orig[0:pos]+line+orig[pos:])
                             self.goto(target, pos+len(line))
                         else:
-                            self.workfile.replaceLine(target,line+orig+'\n')
+                            self.workfile.replaceLine(target,line+orig)
                             self.goto(target, len(line))
                     idx += 1
             elif clipboard.clip_type == clipboard.RECT_CLIP:
@@ -1471,7 +1472,7 @@ class Editor:
                 pos = self.getPos()
                 for line in clipboard.clip:
                     orig = self.getContent(target,self.getPos(),True)
-                    self.workfile.replaceLine(target,orig[0:self.getPos()]+line+orig[self.getPos():]+'\n')
+                    self.workfile.replaceLine(target,orig[0:self.getPos()]+line+orig[self.getPos():])
                     target += 1    
                 self.goto(target,pos)
 
@@ -1479,8 +1480,8 @@ class Editor:
         """ insert a carriage return, split the current line at cursor """
         self.pushUndo()
         orig = self.getContent(self.getLine(),self.getPos(),True)
-        self.workfile.replaceLine(self.getLine(),orig[0:self.getPos()]+'\n')
-        self.workfile.insertLine(self.getLine()+1,orig[self.getPos():]+'\n')
+        self.workfile.replaceLine(self.getLine(),orig[0:self.getPos()])
+        self.workfile.insertLine(self.getLine()+1,orig[self.getPos():])
         self.goto(self.getLine()+1,0)
         
     def instab(self, line, pos, move_cursor = True ):
@@ -1488,7 +1489,7 @@ class Editor:
         orig = self.getContent(line,pos,True)
         stop = self.workfile.get_tab_stop(pos)
         orig = orig[0:pos] + ' '*(stop-(pos)) + orig[pos:]
-        self.workfile.replaceLine(line,orig+'\n')
+        self.workfile.replaceLine(line,orig)
         if move_cursor:
             self.goto(line,stop)
 
@@ -1530,7 +1531,7 @@ class Editor:
                 if start > stop:
                     break
         if start > stop:
-            orig = orig[0:stop]+orig[start+1:]+'\n'
+            orig = orig[0:stop]+orig[start+1:]
             self.workfile.replaceLine(line,orig)
             if move_cursor:
                 self.goto(line,stop)

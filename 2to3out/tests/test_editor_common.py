@@ -1,4 +1,4 @@
-import editor_common 
+import editor_common
 import io
 import pprint
 import os
@@ -15,7 +15,7 @@ def test_memline():
     assert( m.length() == 20 )
     assert( m.getContent() == "01234567890123456789" )
 
-def test_EditFile(testdir):  
+def test_EditFile(testdir):
     lines_to_test = ["This is the first line","This is the second line","This is the third line","This is the last line"]
     testfile = testdir.makefile(".txt",lines_to_test[0],lines_to_test[1],lines_to_test[2],lines_to_test[3])
     fn = str(testfile)
@@ -47,7 +47,7 @@ def test_EditFile(testdir):
     w = ef.getWorking()
     assert( isinstance(w,io.IOBase) and not w.closed )
     for line in range(0,len(lines_to_test)):
-        assert(ef.length(line) == len(lines_to_test[line])+1)
+        assert(ef.length(line) == len(lines_to_test[line]))
         fl = ef.getLine(line)
         assert(fl.rstrip() == lines_to_test[line])
         assert(fls[line].rstrip() == lines_to_test[line])
@@ -96,7 +96,7 @@ def test_EditFile(testdir):
         assert(fls[line].rstrip() == lines_to_test[line])
     assert(ef.numLines() == 4)
     assert(ef.getModref() == 6)
-    assert(not ef.isChanged() )         
+    assert(not ef.isChanged() )
     fd = str(testdir.tmpdir)
     backup_filepath = ef.make_backup_dir( fn, fd )
     assert(os.path.exists(os.path.dirname(backup_filepath)))
@@ -107,7 +107,7 @@ def test_EditFile(testdir):
     fls = ef.getLines()
     for line in range(0,len(lines_to_test)):
         assert(fls[line].rstrip() == lines_to_test[line])
-    assert(fls[9].rstrip() == new_test_line) 
+    assert(fls[10].rstrip() == new_test_line)
     newname = os.path.join(fd,"1_"+os.path.basename(fn))
     ef.save(newname)
     assert(os.path.exists(newname))
@@ -117,21 +117,21 @@ def test_EditFile(testdir):
     fls = ef.getLines()
     for line in range(0,len(lines_to_test)):
         assert(fls[line].rstrip() == lines_to_test[line])
-    assert(fls[9].rstrip() == new_test_line) 
+    assert(fls[10].rstrip() == new_test_line)
     assert(ef.get_tab_stop(4) == 8)
     assert(ef.get_tab_stop(10) == 16 )
-    assert(ef.get_tab_stop(10,True) == 8)  
+    assert(ef.get_tab_stop(10,True) == 8)
     tabby_string = "01234\t56789012\t3456789"
     expanded_string = "01234   56789012        3456789"
     assert(ef.expand_tabs(tabby_string) == expanded_string)
-    
+
 def test_Editor(testdir,capsys):
     with capsys.disabled():
         lines_to_test = ["This is the first line","This is the second line","This is the third line","This is the last line"]
         lines_to_test += [ ("This is line %d "%f)*20 for f in range(5,2000) ]
         testfile = testdir.makefile(".txt",*lines_to_test)
         fn = str(testfile)
-        
+
         def read_str( win, y, x, width ):
             out_str = ''
             for ix in range(x,x+width):
@@ -146,14 +146,19 @@ def test_Editor(testdir,capsys):
                     if not (attr & rc):
                         return(False)
             return(True)
-                        
-            
-        def main(stdscr):
+
+
+        def main(stdscr,wrapped):
             ed = editor_common.Editor(stdscr,None,fn)
             ed.setWin(stdscr.subwin(ed.max_y,ed.max_x,0,0))
             ed.main(False)
+            if wrapped:
+                ed.toggle_wrap()
+                ed.main(False)
+
             for y in range(1,ed.max_y):
-                assert(read_str(ed.scr,y,0,ed.max_x).startswith(lines_to_test[y-1][:ed.max_x-1]))
+                (f_line,f_pos) = ed.filePos(y-1,0)
+                assert(read_str(ed.scr,y,0,ed.max_x).startswith(lines_to_test[f_line][f_pos:ed.max_x-1]))
             assert(match_attr(ed.scr,0,0,1,ed.max_x,curses.A_REVERSE))
             ef = ed.getWorkfile()
 
@@ -161,7 +166,11 @@ def test_Editor(testdir,capsys):
                 while ed.isChanged():
                     ed.undo()
                 ed.main(False)
-                    
+
+            def window_pos(line,pos):
+                sc_line,sc_pos = ed.scrPos(line,pos)
+                return((sc_line-ed.line)+1,sc_pos-ed.left)
+
             assert(isinstance(ef,editor_common.EditFile))
             assert(ed.getFilename() == fn)
             assert(isinstance(ed.getUndoMgr(),editor_common.undo.UndoManager))
@@ -178,50 +187,53 @@ def test_Editor(testdir,capsys):
                     target_pos = main.target_pos
                     ed.goto(target_line,target_pos)
                 ed.main(False)
-                line = ed.getLine()
-                assert(line == target_line)
-                pos = ed.getPos()
-                assert(pos == target_pos)
-                (y,x) = ed.scrPos(line,ed.left)
-                y = (y-ed.line)+1
-                x = x-ed.left
-                compare_string = lines_to_test[target_line][ed.left:ed.left+ed.max_x]
+                line = ed.getLine(True)
+                pos = ed.getPos(True)
+                (f_line,f_pos) = ed.filePos(line,pos)
+                (s_line,s_pos) = ed.filePos(line,0)
+                assert(f_line == target_line)
+                assert(f_pos == target_pos)
+                (y,x) = window_pos(s_line,s_pos)
+                compare_string = lines_to_test[f_line][s_pos:s_pos+ed.max_x]
                 assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
                 ed.insert('X')
                 assert(ed.isChanged())
                 assert(ed.isLineChanged(target_line))
                 ed.main(False)
                 prev_compare_string = compare_string
-                compare_string = lines_to_test[target_line][ed.left:pos] + 'X' + lines_to_test[target_line][pos]
+                (f_line,f_pos) = ed.filePos(line,pos)
+                (s_line,s_pos) = ed.filePos(line,0)
+                compare_string = lines_to_test[f_line][s_pos:f_pos] + 'X' + lines_to_test[f_line][f_pos:f_pos+1]
                 assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
                 undo_all()
                 assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
-                ed.delc()
-                cur_line = ed.getLine()
-                cur_pos = ed.getPos()
-                if cur_line < ed.numLines()-1 and cur_pos < len(lines_to_test[cur_line]):
+
+                (cur_line,cur_pos) = ed.filePos(ed.getLine(True),ed.getPos(True))
+                (s_line,s_pos) = ed.filePos(ed.getLine(True),0)
+                if cur_line <= ed.numLines()-1 and cur_pos < len(lines_to_test[cur_line])-1:
+                    ed.delc()
                     assert(ed.isChanged())
-                    assert(ed.isLineChanged(target_line))
+                    assert(ed.isLineChanged(cur_line))
                     ed.main(False)
-                    if pos+1 < len(lines_to_test[target_line]):
-                        compare_string = lines_to_test[target_line][ed.left:pos] + lines_to_test[target_line][pos+1]
-                    elif pos == len(lines_to_test[target_line]) and target_line+1 < len(lines_to_test):
-                        compare_string = lines_to_test[target_line][ed.left:pos] + lines_to_test[target_line+1][0]
+                    if cur_pos+1 < len(lines_to_test[cur_line]):
+                        compare_string = lines_to_test[cur_line][s_pos:cur_pos] + lines_to_test[cur_line][cur_pos+1]
+                    elif cur_pos == len(lines_to_test[cur_line]) and cur_line+1 < len(lines_to_test):
+                        compare_string = lines_to_test[cur_line][s_pos:cur_pos] + lines_to_test[cur_line+1][0]
                     else:
-                        compare_string = lines_to_test[target_line][ed.left:pos]
+                        compare_string = lines_to_test[cur_line][s_pos:cur_pos]
                     assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
                     undo_all()
+                    assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
 
-                assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
                 ed.backspace()
                 assert(ed.isChanged())
-                assert(ed.isLineChanged(target_line))
+                assert(ed.isLineChanged(cur_line))
                 ed.main(False)
-                if pos+1 < len(lines_to_test[target_line]):
-                    compare_string = lines_to_test[target_line][ed.left:pos-1] + lines_to_test[target_line][pos:pos+1]
+                if cur_pos+1 < len(lines_to_test[cur_line]):
+                    compare_string = lines_to_test[cur_line][s_pos:cur_pos-1] + lines_to_test[cur_line][cur_pos:cur_pos+1]
                 else:
-                    compare_string = lines_to_test[target_line][ed.left:pos-1]
-                    
+                    compare_string = lines_to_test[cur_line][s_pos:cur_pos-1]
+
                 assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
                 undo_all()
                 assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
@@ -237,26 +249,26 @@ def test_Editor(testdir,capsys):
             ed.goto(0,0)
             ed.endpg()
             ed.endln()
-            assert(ed.getLine() == ed.max_y-2)
+            assert(ed.getLine(True) == ed.max_y-1)
             do_edit_tests(True)
             ed.endfile()
-            ed.endln()                                                   
-            assert(ed.getLine() == ed.numLines(True)-1)
+            ed.endln()
+            assert(ed.getLine(True) == ed.numLines(True)-1)
             do_edit_tests(True)
-            start_line = ed.getLine()
+            start_line = ed.getLine(True)
             ed.pageup()
-            assert(ed.getLine() == start_line - (ed.max_y-2))
+            assert(ed.getLine(True) == start_line - (ed.max_y-2))
             do_edit_tests(True)
             ed.pagedown()
-            assert(ed.getLine() == start_line)
+            assert(ed.getLine(True) == start_line)
             do_edit_tests(True)
             ed.cup()
-            assert(ed.getLine() == start_line -1 )
+            assert(ed.getLine(True) == start_line -1 )
             do_edit_tests(True)
             ed.cdown()
-            assert(ed.getLine() == start_line )
+            assert(ed.getLine(True) == start_line )
             do_edit_tests(True)
-            word_pos = []                        
+            word_pos = []
             in_word = False
             for i in range(0,len(lines_to_test[main.target_line])-1):
                 if lines_to_test[main.target_line][i] != ' ':
@@ -267,48 +279,66 @@ def test_Editor(testdir,capsys):
                     in_word = False
             word_pos.append(len(lines_to_test[main.target_line])-1)
             for rfunc,lfunc in [(ed.next_word,ed.prev_word),(ed.cright,ed.cleft),(ed.scroll_right,ed.scroll_left)]:
+                if wrapped and rfunc == ed.scroll_right:
+                    break
                 ed.goto(main.target_line,0)
                 ed.main(False)
                 prev_pos = ed.getPos()
-                while ed.getPos() < len(lines_to_test[main.target_line])-1:
+                while ed.getPos() < len(lines_to_test[main.target_line])-2:
                     rfunc()
                     if rfunc == ed.next_word:
                         assert(ed.getPos() in word_pos)
                     assert(ed.getPos() > prev_pos)
                     prev_pos = ed.getPos()
-                    assert(ed.getPos() >= ed.left and ed.getPos() < ed.left+ed.max_x)
+                    sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
+                    s_line,s_pos = ed.filePos(ed.getLine(True),0)
+                    assert(ed.getPos() >= s_pos and ed.getPos() < s_pos+ed.max_x)
                     ed.main(False)
-                    assert(read_str(ed.scr,(main.target_line-ed.line)+1,0,ed.max_x).startswith(lines_to_test[main.target_line][ed.left:ed.left+ed.max_x]))
-    
+                    assert(read_str(ed.scr,sc_line,0,ed.max_x).startswith(lines_to_test[s_line][s_pos:s_pos+ed.max_x]))
+
                 while ed.getPos() > 0:
                     lfunc()
+                    if ed.getLine() != main.target_line:
+                        break
                     if lfunc == ed.prev_word:
                         assert(ed.getPos() in word_pos)
                     assert(ed.getPos() < prev_pos)
                     prev_pos = ed.getPos()
-                    assert(ed.getPos() >= ed.left and ed.getPos() < ed.left+ed.max_x)
+                    sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
+                    s_line,s_pos = ed.filePos(ed.getLine(True),0)
+                    assert(ed.getPos() >= s_pos and ed.getPos() < s_pos+ed.max_x)
                     ed.main(False)
-                    assert(read_str(ed.scr,(main.target_line-ed.line)+1,0,ed.max_x).startswith(lines_to_test[main.target_line][ed.left:ed.left+ed.max_x]))
+                    assert(read_str(ed.scr,sc_line,0,ed.max_x).startswith(lines_to_test[s_line][s_pos:s_pos+ed.max_x]))
             ed.search("This is line 1010",True,False)
-            assert(ed.getLine() == 1009 and ed.getPos() == 16) 
+            assert(ed.getLine() == 1009 and ed.getPos() == 16)
             ed.main(False)
-            assert(read_str(ed.scr,(ed.getLine()-ed.line)+1,0,ed.max_x).startswith(lines_to_test[ed.getLine()][ed.left:ed.left+ed.max_x]))
+            sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
+            f_line,f_pos = ed.filePos(ed.getLine(True),0)
+            assert(read_str(ed.scr,sc_line,0,ed.max_x).startswith(lines_to_test[f_line][f_pos:f_pos+ed.max_x]))
             ed.search("This is line 990",False,False)
             assert(ed.getLine() == 989 and ed.getPos() == 338)
             ed.main(False)
-            assert(read_str(ed.scr,(ed.getLine()-ed.line)+1,0,ed.max_x).startswith(lines_to_test[ed.getLine()][ed.left:ed.left+ed.max_x]))
-            
+            sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
+            f_line,f_pos = ed.filePos(ed.getLine(True),0)
+            assert(read_str(ed.scr,sc_line,0,ed.max_x).startswith(lines_to_test[ed.getLine()][f_pos:f_pos+ed.max_x]))
+
             success_count = 0
             search_succeeded = ed.search("This is line 100[0,1,2]",down = True, next = False)
             while search_succeeded:
                 success_count += 1
                 ed.main(False)
-                found_str = read_str(ed.scr,(ed.getLine()-ed.line)+1,ed.mark_pos_start-ed.left,(ed.getPos()-ed.mark_pos_start)+1)
+                sc_line,sc_pos = window_pos(ed.mark_line_start,ed.mark_pos_start)
+                ec_line,ec_pos = window_pos(ed.getLine(),ed.getPos())
+                if sc_line == ec_line:
+                    found_str = read_str(ed.scr,sc_line,sc_pos,(ec_pos - sc_pos)+1)
+                else:
+                    found_str = read_str(ed.scr,sc_line,sc_pos,ed.max_x-sc_pos) + read_str(ed.scr,ec_line,0,ec_pos+1)
+
                 assert(re.match("This is line 100[0,1,2]",found_str))
                 print("search loop =",ed.getLine(),ed.getPos(),found_str,success_count,search_succeeded,file=open("/home/james/ped.log","a"))
                 search_succeeded = ed.searchagain()
             assert(success_count == 60)
-            
+
             def play_macro( macro ):
                 keymap.start_recording()
                 for seq in macro:
@@ -323,14 +353,18 @@ def test_Editor(testdir,capsys):
             play_macro( [ 'fk06','down','l','i','n','e',' ','3','0','8','\t','l','i','n','e',' ','6','6','6','\t','\n','\x00','\t','\t','\n','\x00','\n','refresh' ] )
             ed.goto(307,0)
             ed.main(False)
-            assert(read_str(ed.scr,(ed.getLine()-ed.line)+1,0,ed.max_x).startswith(lines_to_test[307].replace('line 308','line 666')[0:ed.max_x]))
-            
+            sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
+            f_line,f_pos = ed.filePos(ed.getLine(True),0)
+            assert(read_str(ed.scr,sc_line,0,ed.max_x).startswith(lines_to_test[ed.getLine()].replace('line 308','line 666')[f_pos:f_pos+ed.max_x]))
+
             ed.goto(main.target_line,0)
             ed.main(False)
             ed.mark_span()
             ed.goto(main.target_line,15)
             ed.main(False)
-            assert(match_attr(ed.scr,(main.target_line-ed.line)+1,0,1,15,curses.A_REVERSE))
+            sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
+
+            assert(match_attr(ed.scr,sc_line,0,1,15,curses.A_REVERSE))
             assert(ed.get_marked() == ( clipboard.SPAN_CLIP, [ lines_to_test[main.target_line][0:16] ] ))
             ed.goto(main.target_line,15)
             ed.main(False)
@@ -410,8 +444,8 @@ def test_Editor(testdir,capsys):
                                                     lines_to_test[main.target_line+3]+'\n',
                                                     lines_to_test[main.target_line+4]+'\n',
                                                     lines_to_test[main.target_line+5]+'\n'] )
-            assert(ed.get_marked() == match_tuple )   
-            
+            assert(ed.get_marked() == match_tuple )
+
             ed.goto(main.target_line,0)
             ed.main(False)
             ed.goto(main.target_line,15)
@@ -427,7 +461,7 @@ def test_Editor(testdir,capsys):
                                                     lines_to_test[main.target_line+4][15:26],
                                                     lines_to_test[main.target_line+5][15:26]] )
             assert(ed.get_marked() == match_tuple )
-            
+
             ed.goto(main.target_line,15)
             ed.main(False)
             ed.cr()
@@ -437,7 +471,7 @@ def test_Editor(testdir,capsys):
             assert(len(first_line)==16 and first_line == lines_to_test[main.target_line][0:15]+'\n')
             assert(second_line == lines_to_test[main.target_line][15:].rstrip()+'\n')
             undo_all()
-                                                                               
+
             ed.goto(main.target_line,0)
             ed.main(False)
             ed.mark_lines()
@@ -454,7 +488,7 @@ def test_Editor(testdir,capsys):
             undo_all()
             while ed.isMark():
                 ed.mark_lines()
-            
+
             play_macro( [ keytab.KEYTAB_ALTO ,'\t',keytab.KEYTAB_DOWN,'s','a','v','e','a','s','.','t','x','t','\n','\n',keytab.KEYTAB_REFRESH ] )
             new_fn = ed.getWorkfile().getFilename()
             assert(new_fn.endswith('saveas.txt'))
@@ -469,7 +503,7 @@ def test_Editor(testdir,capsys):
             ed.insert('A test change')
             ed.main(False)
             ed.save()
-            
+
             lidx = 0
             for line in open(new_fn,'r'):
                 if lidx == main.target_line:
@@ -477,7 +511,7 @@ def test_Editor(testdir,capsys):
                 else:
                     assert(line.startswith(lines_to_test[lidx].rstrip()))
                 lidx += 1
-            
+
             cur_line = ed.getLine()
             cur_pos = ed.getPos()
             play_macro( [ keytab.KEYTAB_CR ] )
@@ -486,5 +520,6 @@ def test_Editor(testdir,capsys):
             assert(clipboard.clip_type == clipboard.SPAN_CLIP and len(clipboard.clip) == 5)
             play_macro( [ keytab.KEYTAB_ALTG, '4','0','0','\n'] )
             assert(ed.getLine() == 400 )
-                      
-        curses.wrapper(main)
+
+#        curses.wrapper(main,False)
+        curses.wrapper(main,True)
