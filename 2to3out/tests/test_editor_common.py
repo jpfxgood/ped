@@ -9,6 +9,7 @@ import re
 import keymap
 import keytab
 import clipboard
+from ped_test_util import read_str, match_attr, undo_all, window_pos, play_macro, validate_mark, validate_screen
 
 def test_memline():
     m = editor_common.MemLine( "01234567890123456789" )
@@ -39,7 +40,6 @@ def test_EditFile(testdir):
     ef.setFilename( fn )
     assert( ef.getFilename() == fn )
     fls = ef.getLines()
-    pprint.pprint(fls)
     assert( ef.numLines() == 4 )
     ef.close()
     assert( ef.getWorking() == None )
@@ -127,22 +127,6 @@ def test_EditFile(testdir):
 
 def test_Editor(testdir,capsys):
     with capsys.disabled():
-
-        def read_str( win, y, x, width ):
-            out_str = ''
-            for ix in range(x,x+width):
-                rc = win.inch(y,ix)
-                out_str += chr(rc & 0x00FF)
-            return out_str
-
-        def match_attr( win, y, x, height, width, attr ):
-            for iy in range(y,y+height):
-                for ix in range(x,x+width):
-                    rc = win.inch(iy,ix)
-                    if not (attr & rc):
-                        return(False)
-            return(True)
-
         def main(stdscr,wrapped):
             lines_to_test = ["This is the first line","This is the second line","This is the third line","This is the last line"]
             lines_to_test += [ (("This is line %d "%f)*20).rstrip() for f in range(5,2000) ]
@@ -156,20 +140,9 @@ def test_Editor(testdir,capsys):
                 ed.toggle_wrap()
                 ed.main(False)
 
-            for y in range(1,ed.max_y):
-                (f_line,f_pos) = ed.filePos(y-1,0)
-                assert(read_str(ed.scr,y,0,ed.max_x).startswith(lines_to_test[f_line][f_pos:ed.max_x-1]))
+            validate_screen(ed)
             assert(match_attr(ed.scr,0,0,1,ed.max_x,curses.A_REVERSE))
             ef = ed.getWorkfile()
-
-            def undo_all():
-                while ed.isChanged():
-                    ed.undo()
-                ed.main(False)
-
-            def window_pos(line,pos):
-                sc_line,sc_pos = ed.scrPos(line,pos)
-                return((sc_line-ed.line)+1,sc_pos-ed.left)
 
             assert(isinstance(ef,editor_common.EditFile))
             assert(ed.getFilename() == fn)
@@ -194,50 +167,54 @@ def test_Editor(testdir,capsys):
                 (s_line,s_pos) = ed.filePos(line,ed.left)
                 assert(f_line == target_line)
                 assert(f_pos == target_pos)
-                (y,x) = window_pos(s_line,s_pos)
-                compare_string = lines_to_test[f_line][s_pos:s_pos+ed.max_x]
-                assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
+                validate_screen(ed)
+
+                before_string = ed.getContent(f_line)
                 ed.insert('X')
                 assert(ed.isChanged())
                 assert(ed.isLineChanged(target_line))
                 ed.main(False)
-                prev_compare_string = compare_string
-                (f_line,f_pos) = ed.filePos(line,pos)
-                (s_line,s_pos) = ed.filePos(line,ed.left)
-                compare_string = lines_to_test[f_line][s_pos:f_pos] + 'X' + lines_to_test[f_line][f_pos:f_pos+1]
-                assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
-                undo_all()
-                assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
+                after_string = ed.getContent(f_line)
+                assert(after_string == before_string[:f_pos]+'X'+before_string[f_pos:])
+                validate_screen(ed)
+                undo_all(ed)
+                assert(ed.getContent(f_line) == before_string)
+                validate_screen(ed)
 
                 (cur_line,cur_pos) = ed.filePos(ed.getLine(True),ed.getPos(True))
-                (s_line,s_pos) = ed.filePos(ed.getLine(True),ed.left)
-                if cur_line <= ed.numLines()-1 and cur_pos < len(lines_to_test[cur_line])-1:
+                before_string = ed.getContent(cur_line)
+                if cur_line <= ed.numLines()-1 and cur_pos < len(before_string)-1:
                     ed.delc()
                     assert(ed.isChanged())
                     assert(ed.isLineChanged(cur_line))
                     ed.main(False)
-                    if cur_pos+1 < len(lines_to_test[cur_line]):
-                        compare_string = lines_to_test[cur_line][s_pos:cur_pos] + lines_to_test[cur_line][cur_pos+1]
-                    elif cur_pos == len(lines_to_test[cur_line]) and cur_line+1 < len(lines_to_test):
-                        compare_string = lines_to_test[cur_line][s_pos:cur_pos] + lines_to_test[cur_line+1][0]
+                    after_string = ed.getContent(cur_line)
+                    if cur_pos+1 < len(before_string):
+                        compare_string = before_string[:cur_pos] + before_string[cur_pos+1:]
+                    elif cur_pos == len(before_string) and cur_line+1 < len(lines_to_test):
+                        compare_string = before_string[:cur_pos] + lines_to_test[cur_line+1]
                     else:
-                        compare_string = lines_to_test[cur_line][s_pos:cur_pos]
-                    assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
-                    undo_all()
-                    assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
+                        compare_string = before_string
+                    assert(after_string == compare_string)
+                    validate_screen(ed)
+                    undo_all(ed)
+                    assert(ed.getContent(cur_line) == before_string)
+                    validate_screen(ed)
 
                 ed.backspace()
                 assert(ed.isChanged())
                 assert(ed.isLineChanged(cur_line))
                 ed.main(False)
-                if cur_pos+1 < len(lines_to_test[cur_line]):
-                    compare_string = lines_to_test[cur_line][s_pos:cur_pos-1] + lines_to_test[cur_line][cur_pos:cur_pos+1]
+                if cur_pos+1 < len(before_string):
+                    compare_string = before_string[:cur_pos-1] + before_string[cur_pos:]
                 else:
-                    compare_string = lines_to_test[cur_line][s_pos:cur_pos-1]
+                    compare_string = before_string[:cur_pos-1]
 
-                assert(read_str(ed.scr,y,x,ed.max_x).startswith(compare_string))
-                undo_all()
-                assert(read_str(ed.scr,y,x,ed.max_x).startswith(prev_compare_string))
+                assert(ed.getContent(cur_line) == compare_string)
+                validate_screen(ed)
+                undo_all(ed)
+                assert(ed.getContent(cur_line) == before_string)
+                validate_screen(ed)
 
             do_edit_tests()
             main.target_pos = 5
@@ -299,11 +276,10 @@ def test_Editor(testdir,capsys):
                         assert(ed.getPos() in word_pos)
                     assert(ed.getPos() > prev_pos)
                     prev_pos = ed.getPos()
-                    sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
                     s_line,s_pos = ed.filePos(ed.getLine(True),ed.left)
                     assert(ed.getPos() >= s_pos and ed.getPos() < s_pos+ed.max_x)
                     ed.main(False)
-                    assert(read_str(ed.scr,sc_line,0,ed.max_x).startswith(lines_to_test[s_line][s_pos:s_pos+ed.max_x]))
+                    validate_screen(ed)
 
                 while ed.getPos() > 0:
                     lfunc()
@@ -313,100 +289,56 @@ def test_Editor(testdir,capsys):
                         assert(ed.getPos() in word_pos)
                     assert(ed.getPos() < prev_pos)
                     prev_pos = ed.getPos()
-                    sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
                     s_line,s_pos = ed.filePos(ed.getLine(True),ed.left)
                     assert(ed.getPos() >= s_pos and ed.getPos() < s_pos+ed.max_x)
                     ed.main(False)
-                    assert(read_str(ed.scr,sc_line,0,ed.max_x).startswith(lines_to_test[s_line][s_pos:s_pos+ed.max_x]))
+                    validate_screen(ed)
+
             ed.search("This is line 1010",True,False)
-            assert(ed.getLine() == 1009 and ed.getPos() == 16)
+            assert(ed.getLine() == 1009 and ed.getPos() == 16 and ed.isMark() and ed.mark_line_start == 1009 and ed.mark_pos_start == 0 and ed.getContent(ed.mark_line_start)[ed.mark_pos_start:ed.getPos()+1] == "This is line 1010")
             ed.main(False)
-            sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
-            f_line,f_pos = ed.filePos(ed.getLine(True),0)
-            assert(read_str(ed.scr,sc_line,0,ed.max_x).startswith(lines_to_test[f_line][f_pos:f_pos+ed.max_x]))
+            validate_screen(ed)
+
             ed.search("This is line 990",False,False)
-            assert(ed.getLine() == 989 and ed.getPos() == 338)
+            assert(ed.getLine() == 989 and ed.getPos() == 338 and ed.isMark() and ed.mark_line_start == 989 and ed.mark_pos_start == 339-len("This is line 990") and ed.getContent(ed.mark_line_start)[ed.mark_pos_start:ed.getPos()+1] == "This is line 990")
             ed.main(False)
-            sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
-            f_line,f_pos = ed.filePos(ed.getLine(True),ed.left)
-            assert(read_str(ed.scr,sc_line,0,ed.max_x).startswith(lines_to_test[ed.getLine()][f_pos:f_pos+ed.max_x]))
+            validate_screen(ed)
 
             success_count = 0
             search_succeeded = ed.search("This is line 100[0,1,2]",down = True, next = False)
             while search_succeeded:
                 success_count += 1
                 ed.main(False)
-                sc_line,sc_pos = window_pos(ed.mark_line_start,ed.mark_pos_start)
-                ec_line,ec_pos = window_pos(ed.getLine(),ed.getPos())
-                if sc_line == ec_line:
-                    found_str = read_str(ed.scr,sc_line,sc_pos,(ec_pos - sc_pos)+1)
-                else:
-                    found_str = read_str(ed.scr,sc_line,sc_pos,ed.max_x-sc_pos) + read_str(ed.scr,ec_line,0,ec_pos+1)
-
+                found_str = ""
+                if ed.isMark():
+                    found_str = ed.getContent(ed.mark_line_start)[ed.mark_pos_start:ed.getPos()+1]
                 assert(re.match("This is line 100[0,1,2]",found_str))
-                print("search loop =",ed.getLine(),ed.getPos(),found_str,success_count,search_succeeded,file=open("/home/james/ped.log","a"))
+                validate_screen(ed)
                 search_succeeded = ed.searchagain()
+
             assert(success_count == 60)
 
-            def play_macro( macro ):
-                keymap.start_recording()
-                for seq in macro:
-                    keymap.record_seq(seq)
-                keymap.stop_recording()
-                keymap.start_playback()
-                while keymap.is_playback():
-                    ed.main(False)
-
             ed.goto(307,0)
             ed.main(False)
-            play_macro( [ 'fk06','down','l','i','n','e',' ','3','0','8','\t','down','l','i','n','e',' ','6','6','6','\t','\n','\t','\t','\n','\n' ] )
+            play_macro(ed, [ 'fk06','down','l','i','n','e',' ','3','0','8','\t','down','l','i','n','e',' ','6','6','6','\t','\n','\t','\t','\n','\n' ] )
             ed.goto(307,0)
             ed.main(False)
-            sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
-            f_line,f_pos = ed.filePos(ed.getLine(True),ed.left)
-            assert(read_str(ed.scr,sc_line,0,ed.max_x).startswith(lines_to_test[ed.getLine()].replace('line 308','line 666')[f_pos:f_pos+ed.max_x]))
+            assert(ed.getContent(ed.getLine()) == lines_to_test[ed.getLine()].replace('line 308','line 666'))
+            validate_screen(ed)
 
             ed.goto(main.target_line,0)
             ed.main(False)
             ed.mark_span()
             ed.goto(main.target_line,15)
             ed.main(False)
-            sc_line,sc_pos = window_pos(ed.getLine(),ed.getPos())
+            validate_mark(ed, lines_to_test, main.target_line, main.target_line, 0, 15 )
 
-            assert(match_attr(ed.scr,sc_line,0,1,15,curses.A_REVERSE))
-            assert(ed.get_marked() == ( clipboard.SPAN_CLIP, [ lines_to_test[main.target_line][0:16] ] ))
             ed.goto(main.target_line,15)
             ed.main(False)
             ed.mark_span()
             ed.goto(main.target_line+5,25)
             ed.main(False)
-
-            def validate_mark( start_line, end_line, start_pos, end_pos, do_validation = True ):
-                match_tuple = ( clipboard.SPAN_CLIP, [ "" for f in range(start_line,end_line+1)  ] )
-                lidx = 0
-                for f_line in range(start_line,end_line+1):
-                    s_pos = 0
-                    e_pos = len(lines_to_test[f_line])
-                    if f_line == start_line:
-                        s_pos = start_pos
-                    elif f_line == end_line:
-                        e_pos = end_pos+1
-                    for f_pos in range(s_pos,e_pos):
-                        sc_line,sc_pos = window_pos(f_line,f_pos)
-                        c_to_test = lines_to_test[f_line][f_pos]
-                        match_tuple[1][lidx] += c_to_test
-                        if do_validation and (sc_line >= 1 and sc_line < ed.max_y-1 and sc_pos >= 0 and sc_pos < ed.max_x):
-                            assert(match_attr(ed.scr,sc_line,sc_pos,1,1,curses.A_REVERSE))
-                            assert(read_str(ed.scr,sc_line,sc_pos,1) == c_to_test)
-                    if f_line != end_line:
-                        match_tuple[1][lidx] += '\n'
-                    lidx += 1
-                if do_validation:
-                    marked_tuple = ed.get_marked()
-                    assert(marked_tuple == match_tuple)
-                return match_tuple
-
-            validate_mark( main.target_line, main.target_line+5, 15, 25 )
+            validate_mark(ed, lines_to_test, main.target_line, main.target_line+5, 15, 25 )
 
             ed.goto(main.target_line,15)
             ed.main(False)
@@ -414,7 +346,7 @@ def test_Editor(testdir,capsys):
             ed.goto(main.target_line+5,ed.max_x)
             ed.cright()
             ed.main(False)
-            validate_mark( main.target_line,main.target_line+5,15,ed.getPos())
+            validate_mark(ed, lines_to_test, main.target_line,main.target_line+5,15,ed.getPos())
 
             ed.goto(main.target_line,15)
             ed.main(False)
@@ -422,7 +354,7 @@ def test_Editor(testdir,capsys):
             ed.goto(main.target_line+5,ed.max_x)
             ed.cright()
             ed.main(False)
-            match_tuple = validate_mark( main.target_line,main.target_line+5,15,ed.getPos(),False)
+            match_tuple = validate_mark(ed, lines_to_test, main.target_line,main.target_line+5,15,ed.getPos(),False)
             ed.copy_marked()
             ed.goto(main.target_line+25,0)
             ed.paste()
@@ -430,7 +362,7 @@ def test_Editor(testdir,capsys):
             for line in range(0,5):
                 assert(ed.getContent(main.target_line+25+line) == match_tuple[1][line].rstrip())
             assert(ed.getContent(main.target_line+25+5).startswith(match_tuple[1][5]))
-            undo_all()
+            undo_all(ed)
             for line in range(0,6):
                 assert(ed.getContent(main.target_line+25+line).startswith(lines_to_test[main.target_line+25+line]))
             ed.goto(main.target_line,15)
@@ -453,7 +385,7 @@ def test_Editor(testdir,capsys):
             for line in range(0,5):
                 assert(ed.getContent(main.target_line+25+line) == match_tuple[1][line].rstrip())
             assert(ed.getContent(main.target_line+25+5).startswith(match_tuple[1][5]))
-            undo_all()
+            undo_all(ed)
             for line in range(0,6):
                 assert(ed.getContent(main.target_line+25+line).startswith(lines_to_test[main.target_line+25+line]))
 
@@ -462,14 +394,7 @@ def test_Editor(testdir,capsys):
             ed.mark_lines()
             ed.goto(main.target_line+5,25)
             ed.main(False)
-            assert(match_attr(ed.scr,(main.target_line-ed.line)+1,0,5,ed.max_x,curses.A_REVERSE))
-            match_tuple = ( clipboard.LINE_CLIP, [  lines_to_test[main.target_line],
-                                                    lines_to_test[main.target_line+1],
-                                                    lines_to_test[main.target_line+2],
-                                                    lines_to_test[main.target_line+3],
-                                                    lines_to_test[main.target_line+4],
-                                                    lines_to_test[main.target_line+5]] )
-            assert(ed.get_marked() == match_tuple )
+            validate_mark(ed,lines_to_test,main.target_line,main.target_line+5,15,25,True, clipboard.LINE_CLIP)
 
             if not wrapped:
                 ed.goto(main.target_line,0)
@@ -479,14 +404,7 @@ def test_Editor(testdir,capsys):
                 ed.mark_rect()
                 ed.goto(main.target_line+5,25)
                 ed.main(False)
-                assert(match_attr(ed.scr,(main.target_line-ed.line)+1,15,5,11,curses.A_REVERSE))
-                match_tuple = ( clipboard.RECT_CLIP, [  lines_to_test[main.target_line][15:26],
-                                                        lines_to_test[main.target_line+1][15:26],
-                                                        lines_to_test[main.target_line+2][15:26],
-                                                        lines_to_test[main.target_line+3][15:26],
-                                                        lines_to_test[main.target_line+4][15:26],
-                                                        lines_to_test[main.target_line+5][15:26]] )
-                assert(ed.get_marked() == match_tuple )
+                validate_mark(ed,lines_to_test,main.target_line,main.target_line+5,15,25,True, clipboard.RECT_CLIP)
 
             ed.goto(main.target_line,15)
             ed.main(False)
@@ -496,7 +414,9 @@ def test_Editor(testdir,capsys):
             second_line = ed.getContent(main.target_line+1)
             assert(len(first_line)==15 and first_line == lines_to_test[main.target_line][0:15])
             assert(second_line == lines_to_test[main.target_line][15:].rstrip())
-            undo_all()
+            validate_screen(ed)
+            undo_all(ed)
+            validate_screen(ed)
 
             ed.goto(main.target_line,0)
             ed.main(False)
@@ -507,15 +427,18 @@ def test_Editor(testdir,capsys):
             ed.main(False)
             for line in range(0,6):
                 assert(ed.getContent(main.target_line+line).startswith(' '*ed.workfile.get_tab_stop(0)))
+            validate_screen(ed)
             ed.btab()
             ed.main(False)
             for line in range(0,6):
                 assert(ed.getContent(main.target_line+line).startswith(lines_to_test[main.target_line+line].rstrip()))
-            undo_all()
+            validate_screen(ed)
+            undo_all(ed)       
+            validate_screen(ed)
             while ed.isMark():
                 ed.mark_lines()
 
-            play_macro( [ keytab.KEYTAB_ALTO ,'\t',keytab.KEYTAB_DOWN,'s','a','v','e','a','s','.','t','x','t','\n','\n',keytab.KEYTAB_REFRESH ] )
+            play_macro(ed, [ keytab.KEYTAB_ALTO ,'\t',keytab.KEYTAB_DOWN,'s','a','v','e','a','s','.','t','x','t','\n','\n',keytab.KEYTAB_REFRESH ] )
             new_fn = ed.getWorkfile().getFilename()
             assert(new_fn.endswith('saveas.txt'))
             lidx = 0
@@ -540,13 +463,13 @@ def test_Editor(testdir,capsys):
 
             cur_line = ed.getLine()
             cur_pos = ed.getPos()
-            play_macro( [ keytab.KEYTAB_CR ] )
+            play_macro(ed, [ keytab.KEYTAB_CR ] )
             assert(ed.getLine() == cur_line+1 and ed.getPos() == 0)
             start_line = ed.getLine()
-            play_macro( [ keytab.KEYTAB_ALTM, keytab.KEYTAB_DOWN,keytab.KEYTAB_DOWN, keytab.KEYTAB_DOWN, keytab.KEYTAB_DOWN, keytab.KEYTAB_RIGHT, keytab.KEYTAB_RIGHT, keytab.KEYTAB_RIGHT, keytab.KEYTAB_CTRLC ] )
+            play_macro(ed, [ keytab.KEYTAB_ALTM, keytab.KEYTAB_DOWN,keytab.KEYTAB_DOWN, keytab.KEYTAB_DOWN, keytab.KEYTAB_DOWN, keytab.KEYTAB_RIGHT, keytab.KEYTAB_RIGHT, keytab.KEYTAB_RIGHT, keytab.KEYTAB_CTRLC ] )
             end_line = ed.getLine()
             assert(clipboard.clip_type == clipboard.SPAN_CLIP and len(clipboard.clip) == (end_line-start_line)+1)
-            play_macro( [ keytab.KEYTAB_ALTG, 'down', '4','0','0','\n'] )
+            play_macro(ed, [ keytab.KEYTAB_ALTG, 'down', '4','0','0','\n'] )
             assert(ed.getLine() == 400 )
 
         curses.wrapper(main,False)
