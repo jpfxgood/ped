@@ -10,7 +10,7 @@ import re
 import keymap
 import keytab
 import clipboard
-from ped_test_util import read_str,validate_screen,editor_test_suite
+from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro
 
 
 def test_BaseFrame(testdir,capsys):
@@ -112,5 +112,43 @@ def test_EditorFrame(testdir,capsys):
             for f in frames:
                 validate_screen(f.editor)
             editor_test_suite(frames[3].win,testdir,False,frames[3].editor)
+
+        curses.wrapper(main)
+
+def test_EditorManager(testdir,capsys):
+    with capsys.disabled():
+        def main(stdscr):
+            test_files = []
+            for idx in range(0,5):
+                lines_to_test = "\n".join([(("File %d line %d "%(idx,r))*20).rstrip() for r in range(0,2001)])
+                args = { "test_file_%d"%idx: lines_to_test }
+                testfile = testdir.makefile(".txt",**args)
+                test_files.append(testfile)
+
+            em = editor_manager.EditorManager(stdscr)
+            em.addEditor(editor_common.Editor(stdscr,None,str(test_files[0])))
+            em.main(False)
+            assert(em.getCurrentEditor().getFilename() == str(test_files[0]))
+            validate_screen(em.getCurrentEditor())
+            play_macro(em,[keytab.KEYTAB_ALTE]+list(test_files[1].basename)+['\n','\n','\n'])
+            assert(em.getCurrentEditor().getFilename() == str(test_files[1]))
+            validate_screen(em.getCurrentEditor())
+            play_macro(em,[keytab.KEYTAB_ALTV,keytab.KEYTAB_F04,keytab.KEYTAB_ALTN])
+            cur_rect = em.getCurrentFrame().getrect()
+            assert(cur_rect[0] == 0 and cur_rect[1] == 0)
+            assert(em.getCurrentEditor().getFilename() == str(test_files[0]))
+            validate_screen(em.getCurrentEditor())
+            em.nextFrame()
+            validate_screen(em.getCurrentEditor())
+            play_macro(em,[keytab.KEYTAB_ALTZ,keytab.KEYTAB_ALTH,keytab.KEYTAB_F04,keytab.KEYTAB_ALTN])
+            cur_name = em.getCurrentEditor().getFilename()
+            validate_screen(em.getCurrentEditor())
+            em.nextFrame()
+            assert(cur_name != em.getCurrentEditor().getFilename())
+            validate_screen(em.getCurrentEditor())
+            
+
+
+
 
         curses.wrapper(main)

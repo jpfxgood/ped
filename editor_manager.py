@@ -20,7 +20,7 @@ from ssh_dialog import sftpDialog
 import keytab
 import cmd_names
 import keymap
-import extension_manager     
+import extension_manager
 
 #def debug_print(*argv):
 #    f = open(os.path.expanduser("~/ped.log"),"a")
@@ -45,22 +45,22 @@ class BaseFrame:
             return self.x < other.x
         else:
             return self.y < other.y
-        
+
     def __gt__(self, other):
         if self.y == other.y:
             return self.x > other.x
         else:
             return self.y > other.y
-        
+
     def __eq__(self, other):
         return (self.y == other.y) and (self.x == other.x)
-        
+
     def __le__(self, other):
         return self.__lt__(other) or self.__eq__(other)
 
     def __ge__(self, other):
         return self.__gt__(other) or self.__eq__(other)
-        
+
     def __ne__(self, other):
         return not self.__eq__(other)
 
@@ -79,7 +79,7 @@ class BaseFrame:
                     self.parent.addch(self.y+off,self.x-1,curses.ACS_VLINE,curses.A_NORMAL)
                     off += 1
             self.changed = False
-            
+
 
     def setlborder( self, flag ):
         """ our frames only have an optional left border to conserve screen space, this turns on/off the left border which is drawn at x-1 """
@@ -111,12 +111,12 @@ class EditorFrame ( BaseFrame ):
         BaseFrame.__init__( self, parent,x,y,height,width,lborder )
         self.editor = None
         self.chgseq = -1
-        
+
     def __del__(self):
         """ clean up our subwindow when we close """
         BaseFrame.__del__(self)
         self.editor = None
-        
+
     def __copy__(self):
         """ copy of editor frame """
         return EditorFrame( self.parent, self.x, self.y, self.height, self.width, self.lborder )
@@ -156,12 +156,12 @@ class DialogFrame ( BaseFrame ):
         BaseFrame.__init__( self, parent,x,y,height,width, lborder )
         self.dialog = None
         self.chgseq = -1
-        
+
     def __del__(self):
         """ clean up our subwindow when we close """
         BaseFrame.__del__(self)
         self.dialog = None
-        
+
     def __copy__(self):
         """ copy of dialog frame """
         return DialogFrame( self.parent, self.x, self.y, self.height, self.width, self.lborder )
@@ -191,23 +191,23 @@ class DialogFrame ( BaseFrame ):
 
 class EditorManager:
     """ class manages a collection of editors and editor frames that tile the full terminal service """
-    def __init__(self,scr): 
+    def __init__(self,scr):
         """ constructed with scr == curses screen or window object to manage within """
         (self.max_y,self.max_x) = scr.getmaxyx()
         self.editors = []
         self.frames = [EditorFrame(scr,0,0,self.max_y,self.max_x)]
         self.current = 0
         self.current_frame = 0
-        self.scr = scr    
+        self.scr = scr
 
     def __del__(self):
         self.editors = None
         self.frames = None
-        
+
     def getCurrentFrame(self):
         """ get the current frame """
         return self.frames[self.current_frame]
-        
+
     def getCurrentEditor(self):
         """ return the current editor for the current frame or None if it isn't an editor """
         f = self.getCurrentFrame()
@@ -282,7 +282,7 @@ class EditorManager:
                 self.current = len(self.editors)-1
             self.frames[self.current_frame].seteditor(self.editors[self.current])
 
-    def nextFrame(self):       
+    def nextFrame(self):
         """ set the next frame to be current, wrap around the list """
         self.current_frame += 1
         if self.current_frame > len(self.frames)-1:
@@ -292,18 +292,18 @@ class EditorManager:
         """ kill the current frame and clean up the remaining ones, there are still issues here """
         if (len(self.frames)-1):
             (x,y,width,height) = self.frames[self.current_frame].getrect(True) # width adjusted for any frame
-            (x1,y1,width1,height1) = self.frames[self.current_frame].getrect(False) # width not adjusted 
+            (x1,y1,width1,height1) = self.frames[self.current_frame].getrect(False) # width not adjusted
             del self.frames[self.current_frame]
             if self.current_frame > (len(self.frames)-1):
                 self.current_frame -= 1
-                
+
             for f in self.frames:
                 (fx,fy,fwidth,fheight) = f.getrect(True)
                 (ux,uy,uwidth,uheight) = f.getrect(False)
                 if fy == y and fheight == height and fx+fwidth == x: # window to left of us
                     f.resize(ux,uy,uwidth+width,uheight)
                     return
-                
+
             for f in self.frames:
                 (fx,fy,fwidth,fheight) = f.getrect(True)
                 (ux,uy,uwidth,uheight) = f.getrect(False)
@@ -313,13 +313,13 @@ class EditorManager:
                     else:
                         f.resize(x,fy,fwidth+width,fheight)
                     return
-                
+
             for f in self.frames:
                 (fx,fy,fwidth,fheight) = f.getrect(False)
                 if fx == x1 and fwidth == width1 and y1+height1 == fy: # window below us (don't use frame adjustement for this one)
                     f.resize(fx,y1,fwidth,height1+fheight)
                     return
-                
+
             for f in self.frames:
                 (fx,fy,fwidth,fheight) = f.getrect(False)
                 if fx == x1 and fwidth == width1 and fy+fheight == y1: # window above us (don't use frame adjustement for this one)
@@ -344,7 +344,7 @@ class EditorManager:
         """ open a new file in the current window, launches the file dialog allowing choosing or typing in a file name """
         if not isinstance(self.frames[self.current_frame],EditorFrame):
             self.replaceFrame(EditorFrame)
-            
+
         f = file_dialog.FileDialog(self.scr,"Open or create file")
         choices = f.main()
         if choices and choices["file"]:
@@ -354,7 +354,7 @@ class EditorManager:
         """ handle the resize event from the parent window and re-layout the parent window """
         ymax,xmax = self.scr.getmaxyx()
         sy = float(ymax)/float(self.max_y)
-        sx = float(xmax)/float(self.max_x)                 
+        sx = float(xmax)/float(self.max_x)
         fmap = self.frames
         fmap.sort()
         idx = 0
@@ -405,7 +405,7 @@ class EditorManager:
         if result:
             self.current = names.index(result)
             self.frames[self.current_frame].seteditor(self.editors[self.current])
-            
+
     def fileFind( self , fpat=".*",cpat="",recurse=False):
         """ launch the file find dialog box """
         result = file_find.filefind(self.scr,fpat=fpat,cpat=cpat,recurse=recurse)
@@ -426,7 +426,7 @@ class EditorManager:
             return True
         return False
 
-       
+
     def mouseEvent( self ):
         """ handle mouse events """
         try:
@@ -440,41 +440,41 @@ class EditorManager:
                 cf += 1
             else:
                 return
-    
+
             by,bx = f.win.getbegyx()
             oy = my - by - 1
             ox = mx - bx
             if oy < 0:
                 return
-    
+
             if isinstance(f,EditorFrame):
                 line = f.editor.line + oy
                 pos = f.editor.left + ox
-    
+
                 if mtype & (curses.BUTTON1_CLICKED | curses.BUTTON1_PRESSED | curses.BUTTON1_RELEASED):
                     (line,pos) = f.editor.filePos(line,pos)
                     f.editor.goto(line,pos)
                     self.current_frame = cf
-    
+
                 if mtype & curses.BUTTON1_PRESSED:
                     f.editor.mark_span()
-    
+
                 if (mtype & curses.BUTTON1_CLICKED) and f.editor.isMark():
                     f.editor.mark_span()
             else:
                 self.current_frame = cf
         except:
             return
-                
-                
-        
-    def main(self):
+
+
+
+    def main(self,blocking = True):
         """ this is the main driver for the editor manager it displays the frames and gets it's keystrokes
         from the current frame, only the key events that are released """
         force = False
-        
+
         curses.mousemask( curses.BUTTON1_PRESSED| curses.BUTTON1_RELEASED| curses.BUTTON1_CLICKED)
-        
+
         while len(self.editors):
             for f in self.frames:
                 f.redraw(force)
@@ -487,11 +487,11 @@ class EditorManager:
                 if filename:
                     (path,filename) = os.path.split(filename)
                     os.chdir(path)
-            
+
                 # run the editor in non blocking mode to have it process keystrokes returns unhandled ones
                 cmd_id, seq = keymap.mapseq(keymap.keymap_manager,self.frames[self.current_frame].editor.main(False))
             else:
-                # run the dialog non blocking mode to have it process keystrokes returns unhandled ones             
+                # run the dialog non blocking mode to have it process keystrokes returns unhandled ones
                 (seq, values) = self.frames[self.current_frame].dialog.main(False)
                 cmd_id, seq = keymap.mapseq(keymap.keymap_manager,seq)
             if extension_manager.is_extension(cmd_id):
@@ -567,4 +567,8 @@ class EditorManager:
                 else:
                     return keytab.KEYTAB_ESC
             else:
-                force = False        
+                force = False
+
+            if not blocking:
+                self.scr.refresh()
+                return seq
