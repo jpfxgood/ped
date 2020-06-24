@@ -1,11 +1,11 @@
-#!/usr/bin/env python -u
+#!/usr/bin/env python3
 import ssh_mod
 import os
 import sys
 import re
 import traceback
 from optparse import OptionParser
-from StringIO import StringIO
+from io import StringIO
 
 
 def main(options, args):
@@ -18,25 +18,25 @@ def main(options, args):
     
     while ( paths ):
         path = paths.pop()
-        print path
+        print(path)
         if options.exclude and re.search(options.exclude,path):
-            print "skipping path",path
+            print("skipping path",path)
             continue
         dir_list = ssh_mod.ssh_ls(path,False,get_config,options.verbose)
         for item in StringIO(dir_list):
             item = item.strip()
             if item.startswith("DIR"):
-                print item
+                print(item)
                 paths.append(item[4:])
                 continue
             (date,time,size,path) = re.split("\s+",item,3)
             for pat in args:
                 if re.match(pat,path):
-                    print date,time,size,path
+                    print(date,time,size,path)
                     (host,port,fpath) = ssh_mod.split_hostpath(path)
                     parts = fpath.split("/")
                     out_path = os.path.join( options.destination, "/".join(parts[-3:]))
-                    print out_path
+                    print(out_path)
                     if os.path.exists( out_path ):
                         break
                     ssh_mod.ssh_get( path, out_path, get_config )
@@ -60,7 +60,7 @@ if __name__ == '__main__':
         ret = main(options,args)
     except:
         tb = traceback.format_exc()
-        print >>sys.stderr, tb
+        print(tb, file=sys.stderr)
         exit(1)
         
     exit(ret)

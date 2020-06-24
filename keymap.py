@@ -21,7 +21,6 @@ keymap_manager = {
     keytab.KEYTAB_ALTF: (cmd_names.CMD_FILEFIND,keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_F22: (cmd_names.CMD_SFTP,keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_ALTX: (cmd_names.CMD_SAVEEXIT,keytab.KEYTAB_NOKEY),
-    keytab.KEYTAB_ALTS: (cmd_names.CMD_BROWSESVN,keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_F01: (cmd_names.CMD_HELP, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_ALTI: (cmd_names.CMD_HELP, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_F10: (cmd_names.CMD_SHELLCMD, keytab.KEYTAB_NOKEY),
@@ -37,7 +36,6 @@ keymap_manager = {
     keytab.KEYTAB_ALTD: (cmd_names.CMD_DELEDITOR, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_ESC: (cmd_names.CMD_EXITNOSAVE, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_DLGCANCEL: (cmd_names.CMD_EXITNOSAVE, keytab.KEYTAB_NOKEY),
-    keytab.KEYTAB_ALTR: (cmd_names.CMD_READNEWS, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_MOUSE: (cmd_names.CMD_MOUSE, keytab.KEYTAB_NOKEY),
     }
 
@@ -46,7 +44,7 @@ keymap_editor = {
     keytab.KEYTAB_CTRLK:       (cmd_names.CMD_MARKSPAN,        keytab.KEYTAB_NOKEY),    # CTRL-K
     keytab.KEYTAB_CTRLR:       (cmd_names.CMD_MARKRECT,        keytab.KEYTAB_NOKEY),    # CTRL-R
     keytab.KEYTAB_CTRLC:       (cmd_names.CMD_COPYMARKED,      keytab.KEYTAB_NOKEY),    # CTRL-C
-    keytab.KEYTAB_CTRLG:       (cmd_names.CMD_PRMTGOTO,        keytab.KEYTAB_NOKEY),    # CTRL-G
+    keytab.KEYTAB_CTRLG:       (cmd_names.CMD_PRMTGOTO,        keytab.KEYTAB_REFRESH),    # CTRL-G
     keytab.KEYTAB_BACKSPACE:   (cmd_names.CMD_BACKSPACE,       keytab.KEYTAB_NOKEY),    # CTRL-H
     keytab.KEYTAB_CTRLF:       (cmd_names.CMD_FILENAME,        keytab.KEYTAB_REFRESH),    # CTRL-F
     keytab.KEYTAB_CTRLX:       (cmd_names.CMD_CUTMARKED,       keytab.KEYTAB_NOKEY),    # CTRL-X
@@ -61,7 +59,7 @@ keymap_editor = {
     keytab.KEYTAB_ALTC:        (cmd_names.CMD_MARKRECT,        keytab.KEYTAB_NOKEY),    # alt-C
     keytab.KEYTAB_ALTW:        (cmd_names.CMD_SAVE,            keytab.KEYTAB_NOKEY),    # alt-W
     keytab.KEYTAB_ALTo:        (cmd_names.CMD_SAVEAS,          keytab.KEYTAB_REFRESH),  # alt-o
-    keytab.KEYTAB_ALTG:        (cmd_names.CMD_PRMTGOTO,        keytab.KEYTAB_NOKEY),    # alt-G
+    keytab.KEYTAB_ALTG:        (cmd_names.CMD_PRMTGOTO,        keytab.KEYTAB_REFRESH),    # alt-G
     keytab.KEYTAB_ALTU:        (cmd_names.CMD_UNDO,            keytab.KEYTAB_NOKEY),    # alt-U
     keytab.KEYTAB_ALTJ:        (cmd_names.CMD_TOGGLEWRAP,      keytab.KEYTAB_NOKEY),    # alt-J
     keytab.KEYTAB_KEYPADPLUS:  (cmd_names.CMD_MARKCOPYLINE,    keytab.KEYTAB_NOKEY),    # keypad +
@@ -123,7 +121,7 @@ def insert_keydef( km, oseq, kt ):
                 km[oseq[0]] = {}
             insert_keydef( km[oseq[0]], oseq[1:], kt )
     except:
-        print >>open(os.path.expanduser("~/ped.log"),"a"),pprint.pformat(km),oseq,kt
+        print(pprint.pformat(km),oseq,kt, file=open(os.path.expanduser("~/ped.log"),"a"))
         raise
 
 def compile_keydef():
@@ -176,7 +174,7 @@ def stop_playback():
 def record_seq( seq ):
     """ record a key sequence into the buffer """
     global macro
-    if len(seq) == 1 and seq[0] == -1:
+    if (len(seq) == 1 and seq[0] == -1) or seq == '\x00':
         return
     macro.append(seq)
     
@@ -295,9 +293,9 @@ def dumpkeymap():
     f = open(kmf,"w")
     keymaps = [ ("EDITOR",keymap_editor), ("DIALOG",keymap_dialog), ("MANAGER",keymap_manager) ]
     for name,km in keymaps:
-        print >>f,"KEYMAP=%s"%name
-        for key, mapping in km.items():
-            print >>f,"MAP=%s,%s,%s"%(keytab.key_to_name[key],cmd_names.cmd_to_name[mapping[0]],keytab.key_to_name[mapping[1]])
+        print("KEYMAP=%s"%name, file=f)
+        for key, mapping in list(km.items()):
+            print("MAP=%s,%s,%s"%(keytab.key_to_name[key],cmd_names.cmd_to_name[mapping[0]],keytab.key_to_name[mapping[1]]), file=f)
 
 def loadkeydef():
     """ look for a file ~/.pedkeydef and load alternate KEYTAB definitions and mappings from raw curses key codes to KEYTAB definitions """
@@ -331,9 +329,9 @@ def dumpkeydef():
     fkdf = open(kdf,"w")
     for attr_name in dir(keytab):
         if attr_name.startswith("KEYTAB_"):
-            print >>fkdf, "%s=%s"%(attr_name,repr(getattr(keytab,attr_name)))
+            print("%s=%s"%(attr_name,repr(getattr(keytab,attr_name))), file=fkdf)
     for k in keytab.keydef:
-        print >>fkdf,"KEYDEF=%s,%s"%(",".join([str(f) for f in k[0]]),keytab.key_to_name[k[1]])
+        print("KEYDEF=%s,%s"%(",".join([str(f) for f in k[0]]),keytab.key_to_name[k[1]]), file=fkdf)
             
     
 # force the keydef_map to be built on load of module
@@ -346,21 +344,19 @@ def main(stdscr):
     stdscr.timeout(0)  
     curses.raw()
     line = 0
-    col = 0
-    k = stdscr.getch()
+    col = 0                    
+    seq = get_keyseq(stdscr, getch(stdscr))
+    k = mapseq(keymap_editor,seq)
     while True:
-        stdscr.addstr(line,col,"%4d               "%(k), curses.A_REVERSE)
-#        line += 1
-        col += 4  
-        line = line % 10
-        if k < 0: 
-            col = 0
-            while (k < 0):
-                k = stdscr.getch()
-        else:
-            k = stdscr.getch()
-        if col == 0 and k == 32:
+        if k[1] == 32:
             break
+        if seq != '\x00':
+            stdscr.addstr(line,col,"%s == %s               "%(seq,str(k)), curses.A_REVERSE)
+            line += 1
+            line = line % 10     
+        seq = get_keyseq(stdscr, getch(stdscr))
+        k = mapseq(keymap_editor,seq)
+         
     stdscr.nodelay(0)
 #        altch = stdscr.getch()
 #        stdscr.nodelay(1)

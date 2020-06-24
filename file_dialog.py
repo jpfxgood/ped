@@ -11,7 +11,7 @@ def get_dir(path,showhidden=False):
     """ get a directory listing of path, directories are prefixed with <DIR> 
         if showhidden == False hidden files are not include, otherwise they are 
         returns the directory path, the list of directories and list of files as a tuple"""
-    (dirpath, dirnames, filenames) = os.walk(path).next()
+    (dirpath, dirnames, filenames) = next(os.walk(path))
     if not showhidden:
         dirnames = [d for d in dirnames if d[0] != "."]
         filenames = [f for f in filenames if f[0] != "." and f[-1] != "~" and not f.endswith(".bak")]

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2009 James P Goodwin ped tiny python editor
 # This is a tiny editor created by James
 import sys                        
@@ -13,12 +13,12 @@ def run_find( name, file_input, options ):
     for l in file_input:
         if pat.search(l):
             if options.filenames:
-                print name
+                print(name)
                 return
             if options.numbers:
-                print "%s:%d: %s"%(name,line,l.strip())
+                print("%s:%d: %s"%(name,line,l.strip()))
             else:
-                print "%s: %s"%(name,l.strip())
+                print("%s: %s"%(name,l.strip()))
         line += 1
 
 def main(piped_stdin, options, args):

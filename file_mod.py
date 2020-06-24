@@ -4,7 +4,7 @@
 import shutil
 import os
 import time
-from StringIO import StringIO
+from io import StringIO
 import threading
 import sys
 
@@ -50,19 +50,19 @@ def file_ls( remote_path, recurse=False ):
         for root,dirs,files in os.walk(remote_path):
             if not recurse:
                 for d in dirs:
-                    print >>stream, "                           DIR file://%s/"%os.path.join(os.path.abspath(root),d)
+                    print("                           DIR file://%s/"%os.path.join(os.path.abspath(root),d), file=stream)
             for f in files:
                 fp = os.path.join(os.path.abspath(root),f)
                 st = os.stat(fp)
                 mtime = time.localtime(st.st_mtime)
-                print >>stream, "%04d-%02d-%02d %02d:%02d %9d   file://%s"%(mtime.tm_year,mtime.tm_mon,mtime.tm_mday,mtime.tm_hour,mtime.tm_min,st.st_size,fp)
+                print("%04d-%02d-%02d %02d:%02d %9d   file://%s"%(mtime.tm_year,mtime.tm_mon,mtime.tm_mday,mtime.tm_hour,mtime.tm_min,st.st_size,fp), file=stream)
             if not recurse:
                 break
     else:
         fp = os.path.abspath(remote_path)
         st = os.stat(fp)
         mtime = time.localtime(st.st_mtime)
-        print >>stream, "%04d-%02d-%02d %02d:%02d %9d   file://%s"%(mtime.tm_year,mtime.tm_mon,mtime.tm_mday,mtime.tm_hour,mtime.tm_min,st.st_size,fp)
+        print("%04d-%02d-%02d %02d:%02d %9d   file://%s"%(mtime.tm_year,mtime.tm_mon,mtime.tm_mday,mtime.tm_hour,mtime.tm_min,st.st_size,fp), file=stream)
         
             
     output = stream.getvalue()

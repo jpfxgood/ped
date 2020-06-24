@@ -66,13 +66,17 @@ class FileBrowseComponent(dialog.Component):
             if not self.editor and self.filename:
                 self.editor = editor_common.ReadonlyEditor(win,self.ewin,self.filename, self.showname)
                 self.editor.goto(self.start_line,0)
+                self.editor.invalidate_all()
+                self.editor.main(False)
+
             if self.isfocus:
                 attr = curses.A_BOLD
             else:
                 attr = curses.A_NORMAL
 
-            dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr)
+            dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr,False)
             if self.editor:
+#                self.editor.invalidate_all()
                 if not self.editor.isMark():
                     self.editor.mark_lines()
                 self.editor.redraw()

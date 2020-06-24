@@ -10,7 +10,7 @@ class BufferDialog(dialog.Dialog):
         max_y,max_x = scr.getmaxyx()
         dw = max_x - 4
         lw = dw - 4
-        lx = dw/2 - lw/2
+        lx = dw//2 - lw//2
         self.buffer_list = dialog.ListBox("buffers",1,lx,2,12,lw,"Buffers",0,buffers)
         dialog.Dialog.__init__(self,scr,"BufferDialog",20,dw, [ dialog.Frame(title),
                                                               self.buffer_list,

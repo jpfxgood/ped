@@ -12,7 +12,7 @@ import sys
     
 class Change:
     """ Represents one span of lines that have been changed """
-    def __init__(self, start_line = 0, end_line = sys.maxint, revNo = sys.maxint):
+    def __init__(self, start_line = 0, end_line = sys.maxsize, revNo = sys.maxsize):
         """ Constructed with the first last lines of span of change and the revision number of the change """
         self.start_line = start_line
         self.end_line = end_line
@@ -24,7 +24,7 @@ class Change:
     def is_changed(self, line, revNo = 0):
         """ tests to see if a specified line number is changed at the revNo or greater in this span """
 #        logChange( self, "is_changed( %d, %d )"%(line, revNo))
-        if line >= self.start_line and line <= self.end_line and revNo >= self.revNo:
+        if line >= self.start_line and line <= self.end_line and revNo < self.revNo:
 #            logChange( self, "is_changed( %d, %d ) return True"%(line, revNo))
             return True
         else:
@@ -95,7 +95,7 @@ class ChangeManager:
         """ reset the change list to empty used when the whole page is going to need refresh no matter what """
         self.change_list = []
 
-    def changed(self, start_line = 0, end_line = sys.maxint, revNo = sys.maxint ):
+    def changed(self, start_line = 0, end_line = sys.maxsize, revNo = sys.maxsize ):
         """ mark a range of lines as changed or by default mark them all as changed """
         nc = Change(start_line,end_line,revNo)
         new_change_list = []

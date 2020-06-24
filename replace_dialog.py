@@ -65,4 +65,4 @@ def main(stdscr):
     return prompt(stdscr,"Test Replace","Enter a number: ", 8 )
 
 if __name__ == '__main__':
-    print int(curses.wrapper(main))
+    print(int(curses.wrapper(main)))

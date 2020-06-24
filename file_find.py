@@ -24,7 +24,7 @@ def sanitize( text ):
     index = 0
     for i in inbytes:
         if (i < 32 and (i not in [9,10,13]))  or i > 127:
-            hexout = hexchars[i/16] + hexchars[i%16]
+            hexout = hexchars[i//16] + hexchars[i%16]
             outtext = outtext + hexout
         else:
             outtext = outtext + text[index]
@@ -40,11 +40,11 @@ def contains(fullpath, pattern, found):
         while inline:
             sl = sanitize(inline)
             if re.search(pattern,sl):                     
-                print >>found,"%s:%d:%s"%(fullpath,line,sl.rstrip())
+                print("%s:%d:%s"%(fullpath,line,sl.rstrip()), file=found)
             inline = fl.readline(132)
             line += 1                                     
-    except Exception,e:
-        print >>found,"%s:%d:ERROR %s",(fullpath,line,str(e))
+    except Exception as e:
+        print("%s:%d:ERROR %s",(fullpath,line,str(e)), file=found)
 
 def where( path, fpat, cpat, recurse, scr ):
     """ recursively search for a pattern in files starting with path, files matchin re fpat, containing re cpat,
@@ -68,12 +68,12 @@ def where( path, fpat, cpat, recurse, scr ):
                     if cpat:
                         contains(fullpath, cpat, found)
                     else:
-                        print >>found,"%s"%(fullpath)
-            except Exception, e:
-                print >>found,"%s:0:ERROR:%s"%(fullpath,str(e))
+                        print("%s"%(fullpath), file=found)
+            except Exception as e:
+                print("%s:0:ERROR:%s"%(fullpath,str(e)), file=found)
         if not recurse:
             break
-    found.seek(0L,0)
+    found.seek(0,0)
     return found
 
 
@@ -86,12 +86,12 @@ class FileFindDialog(dialog.Dialog):
         """ takes the curses window to pop up over, title to display, will dynamically size to parent window """
         max_y,max_x = scr.getmaxyx()                         
         pw = (max_x - 4)
-        ph = ((max_y-7) / 2)
-        cx = max_x / 2
+        ph = ((max_y-7) // 2)
+        cx = max_x // 2
         y = 1
-        self.found_list = StreamSelectComponent("found",7,cx-(pw/2),y,pw,ph,"Found",where(os.getcwd(),fpat,cpat,recurse,scr))
+        self.found_list = StreamSelectComponent("found",7,cx-(pw//2),y,pw,ph,"Found",where(os.getcwd(),fpat,cpat,recurse,scr))
         y += ph        
-        self.preview = FileBrowseComponent("browse",8,cx-(pw/2),y,pw,ph,"Preview",None)
+        self.preview = FileBrowseComponent("browse",8,cx-(pw//2),y,pw,ph,"Preview",None)
         y += ph
         self.start_dir = dialog.Prompt("dir",1,2,y,"Path: ",max_x-10,os.getcwd())
         y += 1        
@@ -109,8 +109,8 @@ class FileFindDialog(dialog.Dialog):
                                                             self.file_name,
                                                             self.contains,
                                           dialog.Button("search",4,2,y,"SEARCH",dialog.Component.CMP_KEY_NOP),
-                                          dialog.Button("open",5,2+((max_x-4)/3),y,"OPEN",dialog.Component.CMP_KEY_OK),
-                                          dialog.Button("cancel",6,2+(((max_x-4)/3)*2),y,"CANCEL",dialog.Component.CMP_KEY_CANCEL)])
+                                          dialog.Button("open",5,2+((max_x-4)//3),y,"OPEN",dialog.Component.CMP_KEY_OK),
+                                          dialog.Button("cancel",6,2+(((max_x-4)//3)*2),y,"CANCEL",dialog.Component.CMP_KEY_CANCEL)])
 
     def handle(self,ch):
         """ handles found file selection, populating the preview window, new searches, and opening a file """
@@ -163,15 +163,15 @@ def main(stdscr):
     try:
         d = FileFindDialog(stdscr)
         d.main()
-    except Exception, e:
+    except Exception as e:
         log = open("file_find.log","w")
-        print >>log,str(e)
-        print >>log,traceback.format_exc()
+        print(str(e), file=log)
+        print(traceback.format_exc(), file=log)
 
 if __name__ == '__main__':
     try:
         curses.wrapper(main)
-    except Exception, e:
+    except Exception as e:
         log = open("file_find.log","w")
-        print >>log,str(e)
-        print >>log,traceback.format_exc()
+        print(str(e), file=log)
+        print(traceback.format_exc(), file=log)

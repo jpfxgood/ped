@@ -1,4 +1,4 @@
-#!/usr/bin/env python -u
+#!/usr/bin/env python3
 # Copyright 2014 James P Goodwin hex dump utility for the ped editor
 import sys
 import os
@@ -24,9 +24,9 @@ def main( options, args ):
     chunk_mod = options.numchunks * 8
     display = ""
     for b in bytes_from_file(args[0]):
-        sys.stdout.write("%02x "%ord(b))
-        if b in string.digits or b in string.letters or b in string.punctuation:
-            display += b
+        sys.stdout.write("%02x "%b)
+        if chr(b) in string.digits or chr(b) in string.ascii_letters or chr(b) in string.punctuation:
+            display += chr(b)
         else:
             display += '.'
         if not byte_count % 8:

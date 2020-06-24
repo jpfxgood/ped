@@ -18,16 +18,16 @@ def detect_mode(editor):
     """ hook called to detect if this mode should be used for a file, returns True if it should be used, False otherwise """
     global lexer
     workfile = editor.getWorkfile()
-    if re.search("(\.c$)|(\.c\:\(r.*\)$)",workfile.getFilename()):
+    if re.search(r"(\.c$)|(\.c\:\(r.*\)$)",workfile.getFilename()):
         lexer = CLexer()
         return True
-    elif re.search("(\.cpp$)|(\.cpp\:\(r.*\)$)",workfile.getFilename()):
+    elif re.search(r"(\.cpp$)|(\.cpp\:\(r.*\)$)",workfile.getFilename()):
         lexer = CppLexer()
         return True
-    elif re.search("(\.h$)|(\.h\:\(r.*\)$)",workfile.getFilename()):
+    elif re.search(r"(\.h$)|(\.h\:\(r.*\)$)",workfile.getFilename()):
         lexer = CLexer()
         return True
-    elif re.search("(\.hpp$)|(\.hpp\:\(r.*\)$)",workfile.getFilename()):
+    elif re.search(r"(\.hpp$)|(\.hpp\:\(r.*\)$)",workfile.getFilename()):
         lexer = CppLexer()
         return True
     else:

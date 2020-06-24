@@ -20,6 +20,6 @@ def main(stdscr):
 
 if __name__ == '__main__':
     if curses.wrapper(main):
-        print "Yes"
+        print("Yes")
     else:
-        print "No"
+        print("No")

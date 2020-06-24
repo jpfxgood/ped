@@ -13,10 +13,10 @@ import extension_manager
 # utility functions
 def distribute( buttons, xstart, width ):
     """ distribute a bunch of buttons across a given width """
-    width_per_button = width / len(buttons)
-    x = xstart + (width_per_button/2)
+    width_per_button = width // len(buttons)
+    x = xstart + (width_per_button//2)
     for b in buttons:
-        b.x = x - (b.width/2)
+        b.x = x - (b.width//2)
         x += width_per_button
 
 
@@ -37,7 +37,7 @@ def rect( win, x,y,w,h,label,attr,fill=True ):
         off += 1
     win.addch(y,x+(w-1),curses.ACS_URCORNER)
     if label:
-        win.addstr(y,x+(w/2)-(len(label)/2),label,attr)
+        win.addstr(y,x+(w//2)-(len(label)//2),label,attr)
     y += 1
     bh = h-2
     while bh:
@@ -166,9 +166,9 @@ class Frame(Component):
                 y = 0
                 my,mx = win.getmaxyx()
                 
-            rect(win, x, y, mx, my, self.title, curses.A_NORMAL)
+            rect(win, x, y, mx, my, self.title, curses.A_NORMAL, False)
             if self.title:
-                win.addstr(y,x+(mx/2)-(len(self.title)/2),self.title)
+                win.addstr(y,x+(mx//2)-(len(self.title)//2),self.title)
 
     
 class ListBox(Component):
@@ -449,7 +449,7 @@ class Button(Component):
         if win:
             win.addstr(self.y,self.x,"["+self.label+"]",battr)
             if self.isfocus:
-                win.move(self.y,self.x+(len(self.label)+2)/2)
+                win.move(self.y,self.x+(len(self.label)+2)//2)
 
         self.isfocus = False
 
@@ -513,7 +513,7 @@ class StaticText(Component):
                 width -= len(self.prompt[-width:])
                 if width > 0:
                     win.addstr(self.y,x,pad(self.value,self.width)[-width:],curses.A_NORMAL)
-            except Exception, e:
+            except Exception as e:
                 raise Exception("%d,%d,%d,%s,%s"%(x,self.y,width,self.prompt,str(e)))
 
 class Prompt(Component):
@@ -670,7 +670,7 @@ class Dialog(Component):
         max_y,max_x = parent.getmaxyx()
         curses.raw()                                           
         if x < 0:
-            self.win = parent.subwin(height,width,(max_y/2)-(height/2),(max_x/2)-(width/2))
+            self.win = parent.subwin(height,width,(max_y//2)-(height//2),(max_x//2)-(width//2))
         else:
             self.win = parent.subwin(height,width,y,x)
             
@@ -730,7 +730,7 @@ class Dialog(Component):
         if self.focus_list:
             self.focus_list[self.current][1].focus()
             self.focus_list[self.current][1].render()
-#        self.win.nooutrefresh()
+        self.win.refresh()
 
     def focus(self):
         self.focus_list = []
@@ -743,7 +743,7 @@ class Dialog(Component):
             self.current = 0
             return
 
-        self.focus_list.sort()
+        self.focus_list.sort(key=lambda x: x[0])
         self.current = 0
 
     def setvalue(self, value):
@@ -784,7 +784,7 @@ class Dialog(Component):
         if self.focus_list and self.win:           
             try:
                 mid, mx, my, mz, mtype = curses.getmouse()
-                print >>open("dlgmouse.log","a"),mid,mx,my,mz,mtype
+                print(mid,mx,my,mz,mtype, file=open("dlgmouse.log","a"))
                 by,bx = self.win.getbegyx()
                 oy = my - by
                 ox = mx - bx

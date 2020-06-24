@@ -29,8 +29,6 @@ alt-n:                  next buffer
 alt-e:                  edit a new file
 alt-h:                  split the current window horizontally
 alt-v:                  split the current window vertically
-alt-s:                  display svn history and diff browser for current file/directory
-alt-r:                  read nntp news
 tab:                    indent from the current position to the next tab stop
                         if lines are selected then indent the set of lines
 shift-tab:              unindent from the current posiion or the nearest blank space to the left

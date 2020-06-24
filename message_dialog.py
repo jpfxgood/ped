@@ -19,11 +19,11 @@ class MessageDialog(dialog.Dialog):
 
         if blocking:
             dialog.Dialog.__init__(self,scr,"MessageDialog",dh,dw, [ dialog.Frame(title),
-                                              dialog.StaticText("message",max(1,(dw/2)-(len(message)/2)),(dh/2-2)+2,message,0),
-                                              dialog.Button("done",1,(dw/2)-(6/2),(dh/2-2)+3,"DONE",dialog.Component.CMP_KEY_OK)],min_y,min_x)
+                                              dialog.StaticText("message",max(1,(dw//2)-(len(message)//2)),(dh//2-2)+2,message,0),
+                                              dialog.Button("done",1,(dw//2)-(6//2),(dh//2-2)+3,"DONE",dialog.Component.CMP_KEY_OK)],min_y,min_x)
         else:
             dialog.Dialog.__init__(self,scr,"MessageDialog",dh,dw, [ dialog.Frame(title),
-                                              dialog.StaticText("message",max(1,(dw/2)-(len(message)/2)),(dh/2-2)+2,message,0)],min_y,min_x)
+                                              dialog.StaticText("message",max(1,(dw//2)-(len(message)//2)),(dh//2-2)+2,message,0)],min_y,min_x)
             
 
 def message( scr, title = "Message", message = "A message!", blocking=True ):
@@ -37,9 +37,9 @@ def message( scr, title = "Message", message = "A message!", blocking=True ):
         else:
             d.focus()
             d.render()
-    except Exception,e:
-        print >>open("message_dialog.log","a"),d.height,d.width,d.max_y,d.max_x
-        print >>open("message_dialog.log","a"),traceback.format_exc()
+    except Exception as e:
+        print(d.height,d.width,d.max_y,d.max_x, file=open("message_dialog.log","a"))
+        print(traceback.format_exc(), file=open("message_dialog.log","a"))
         raise
     
 

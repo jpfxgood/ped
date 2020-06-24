@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # code=UTF-8
 # Copyright 2009 James P Goodwin ped tiny python editor
 # This is a tiny editor created by James
@@ -32,8 +32,6 @@ def main(stdscr, piped_stdin, options, args):
     from editor_manager import EditorManager
     from editor_common import isdebug, EditFile
     from file_find import filefind
-    from news_browse import UserConfig, ServerConfig, Group
-    import svn_browse
     import extension_manager
 
     extension_manager.register_extensions()
@@ -50,9 +48,6 @@ def main(stdscr, piped_stdin, options, args):
         e = EditorManager(stdscr)
 
         
-        if options.username and options.password:
-            svn_browse.set_userpass( options.username, options.password )
-        
         if options.filefind:
             fpat = ".*"
             cpat = ""
@@ -65,23 +60,6 @@ def main(stdscr, piped_stdin, options, args):
                 if args[2].lower() == 'yes':
                     recurse = True
             if not e.fileFind( fpat, cpat, recurse ):
-                return ""
-        elif options.newsbrowse:
-            e.newsBrowse()
-            return ""
-        elif options.svnbrowse:
-            path = "."
-            filename = ""
-            revision = ""
-            if len(args) > 0:
-                path = args[0]
-                if not os.path.isdir(path):
-                    return "Error %s is not a directory" % path
-            if len(args) > 1:
-                filename = args[1]
-            if len(args) > 2:
-                revision = args[2]
-            if not e.browseSVN( path, filename, revision ):
                 return ""
 
         elif len(args):
@@ -96,10 +74,10 @@ def main(stdscr, piped_stdin, options, args):
 
         e.main()
         e = None
-    except Exception,e:
+    except Exception as e:
         log = open(os.path.expanduser("~/ped.log"),"a")
-        print >>log, str(e)
-        print >>log, traceback.format_exc()
+        print(str(e), file=log)
+        print(traceback.format_exc(), file=log)
         log.close()      
         return str(e)
     return ""
@@ -127,13 +105,9 @@ if __name__ == '__main__':
         
     parser = OptionParser(usage="usage: {cmd |} %prog [options] {files to edit}", description="A tiny text editor in python by James P Goodwin.")
     parser.add_option("-f","--file_find", dest="filefind", action="store_true", default=False, help="start in file find mode, optional args file find pattern and text find pattern and recurse yes/no")
-    parser.add_option("-s","--svn_browse", dest="svnbrowse", action="store_true", default=False, help="start in SVN browse mode, optional args path, file, revision")
     parser.add_option("-c","--contrast", dest="contrast", action="store_true", default=False, help="start display in higher contrast")
     parser.add_option("-r","--readonly", dest="readonly", action="store_true", default=False, help="open file in read only mode")
-    parser.add_option("-n","--newsbrowse", dest="newsbrowse", action="store_true", default=False, help="launch in news browse mode")
     parser.add_option("-b","--backuproot", dest="backuproot", default="~", help="directory root for backup dir, if exists will be used, otherwise homedir will be used")
-    parser.add_option("-u","--username", dest="username", default="", help="svn username")
-    parser.add_option("-p","--password", dest="password", default="", help="svn password")
     parser.add_option("-d","--dumpkeymap", dest="dumpkeymap", action="store_true", default=False, help="dump the default keymap to ~/.pedkeymap and default kedefs to ~/.pedkeydef and exit")
     (options,args) = parser.parse_args(argv[1:])
 

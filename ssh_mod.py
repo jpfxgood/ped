@@ -8,7 +8,7 @@ import stat
 import time
 from file_mod import safe_path
 import threading
-from StringIO import StringIO
+from io import StringIO
 import paramiko
 import socket
 
@@ -62,7 +62,7 @@ def lookup_hostkey( hostname ):
                 host_keys = {}
     
     if hostname in host_keys:
-        hostkeytype = host_keys[hostname].keys()[0]
+        hostkeytype = list(host_keys[hostname].keys())[0]
         hostkey = host_keys[hostname][hostkeytype]
     return ( hostkey, hostkeytype )
     
@@ -182,7 +182,7 @@ def ssh_ls( remote_path, recurse=False, get_config= None, verbose=False ):
             while dirs:
                 dir = dirs.pop() 
                 if verbose:
-                    print >>sys.stderr, "Processing ", dir
+                    print("Processing ", dir, file=sys.stderr)
                 try:
                     entries = sftp.listdir(dir)
                 except IOError:
@@ -195,7 +195,7 @@ def ssh_ls( remote_path, recurse=False, get_config= None, verbose=False ):
                         continue
                         
                     if verbose:
-                        print >>sys.stderr, "Is dir ?", fp
+                        print("Is dir ?", fp, file=sys.stderr)
                     try:
                         st = sftp.lstat(fp)
                     except IOError:
@@ -209,13 +209,13 @@ def ssh_ls( remote_path, recurse=False, get_config= None, verbose=False ):
                         if recurse:
                             dirs.append( fp )
                         else:
-                            print >>stream, "                           DIR ssh://%s:%s%s/"%(host,port,fp)
+                            print("                           DIR ssh://%s:%s%s/"%(host,port,fp), file=stream)
                     else:
                         mtime = time.localtime(st.st_mtime)
-                        print >>stream, "%04d-%02d-%02d %02d:%02d %9d   ssh://%s:%s%s"%(mtime.tm_year,mtime.tm_mon,mtime.tm_mday,mtime.tm_hour,mtime.tm_min,st.st_size,host,port,fp)
+                        print("%04d-%02d-%02d %02d:%02d %9d   ssh://%s:%s%s"%(mtime.tm_year,mtime.tm_mon,mtime.tm_mday,mtime.tm_hour,mtime.tm_min,st.st_size,host,port,fp), file=stream)
         else:
             mtime = time.localtime(st.st_mtime)
-            print >>stream, "%04d-%02d-%02d %02d:%02d %9d   ssh://%s:%s%s"%(mtime.tm_year,mtime.tm_mon,mtime.tm_mday,mtime.tm_hour,mtime.tm_min,st.st_size,host,port,path)
+            print("%04d-%02d-%02d %02d:%02d %9d   ssh://%s:%s%s"%(mtime.tm_year,mtime.tm_mon,mtime.tm_mday,mtime.tm_hour,mtime.tm_min,st.st_size,host,port,path), file=stream)
     
         output = stream.getvalue()
         stream.close()
@@ -265,12 +265,12 @@ def ssh_test( remote_path, verbose = False, get_config= None ):
         s.connect((host,port))
         data = s.recv(1024)
         if verbose:
-            print >>sys.stderr, "ssh_test: ", data
+            print("ssh_test: ", data, file=sys.stderr)
         s.close()
         return True
     except:        
         if verbose:
-            print >>sys.stderr, traceback.format_exc()
+            print(traceback.format_exc(), file=sys.stderr)
         return False
         
 def ssh_stat( remote_path, get_config= None ):

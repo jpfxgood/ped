@@ -14,7 +14,7 @@ def get_tabs(editor):
 def detect_mode(editor):
     """ hook called to detect if this mode should be used for a file, returns True if it should be used, False otherwise """
     workfile = editor.getWorkfile()
-    if re.search("(\.java$)|(\.java\:\(r.*\)$)",workfile.getFilename()):
+    if re.search(r"(\.java$)|(\.java\:\(r.*\)$)",workfile.getFilename()):
         return True
     else:
         return False
@@ -26,12 +26,12 @@ def handle(editor,ch):
         wf = editor.getWorkfile()
         line = editor.line + editor.vpos
         above = wf.getLine(line-1)
-        match = re.match("^\s*(if|for|while|else|try|catch|public|private|protected|do|class)\W",above)
+        match = re.match(r"^\s*(if|for|while|else|try|catch|public|private|protected|do|class)\W",above)
         if match:
             stop = wf.get_tab_stop(match.start(1))
             editor.insert(stop*' ')
         else:
-            match = re.match("^\s*(\S+)",above)
+            match = re.match(r"^\s*(\S+)",above)
             if match:
                 editor.insert(match.start(1)*' ')
         return 0

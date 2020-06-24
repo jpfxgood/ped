@@ -7,7 +7,11 @@ import keymap
 import keytab
 
 extensions = {}
-ext_dir = os.path.expanduser( "~/.pedextension" )    
+ped_extension_path = "~/.pedextension"
+if "PED_EXTENSION_PATH" in os.environ:
+    ped_extension_path = os.environ["PED_EXTENSION_PATH"]
+    
+ext_dir = os.path.expanduser( ped_extension_path )
 
 # extension modules are python modules with the following two entry points
 # ped_ext_info which takes no arguments and returns a tuple ( cmd_name, keymap_name {"EDITOR","DIALOG","MANAGER"}, keytab_key_name, keytab_key_name_ret, ext_name )

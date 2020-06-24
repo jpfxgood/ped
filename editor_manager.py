@@ -11,18 +11,21 @@ import curses
 import os
 import subprocess
 import copy
-import StringIO
+import io
 import ped_help
 import file_find
 import traceback
 import buffer_dialog
-from svn_browse import browsesvn, get_file_revision
 from ssh_dialog import sftpDialog
-import news_browse
 import keytab
 import cmd_names
 import keymap
-import extension_manager
+import extension_manager     
+
+#def debug_print(*argv):
+#    f = open(os.path.expanduser("~/ped.log"),"a")
+#    print(" ".join([str(f) for f in argv]),file=f)
+#    f.close()
 
 class BaseFrame:
     """ Each frame keeps track of a subwindow """
@@ -36,13 +39,30 @@ class BaseFrame:
         self.win = parent.subwin(height,width,y,x)
         self.changed = True
         self.lborder = lborder
-    
-    def __cmp__(self,other):
-        """ sort frames first in y then in x """
-        c1 = cmp(self.y,other.y)
-        if not c1:
-            c1 = cmp(self.x,other.x)
-        return c1
+
+    def __lt__(self, other):
+        if self.y == other.y:
+            return self.x < other.x
+        else:
+            return self.y < other.y
+        
+    def __gt__(self, other):
+        if self.y == other.y:
+            return self.x > other.x
+        else:
+            return self.y > other.y
+        
+    def __eq__(self, other):
+        return (self.y == other.y) and (self.x == other.x)
+        
+    def __le__(self, other):
+        return self.__lt__(other) or self.__eq__(other)
+
+    def __ge__(self, other):
+        return self.__gt__(other) or self.__eq__(other)
+        
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __del__(self):
         """ clean up our subwindow when we close """
@@ -210,12 +230,12 @@ class EditorManager:
             newFrame.setdialog(self.frames[self.current_frame].dialog)
         self.frames.insert(self.current_frame,newFrame)
         if horizontal:
-            self.frames[self.current_frame].resize(x,y,width,height/2)
-            self.frames[self.current_frame+1].resize(x,y+(height/2),width,height-(height/2))
+            self.frames[self.current_frame].resize(x,y,width,height//2)
+            self.frames[self.current_frame+1].resize(x,y+(height//2),width,height-(height//2))
             self.current_frame += 1
         else:
-            self.frames[self.current_frame].resize(x,y,width/2,height)                        
-            self.frames[self.current_frame+1].resize(x+(width/2)+1,y,width-(width/2)-1,height)
+            self.frames[self.current_frame].resize(x,y,width//2,height)
+            self.frames[self.current_frame+1].resize(x+(width//2)+1,y,width-(width//2)-1,height)
             self.frames[self.current_frame+1].setlborder(True)
             self.current_frame += 1
 
@@ -406,22 +426,7 @@ class EditorManager:
             return True
         return False
 
-    def newsBrowse( self ):
-        """ launch the news browser """
-        news_browse.newsbrowse( self.scr )
-        
-    def browseSVN( self, path=".", filename="", revision="" ):
-        """ launch  the browse svn dialog """
-        values = browsesvn(self.scr,filename=filename,path=path, revision=revision)
-        if "path" in values:
-            if values["path"]:
-                self.addEditor(editor_common.StreamEditor(self.scr,
-                                                            None,
-                                                            values["path"]+":(r%s)"%values["revision"],
-                                                            get_file_revision( values["revision"],values["path"] )))
-                return True
-        return False
-        
+       
     def mouseEvent( self ):
         """ handle mouse events """
         try:
@@ -447,6 +452,7 @@ class EditorManager:
                 pos = f.editor.left + ox
     
                 if mtype & (curses.BUTTON1_CLICKED | curses.BUTTON1_PRESSED | curses.BUTTON1_RELEASED):
+                    (line,pos) = f.editor.filePos(line,pos)
                     f.editor.goto(line,pos)
                     self.current_frame = cf
     
@@ -473,9 +479,8 @@ class EditorManager:
             for f in self.frames:
                 f.redraw(force)
             if force:
-                self.scr.nooutrefresh()
+                self.scr.noutrefresh()
             force = True
-            
             if isinstance(self.frames[self.current_frame],EditorFrame):
                 # if the buffer has a real filename then when it is current be in its directory
                 filename = self.frames[self.current_frame].editor.getFilename()
@@ -489,11 +494,9 @@ class EditorManager:
                 # run the dialog non blocking mode to have it process keystrokes returns unhandled ones             
                 (seq, values) = self.frames[self.current_frame].dialog.main(False)
                 cmd_id, seq = keymap.mapseq(keymap.keymap_manager,seq)
-
             if extension_manager.is_extension(cmd_id):
                 if not extension_manager.invoke_extension( cmd_id, self, seq ):
                     return seq
-                
             if cmd_id == cmd_names.CMD_KILLFRAME and not (len(self.frames)-1):
                 cmd_id = cmd_names.CMD_EXITNOSAVE
 
@@ -518,13 +521,10 @@ class EditorManager:
                     if e.isChanged():
                         e.save()
                 return seq
-            elif cmd_id == cmd_names.CMD_BROWSESVN:
-                (path,filename ) = os.path.split(os.path.abspath(self.editors[self.current].getWorkfile().getFilename()))
-                self.browseSVN( path=path, filename=filename )
             elif cmd_id == cmd_names.CMD_HELP:
                 self.addEditor(editor_common.StreamEditor(self.scr,None,
                                                             "Help",
-                                                            StringIO.StringIO(ped_help.get_help())))
+                                                            io.StringIO(ped_help.get_help())))
             elif cmd_id == cmd_names.CMD_SHELLCMD:
                 cmd = prompt(self.scr,"Shell command","> ",-1,name="shell")
                 if cmd:
@@ -533,6 +533,7 @@ class EditorManager:
                                                               subprocess.Popen(cmd,
                                                                                shell=True,
                                                                                bufsize=1024,
+                                                                               encoding="utf-8",
                                                                                stdout=subprocess.PIPE,
                                                                                stderr=subprocess.STDOUT).stdout))
             elif cmd_id == cmd_names.CMD_OPENEDITOR:
@@ -565,7 +566,5 @@ class EditorManager:
                         return keytab.KEYTAB_ESC
                 else:
                     return keytab.KEYTAB_ESC
-            elif cmd_id == cmd_names.CMD_READNEWS: # alt-r read news
-                self.newsBrowse()
             else:
-                force = False
+                force = False        

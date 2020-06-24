@@ -304,7 +304,7 @@ name_to_key = {
 }
 
 key_to_name = {}
-for name,key in name_to_key.items():
+for name,key in list(name_to_key.items()):
     key_to_name[key] = name
 
 keydef = [
@@ -393,8 +393,8 @@ keydef = [
 ((24,-1),KEYTAB_CTRLX),
 ((25,-1),KEYTAB_CTRLY),
 ((26,-1),KEYTAB_CTRLZ),
-((540,-1),KEYTAB_CTRLLEFT),
-((555,-1),KEYTAB_CTRLRIGHT),
+((545,-1),KEYTAB_CTRLLEFT),
+((560,-1),KEYTAB_CTRLRIGHT),
 ((530,-1),KEYTAB_CTRLHOME),
 ((525,-1),KEYTAB_CTRLEND),
 ((curses.KEY_DC,-1),KEYTAB_DELC),

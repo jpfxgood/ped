@@ -8,7 +8,7 @@ import re
 import os
 import dialog
 import keytab
-from StringIO import StringIO
+from io import StringIO
 from confirm_dialog import confirm
 from message_dialog import message
 import traceback
@@ -43,7 +43,7 @@ def get_dir(path,showhidden=False):
     """ get a directory listing of path, directories are prefixed with <DIR> 
         if showhidden == False hidden files are not include, otherwise they are 
         returns the directory path, the list of directories and list of files as a tuple"""
-    (dirpath, dirnames, filenames) = os.walk(path).next()
+    (dirpath, dirnames, filenames) = next(os.walk(path))
     if not showhidden:
         dirnames = [d for d in dirnames if d[0] != "."]
         filenames = [f for f in filenames if f[0] != "." and f[-1] != "~" and not f.endswith(".bak")]
@@ -78,23 +78,24 @@ class SSHFileDialog(dialog.Dialog):
         y += 1
         self.ssh_current_dir = dialog.Prompt("ssh_dir",3,2,y,"SSH Path: ",dw-18,remote_path)
         y += 1
-        self.ssh_file_list = SSHFileListBox("ssh_files",4,2,y,dh/3,dw-4,"SSH Directory Listing",0,[])
-        y += dh/3
+        self.ssh_file_list = SSHFileListBox("ssh_files",4,2,y,dh//3,dw-4,"SSH Directory Listing",0,[])
+        y += dh//3
         self.ssh_file_name = dialog.Prompt("ssh_file",5,2,y,"SSH File: ",dw-18)
         y += 1
         self.current_dir = dialog.Prompt("local_dir",6,2,y,"Local Path: ",dw-18,local_path)
         y += 1
-        self.file_list = SSHFileListBox("local_files",7,2,y,dh/3,dw-4,"Local Directory Listing",0,[])
-        y += dh/3
+        self.file_list = SSHFileListBox("local_files",7,2,y,dh//3,dw-4,"Local Directory Listing",0,[])
+        y += dh//3
         self.file_name = dialog.Prompt("local_file",8,2,y,"Local File: ",dw-18)
         y += 1
         x = 2
-        self.put_button = dialog.Button("Put",9,x,y,"PUT (LOCAL->REMOTE)",dialog.Component.CMP_KEY_NOP)
-        x += 24
-        self.get_button = dialog.Button("Get",10,x,y,"GET (REMOTE->LOCAL)",dialog.Component.CMP_KEY_NOP)
-        x += 24
-        self.open_button = dialog.Button("Open",10,x,y,"OPEN (REMOTE->LOCAL->OPEN)",dialog.Component.CMP_KEY_OK)
-        x += 29
+        iw = dw//4
+        self.put_button = dialog.Button("Put",9,x,y,"PUT",dialog.Component.CMP_KEY_NOP)
+        x += iw
+        self.get_button = dialog.Button("Get",10,x,y,"GET",dialog.Component.CMP_KEY_NOP)
+        x += iw
+        self.open_button = dialog.Button("Open",10,x,y,"OPEN",dialog.Component.CMP_KEY_OK)
+        x += iw
         self.cancel_button = dialog.Button("Cancel",11,x,y,"CANCEL",dialog.Component.CMP_KEY_CANCEL)
         dialog.Dialog.__init__(self,scr,"FileDialog",dh,dw, [ dialog.Frame(title),
                                                                 self.ssh_username,
@@ -127,7 +128,7 @@ class SSHFileDialog(dialog.Dialog):
                     self.prior_ssh = new_ssh
                     set_values["ssh_files"] = (0, ssh_dirnames+ssh_filenames)
                 except:
-                    print >>open("ssh_dialog.log","a"),traceback.format_exc()
+                    print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
                     confirm(self.win, "SSH Error! Try Again ?")
         local_path = ""
         local_dirnames = []
@@ -140,7 +141,7 @@ class SSHFileDialog(dialog.Dialog):
                     self.prior_local = values["local_dir"]
                     set_values["local_files"] = (0, local_dirnames+local_filenames)
                 except:
-                    print >>open("ssh_dialog.log","a"),traceback.format_exc()
+                    print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
                     confirm(self.win, "File Error! Try Again ?")
         self.setvalue(set_values)           
         
@@ -197,7 +198,7 @@ class SSHFileDialog(dialog.Dialog):
                         lambda : { 'ssh_username': self.ssh_username.getvalue(), "ssh_password":self.ssh_password.getvalue() }, False)
                         self.refresh(True)
                 except:
-                    print >>open("ssh_dialog.log","a"),traceback.format_exc()
+                    print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
                     confirm(self.win, "SSH Error! Try Again ?")
             elif focus_field == self.get_button:
                 try:     
@@ -210,7 +211,7 @@ class SSHFileDialog(dialog.Dialog):
                         lambda : { 'ssh_username': self.ssh_username.getvalue(), "ssh_password":self.ssh_password.getvalue() })
                         self.refresh(True)
                 except:
-                    print >>open("ssh_dialog.log","a"),traceback.format_exc()
+                    print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
                     confirm(self.win, "SSH Error! Try Again ?")
             elif focus_field == self.open_button:
                 try:     
@@ -223,7 +224,7 @@ class SSHFileDialog(dialog.Dialog):
                         lambda : { 'ssh_username': self.ssh_username.getvalue(), "ssh_password":self.ssh_password.getvalue() })
                         self.refresh(True)
                 except:
-                    print >>open("ssh_dialog.log","a"),traceback.format_exc()
+                    print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
                     confirm(self.win, "SSH Error! Try Again ?")
              
              

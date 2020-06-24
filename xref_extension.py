@@ -4,7 +4,7 @@ import os
 import sys
 import re
 import subprocess
-import StringIO
+import io
 import traceback
 from stream_select import StreamSelectComponent
 import dialog
@@ -24,6 +24,7 @@ class XrefRefreshThread( threading.Thread ):
         self.refresh = xref_dialog.config['refresh'][0]
         self.refresh_time = float(xref_dialog.config['interval'])
         self.last_refresh = 0.0
+        self.cwd = os.getcwd()
         threading.Thread.__init__(self)
         self.daemon = True
         
@@ -53,11 +54,8 @@ class XrefRefreshThread( threading.Thread ):
             exclude = sh_escape(config['exclude'])
             numthreads = int(config['numthreads'].strip())
     
-            cmd = "xref -v %s -p %s -e %s -d %s -n %s"%('-r' if recurse else '',pattern,exclude,directory,numthreads)
-            xref_out = subprocess.Popen(cmd,shell=True,bufsize=1024,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout
-            log = open("xref_extension.log","a")
-            for l in xref_out:
-                print >>log,l
+            cmd = "%s/xref -v %s -p %s -e %s -d %s -n %s"%(self.cwd,'-r' if recurse else '',pattern,exclude,directory,numthreads)
+            xref_out = subprocess.Popen(cmd,encoding="utf-8",shell=True,bufsize=1024,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout
             
         return
         
@@ -77,8 +75,8 @@ class XrefConfigDialog(dialog.Dialog):
         max_y += min_y
         width = 56
         height = 12
-        x = (max_x + min_x)/2 - width/2
-        y = (max_y + min_y)/2 - height/2
+        x = (max_x + min_x)//2 - width//2
+        y = (max_y + min_y)//2 - height//2
         dialog.Dialog.__init__(self,p_win,"XrefConfig", height, width, [
             dialog.Frame(title),
             dialog.Toggle("refresh",1,2,2,50-11,xref_dialog.config['refresh'][0],xref_dialog.config['refresh'][1]),
@@ -101,17 +99,18 @@ class XrefDialog(dialog.Dialog):
         self.files = []
         self.lines = {}
         self.config = {}
+        self.cwd = os.getcwd()
         self.load_config()
         max_y,max_x = scr.getmaxyx()
         pw = (max_x - 4)
-        ph = ((max_y-7) / 3)
-        cx = max_x / 2
+        ph = ((max_y-7) // 3)
+        cx = max_x // 2
         y = 1
-        self.found_list = StreamSelectComponent("paths",5,cx-(pw/2),y,pw,ph,"Files",open(os.devnull,"r"))
+        self.found_list = StreamSelectComponent("paths",5,cx-(pw//2),y,pw,ph,"Files",open(os.devnull,"r"))
         y += ph        
-        self.lines_list = StreamSelectComponent("lines",6,cx-(pw/2),y,pw,ph,"Lines",open(os.devnull,"r"))
+        self.lines_list = StreamSelectComponent("lines",6,cx-(pw//2),y,pw,ph,"Lines",open(os.devnull,"r"))
         y += ph        
-        self.preview = FileBrowseComponent("browse",7,cx-(pw/2),y,pw,ph,"Preview",None)
+        self.preview = FileBrowseComponent("browse",7,cx-(pw//2),y,pw,ph,"Preview",None)
         y += ph
         self.query = dialog.Prompt("query",1,2,y,"Query:",max_x-13,query)
         y += 1
@@ -121,8 +120,8 @@ class XrefDialog(dialog.Dialog):
                                                             self.preview,
                                                             self.query,
                                           dialog.Button("open",2,2,y,"OPEN",dialog.Component.CMP_KEY_OK),
-                                          dialog.Button("config",3,2+((max_x-4)/3),y,"CONFIG",dialog.Component.CMP_KEY_NOP),
-                                          dialog.Button("cancel",4,2+(((max_x-4)/3)*2),y,"CANCEL",dialog.Component.CMP_KEY_CANCEL)])
+                                          dialog.Button("config",3,2+((max_x-4)//3),y,"CONFIG",dialog.Component.CMP_KEY_NOP),
+                                          dialog.Button("cancel",4,2+(((max_x-4)//3)*2),y,"CANCEL",dialog.Component.CMP_KEY_CANCEL)])
         if query:
             self.do_query( query )
         self.refresh_thread = XrefRefreshThread( self )
@@ -136,8 +135,8 @@ class XrefDialog(dialog.Dialog):
 
     def refresh_lists( self ):
         """ refresh the paths and lines lists """
-        pls = StringIO.StringIO()
-        lls = StringIO.StringIO()
+        pls = io.StringIO()
+        lls = io.StringIO()
         
         pidx = 0
         pfile = 0
@@ -145,19 +144,17 @@ class XrefDialog(dialog.Dialog):
             for p in self.files:
                 if p == self.fname:
                     pfile = pidx
-                print >>pls,p
+                print(p, file=pls)
                 pidx += 1
 
-        def cmp_line( x, y ):
-            return int(x[0])-int(y[0])
-            
+           
         fidx = 0
         fline = 0     
         if self.fname and self.fname in self.lines:
-            for lineno,rest in sorted(self.lines[self.fname],cmp_line):
+            for lineno,rest in sorted(self.lines[self.fname],key=lambda x: x[0]):
                 if int(lineno) == self.line:
                     fline = fidx
-                print >>lls,"%5s | %s"%(lineno,rest)
+                print("%5s | %s"%(lineno,rest), file=lls)
                 fidx += 1
             
         pls.seek(0)
@@ -170,7 +167,7 @@ class XrefDialog(dialog.Dialog):
         self.render()
 
         if self.preview.editor:
-            self.preview.editor.goto(self.line+self.preview.height/2,0)
+            self.preview.editor.goto(self.line+self.preview.height//2,0)
             self.preview.editor.goto(self.line,0)
         if self.found_list.editor:
             self.found_list.editor.goto(pfile,0)
@@ -183,7 +180,7 @@ class XrefDialog(dialog.Dialog):
         
     def do_query( self, query ):
         """ perform the query and set up the fields """
-        xref_out = subprocess.Popen("xref -q %s"%(sh_escape(query)),shell=True,bufsize=1024,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout
+        xref_out = subprocess.Popen("%s/xref -q %s"%(self.cwd,sh_escape(query)),encoding="utf-8",shell=True,bufsize=1024,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout
         self.files = []
         self.lines = {}
         for res in xref_out:
@@ -202,7 +199,7 @@ class XrefDialog(dialog.Dialog):
                     else:
                         self.lines[path].append((lineno,rest))
                 except:
-                    print >>open("xref_extension.log","a"), "Error parsing result:",res
+                    print("Error parsing result:",res, file=open("xref_extension.log","a"))
 
         self.files = sorted(self.files)
         if self.files:
@@ -305,16 +302,16 @@ def main( stdscr ):
     try:
         d = XrefDialog(stdscr,"")
         d.main()
-    except Exception, e:
+    except Exception as e:
         log = open("xref_extension.log","w")
-        print >>log,str(e)
-        print >>log,traceback.format_exc()
+        print(str(e), file=log)
+        print(traceback.format_exc(), file=log)
     
 
 if __name__ == '__main__':
     try:
         curses.wrapper(main)
-    except Exception, e:
+    except Exception as e:
         log = open("xref_extension.log","w")
-        print >>log,str(e)
-        print >>log,traceback.format_exc()
+        print(str(e), file=log)
+        print(traceback.format_exc(), file=log)
