@@ -282,11 +282,20 @@ class EditorManager:
                 self.current = len(self.editors)-1
             self.frames[self.current_frame].seteditor(self.editors[self.current])
 
+    def syncFrameEditor(self):
+        """ sync the current frame's editor with the current editor """
+        if isinstance(self.frames[self.current_frame],EditorFrame):
+            for idx in range(0,len(self.editors)):
+                if self.frames[self.current_frame].editor.workfile.filename == self.editors[idx].workfile.filename:
+                    self.current = idx
+                    break
+        
     def nextFrame(self):
         """ set the next frame to be current, wrap around the list """
         self.current_frame += 1
         if self.current_frame > len(self.frames)-1:
             self.current_frame = 0
+        self.syncFrameEditor()
 
     def killFrame(self):
         """ kill the current frame and clean up the remaining ones, there are still issues here """
@@ -326,12 +335,15 @@ class EditorManager:
                     f.resize(fx,fy,fwidth,height1+fheight)
                     return
 
+            self.syncFrameEditor()
+
     def zoomFrame(self):
         """ make the current frame fill the screen and get rid of all of the others """
         self.frames = [self.frames[self.current_frame]]
         self.current_frame = 0
         max_y,max_x = self.frames[self.current_frame].parent.getmaxyx()
         self.frames[self.current_frame].resize(0,0,max_x,max_y)
+        self.syncFrameEditor()
 
     def replaceFrame(self, frameClass ):
         """ replace the current frame with a new frame of frameClass type """
@@ -455,6 +467,7 @@ class EditorManager:
                     (line,pos) = f.editor.filePos(line,pos)
                     f.editor.goto(line,pos)
                     self.current_frame = cf
+                    self.syncFrameEditor()
 
                 if mtype & curses.BUTTON1_PRESSED:
                     f.editor.mark_span()
