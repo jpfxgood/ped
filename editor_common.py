@@ -508,7 +508,6 @@ class Editor:
         self.last_search = None
         self.last_search_dir = True
         self.mode = None
-#        self.clear_mark = False
         self.showname = showname
         self.wrap = wrap
         self.wrap_lines = []
@@ -516,8 +515,37 @@ class Editor:
         self.wrap_modref = -1
         self.wrap_width = -1
         self.display_modref = -1
+        self.copies = []
         curses.raw()
         curses.meta(1)
+        
+    def __copy__(self):
+        """ override to just copy the editor state and not the underlying file object """
+        result = Editor(self.parent,self.scr,None,self.workfile,self.showname,self.wrap)
+        result.line = self.line
+        result.pos = self.pos
+        result.vpos = self.vpos
+        result.left = self.left
+        result.prev_cmd = self.prev_cmd
+        result.cmd_id = self.cmd_id
+        result.home_count = self.home_count
+        result.end_count = self.end_count
+        result.line_mark = self.line_mark
+        result.span_mark = self.span_mark
+        result.rect_mark = self.rect_mark
+        result.search_mark = self.search_mark
+        result.mark_pos_start = self.mark_pos_start
+        result.mark_line_start = self.mark_line_start
+        result.last_search = self.last_search
+        result.last_search_dir = self.last_search_dir
+        result.mode = self.mode
+        result.wrap_lines = copy.copy(self.wrap_lines)
+        result.unwrap_lines = copy.copy(self.unwrap_lines)
+        result.wrap_modref = self.wrap_modref
+        result.wrap_width = self.wrap_width
+        result.display_modref = self.display_modref
+        self.copies.append(result)
+        return result
 
     def __del__(self):
         """ if we're closing then clean some stuff up """
@@ -570,8 +598,9 @@ class Editor:
         self.last_search_dir,
         clipboard.clip,
         clipboard.clip_type,
-#        self.clear_mark,
         self.wrap ) = args
+        for c in self.copies:
+            c.applyUndo(*args)
 
     def undo(self):
         """ undo the last transaction, actually undoes the open transaction and the prior closed one """
