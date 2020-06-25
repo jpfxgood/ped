@@ -23,22 +23,21 @@ def test_BaseFrame(testdir,capsys):
             y = 0
             x = 0
             frames.append(editor_manager.BaseFrame( stdscr, x,y,sw_height,sw_width))
-            x += sw_width+1
-            frames.append(editor_manager.BaseFrame( stdscr, x,y,sw_height,sw_width-1,True))
+            x += sw_width
+            frames.append(editor_manager.BaseFrame( stdscr, x,y,sw_height,sw_width,True))
             x = 0
             y += sw_height
             frames.append(editor_manager.BaseFrame( stdscr, x,y,sw_height,sw_width))
-            x += sw_width+1
-            frames.append(editor_manager.BaseFrame( stdscr, x,y,sw_height,sw_width-1,True))
+            x += sw_width
+            frames.append(editor_manager.BaseFrame( stdscr, x,y,sw_height,sw_width,True))
             stdscr.erase()
             for f in frames:
                 f.redraw(True)
                 f.win.refresh()
             stdscr.refresh()
             assert(frames[0] < frames[1] and frames[1] < frames[2] and frames[2] < frames[3])
-            assert(frames[1].getrect() == (sw_width+1,0,sw_width-1,sw_height))
-            assert(frames[1].getrect(True) == (sw_width,0,sw_width,sw_height))
-            ox,oy,owidth,oheight = frames[1].getrect(True)
+            assert(frames[1].getrect() == (sw_width,0,sw_width,sw_height))
+            ox,oy,owidth,oheight = frames[1].getrect()
             for off_y in range(0,oheight):
                 assert(stdscr.inch(oy+off_y,ox) & curses.ACS_VLINE)
             stdscr.erase()
@@ -49,9 +48,8 @@ def test_BaseFrame(testdir,capsys):
                 f.win.refresh()
             stdscr.refresh()
             assert(frames[0] < frames[1] and frames[1] < frames[2] and frames[2] < frames[3])
-            assert(frames[1].getrect() == (sw_width+1,0,sw_width-2,sw_height-1))
-            assert(frames[1].getrect(True) == (sw_width,0,sw_width-1,sw_height-1))
-            ox,oy,owidth,oheight = frames[1].getrect(True)
+            assert(frames[1].getrect() == (sw_width,0,sw_width-1,sw_height-1))
+            ox,oy,owidth,oheight = frames[1].getrect()
             for off_y in range(0,oheight):
                 assert(stdscr.inch(oy+off_y,ox) & curses.ACS_VLINE)
 
@@ -68,13 +66,13 @@ def test_EditorFrame(testdir,capsys):
             y = 0
             x = 0
             frames.append(editor_manager.EditorFrame( stdscr, x,y,sw_height,sw_width))
-            x += sw_width+1
-            frames.append(editor_manager.EditorFrame( stdscr, x,y,sw_height,sw_width-1,True))
+            x += sw_width
+            frames.append(editor_manager.EditorFrame( stdscr, x,y,sw_height,sw_width,True))
             x = 0
             y += sw_height
             frames.append(editor_manager.EditorFrame( stdscr, x,y,sw_height,sw_width))
-            x += sw_width+1
-            frames.append(editor_manager.EditorFrame( stdscr, x,y,sw_height,sw_width-1,True))
+            x += sw_width
+            frames.append(editor_manager.EditorFrame( stdscr, x,y,sw_height,sw_width,True))
             stdscr.erase()
             idx = 0
             for f in frames:
@@ -89,9 +87,8 @@ def test_EditorFrame(testdir,capsys):
                 idx += 1
             stdscr.refresh()
             assert(frames[0] < frames[1] and frames[1] < frames[2] and frames[2] < frames[3])
-            assert(frames[1].getrect() == (sw_width+1,0,sw_width-1,sw_height))
-            assert(frames[1].getrect(True) == (sw_width,0,sw_width,sw_height))
-            ox,oy,owidth,oheight = frames[1].getrect(True)
+            assert(frames[1].getrect() == (sw_width,0,sw_width,sw_height))
+            ox,oy,owidth,oheight = frames[1].getrect()
             for off_y in range(0,oheight):
                 assert(stdscr.inch(oy+off_y,ox) & curses.ACS_VLINE)
             for f in frames:
@@ -104,9 +101,8 @@ def test_EditorFrame(testdir,capsys):
                 f.win.refresh()
             stdscr.refresh()
             assert(frames[0] < frames[1] and frames[1] < frames[2] and frames[2] < frames[3])
-            assert(frames[1].getrect() == (sw_width+1,0,sw_width-2,sw_height-1))
-            assert(frames[1].getrect(True) == (sw_width,0,sw_width-1,sw_height-1))
-            ox,oy,owidth,oheight = frames[1].getrect(True)
+            assert(frames[1].getrect() == (sw_width,0,sw_width-1,sw_height-1))
+            ox,oy,owidth,oheight = frames[1].getrect()
             for off_y in range(0,oheight):
                 assert(stdscr.inch(oy+off_y,ox) & curses.ACS_VLINE)
             for f in frames:
@@ -146,7 +142,7 @@ def test_EditorManager(testdir,capsys):
             em.nextFrame()
             assert(cur_name != em.getCurrentEditor().getFilename())
             validate_screen(em.getCurrentEditor())
-            
+
 
 
 

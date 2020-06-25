@@ -21,6 +21,7 @@ import keytab
 import cmd_names
 import keymap
 import extension_manager
+import math
 
 #def debug_print(*argv):
 #    f = open(os.path.expanduser("~/ped.log"),"a")
@@ -36,9 +37,12 @@ class BaseFrame:
         self.height = height
         self.width = width
         self.parent = parent
-        self.win = parent.subwin(height,width,y,x)
         self.changed = True
         self.lborder = lborder
+        if self.lborder:
+           self.win = parent.subwin(height,width-1,y,x+1)
+        else:
+            self.win = parent.subwin(height,width,y,x)
 
     def __lt__(self, other):
         if self.y == other.y:
@@ -76,21 +80,29 @@ class BaseFrame:
             if self.lborder:
                 off = 0
                 while off < self.height:
-                    self.parent.addch(self.y+off,self.x-1,curses.ACS_VLINE,curses.A_NORMAL)
+                    try:
+                        self.parent.addch(self.y+off,self.x,curses.ACS_VLINE,curses.A_NORMAL)
+                    except:
+                        pass
                     off += 1
             self.changed = False
 
 
     def setlborder( self, flag ):
         """ our frames only have an optional left border to conserve screen space, this turns on/off the left border which is drawn at x-1 """
-        self.lborder = flag
+        if self.lborder == flag:
+            return
 
-    def getrect(self, adjust = False):
-        """ get a rect as (x,y,width,height) optionally adjusted to include the left border if present and adjust == True """
-        if adjust and self.lborder:
-            return (self.x-1,self.y,self.width+1,self.height)
+        self.lborder = flag
+        if flag:
+            self.win = self.parent.subwin(self.height,self.width-1,self.y,self.x+1)
         else:
-            return (self.x,self.y,self.width,self.height)
+            self.win = self.parent.subwin(self.height,self.width,self.y,self.x)
+        self.changed = True
+
+    def getrect(self):
+        """ get a rect as (x,y,width,height) always includes the left border"""
+        return (self.x,self.y,self.width,self.height)
 
 
     def resize(self,x,y,width,height):
@@ -99,9 +111,10 @@ class BaseFrame:
         self.y = y
         self.height = height
         self.width = width
-        self.win = self.parent.subwin(height,width,y,x)
-        if self.x == 0:
-            self.lborder = False
+        if self.lborder:
+            self.win = self.parent.subwin(height,width-1,y,x+1)
+        else:
+            self.win = self.parent.subwin(height,width,y,x)
         self.changed = True
 
 class EditorFrame ( BaseFrame ):
@@ -235,7 +248,7 @@ class EditorManager:
             self.current_frame += 1
         else:
             self.frames[self.current_frame].resize(x,y,width//2,height)
-            self.frames[self.current_frame+1].resize(x+(width//2)+1,y,width-(width//2)-1,height)
+            self.frames[self.current_frame+1].resize(x+(width//2),y,width-(width//2),height)
             self.frames[self.current_frame+1].setlborder(True)
             self.current_frame += 1
 
@@ -259,12 +272,27 @@ class EditorManager:
         if isinstance(self.frames[self.current_frame],EditorFrame):
             if len(self.editors) == 1:
                 return
+            filename = self.editors[self.current].workfile.filename
             del self.editors[self.current]
             if self.current >= len(self.editors):
                 self.current = len(self.editors)-1
             if self.current < 0:
                 self.current = 0
             self.frames[self.current_frame].seteditor(self.editors[self.current])
+            foundFilename = True
+            while foundFilename:
+                for idx in range(0,len(self.frames)):
+                    if isinstance(self.frames[idx],EditorFrame):
+                        if self.frames[idx].editor.workfile.filename == filename:
+                            cur_frame = self.frames[self.current_frame]
+                            self.current_frame = idx
+                            self.killFrame()
+                            for jdx in range(0,len(self.frames)):
+                                if self.frames[jdx] == cur_frame:
+                                    self.current_frame = jdx
+                            break
+                else:
+                    foundFilename = False
 
     def nextEditor(self):
         """ set the next editor to be current, wrap around in the list """
@@ -289,7 +317,7 @@ class EditorManager:
                 if self.frames[self.current_frame].editor.workfile.filename == self.editors[idx].workfile.filename:
                     self.current = idx
                     break
-        
+
     def nextFrame(self):
         """ set the next frame to be current, wrap around the list """
         self.current_frame += 1
@@ -300,40 +328,58 @@ class EditorManager:
     def killFrame(self):
         """ kill the current frame and clean up the remaining ones, there are still issues here """
         if (len(self.frames)-1):
-            (x,y,width,height) = self.frames[self.current_frame].getrect(True) # width adjusted for any frame
-            (x1,y1,width1,height1) = self.frames[self.current_frame].getrect(False) # width not adjusted
+            (x,y,width,height) = self.frames[self.current_frame].getrect() # width adjusted for border if needed
             del self.frames[self.current_frame]
             if self.current_frame > (len(self.frames)-1):
                 self.current_frame -= 1
 
+            frames_to_adjust = []
+            total_height = 0
             for f in self.frames:
-                (fx,fy,fwidth,fheight) = f.getrect(True)
-                (ux,uy,uwidth,uheight) = f.getrect(False)
-                if fy == y and fheight == height and fx+fwidth == x: # window to left of us
-                    f.resize(ux,uy,uwidth+width,uheight)
-                    return
+                (fx,fy,fwidth,fheight) = f.getrect()
+                if fy >= y and fy+fheight <= y+height and fx+fwidth == x: # window to left of us
+                    frames_to_adjust.append ((f,fx,fy,fwidth+width,fheight))
+                    total_height += fheight
+            if total_height == height:
+                for f,fx,fy,fwidth,fheight in frames_to_adjust:
+                    f.resize(fx,fy,fwidth,fheight)
+                return
 
+            frames_to_adjust = []
+            total_height = 0
             for f in self.frames:
-                (fx,fy,fwidth,fheight) = f.getrect(True)
-                (ux,uy,uwidth,uheight) = f.getrect(False)
-                if fy == y and fheight == height and x+width == fx: # window to right of us
-                    if fx != ux:
-                        f.resize(x1,fy,uwidth+width,fheight)
-                    else:
-                        f.resize(x,fy,fwidth+width,fheight)
-                    return
+                (fx,fy,fwidth,fheight) = f.getrect()
+                if fy >= y and fy+fheight <= y+height and x+width == fx: # window to right of us
+                    frames_to_adjust.append((f,x,fy,fwidth+width,fheight))
+                    total_height += fheight
+            if total_height == height:
+                for f,fx,fy,fwidth,fheight in frames_to_adjust:
+                    f.resize(fx,fy,fwidth,fheight)
+                return
 
+            frames_to_adjust = []
+            total_width = 0
             for f in self.frames:
-                (fx,fy,fwidth,fheight) = f.getrect(False)
-                if fx == x1 and fwidth == width1 and y1+height1 == fy: # window below us (don't use frame adjustement for this one)
-                    f.resize(fx,y1,fwidth,height1+fheight)
-                    return
+                (fx,fy,fwidth,fheight) = f.getrect()
+                if fx >= x and fx+fwidth <= x+width and y+height == fy: # window below us (don't use frame adjustement for this one)
+                    frames_to_adjust.append((f,fx,y,fwidth,height+fheight))
+                    total_width += fwidth
+            if total_width == width:
+                for f,fx,fy,fwidth,fheight in frames_to_adjust:
+                    f.resize(fx,fy,fwidth,fheight)
+                return
 
+            frames_to_adjust = []
+            total_width = 0
             for f in self.frames:
-                (fx,fy,fwidth,fheight) = f.getrect(False)
-                if fx == x1 and fwidth == width1 and fy+fheight == y1: # window above us (don't use frame adjustement for this one)
-                    f.resize(fx,fy,fwidth,height1+fheight)
-                    return
+                (fx,fy,fwidth,fheight) = f.getrect()
+                if fx >= x and fx+fwidth <= x+width and fy+fheight == y: # window above us (don't use frame adjustement for this one)
+                    frames_to_adjust.append((f,fx,fy,fwidth,height+fheight))
+                    total_width += fwidth
+            if total_width == width:
+                for f,fx,fy,fwidth,fheight in frames_to_adjust:
+                    f.resize(fx,fy,fwidth,fheight)
+                return
 
             self.syncFrameEditor()
 
@@ -343,6 +389,7 @@ class EditorManager:
         self.current_frame = 0
         max_y,max_x = self.frames[self.current_frame].parent.getmaxyx()
         self.frames[self.current_frame].resize(0,0,max_x,max_y)
+        self.frames[self.current_frame].setlborder(False)
         self.syncFrameEditor()
 
     def replaceFrame(self, frameClass ):
@@ -365,41 +412,71 @@ class EditorManager:
     def resize(self):
         """ handle the resize event from the parent window and re-layout the parent window """
         ymax,xmax = self.scr.getmaxyx()
-        sy = float(ymax)/float(self.max_y)
-        sx = float(xmax)/float(self.max_x)
-        fmap = self.frames
-        fmap.sort()
-        idx = 0
-        while idx < len(fmap):
-            (x,y,width,height) = fmap[idx].getrect()
-            wx = int(round(width*sx))
-            hy = int(round(height*sy))
-            cx = int(round(x*sx))
-            py = int(round(y*sy))
-            if cx+wx > xmax:
-                wx = xmax - cx
-            if py+hy > ymax:
-                hy = ymax - py
-            fmap[idx].resize(cx,py,wx,hy)
-            idx += 1
-        idx = 0
-        while idx < len(fmap):
-            (x,y,width,height) = fmap[idx].getrect()
-            jdx = 0
-            while jdx < len(fmap):
-                if jdx == idx:
-                    jdx += 1
-                    continue
-                (x1,y1,width1,height1) = fmap[jdx].getrect()
-                if (y1 < y and y1+height1 <= y) or (y1 >= y+height) or (x1 < x):
-                    jdx += 1
-                    continue
-                diff = abs(width - (x1-x)-1)
-                if diff <= 4:
-                    width = (x1-x)-1
-                    fmap[idx].resize(x,y,width,height)
-                jdx += 1
-            idx += 1
+        if self.max_x == xmax and self.max_y == ymax:
+            return
+
+        temp_frames = []
+        for f in self.frames:
+            (x,y,width,height) = f.getrect()
+            temp_frames.append((f,x,y,width,height))
+
+        if self.max_x != xmax:
+            already_horizontal = []
+
+            for oy in range(0,max(ymax,self.max_y)):
+                frames_to_adjust = []
+                for fidx in range(0,len(temp_frames)):
+                    (f,x,y,width,height) = temp_frames[fidx]
+                    if y <= oy and y+height > oy:
+                        frames_to_adjust.append(fidx)
+                remaining_width = xmax
+                frames_to_adjust.sort(key=lambda x: temp_frames[x][1])
+                start_x = 0
+                for idx in range(0,len(frames_to_adjust)):
+                    f,x,y,width,height = temp_frames[frames_to_adjust[idx]]
+                    if f in already_horizontal:
+                        pass
+                    elif idx == len(frames_to_adjust)-1:
+                        width = remaining_width
+                        temp_frames[frames_to_adjust[idx]] = (f,start_x,y,width,height)
+                        already_horizontal.append(f)
+                    else:
+                        width = remaining_width // (len(frames_to_adjust)-idx)
+                        temp_frames[frames_to_adjust[idx]] = (f,start_x,y,width,height)
+                        already_horizontal.append(f)
+                    start_x += width
+                    remaining_width -= width
+
+        if self.max_y != ymax:
+            already_vertical = []
+
+            for ox in range(0,max(self.max_x,xmax)):
+                frames_to_adjust = []
+                for fidx in range(0,len(temp_frames)):
+                    (f,x,y,width,height) = temp_frames[fidx]
+                    if x <= ox and x+width > ox:
+                        frames_to_adjust.append(fidx)
+                remaining_height = ymax
+                frames_to_adjust.sort(key=lambda x: temp_frames[x][2])
+                start_y = 0
+                for idx in range(0,len(frames_to_adjust)):
+                    f,x,y,width,height = temp_frames[frames_to_adjust[idx]]
+                    if f in already_vertical:
+                        pass
+                    elif idx == len(frames_to_adjust)-1:
+                        height = remaining_height
+                        temp_frames[frames_to_adjust[idx]] = (f,x,start_y,width,height)
+                        already_vertical.append(f)
+                    else:
+                        height = remaining_height // (len(frames_to_adjust)-idx)
+                        temp_frames[frames_to_adjust[idx]] = (f,x,start_y,width,height)
+                        already_vertical.append(f)
+                    start_y += height
+                    remaining_height -= height
+
+        for f,x,y,width,height in temp_frames:
+            f.resize(x,y,width,height)
+
         self.max_x = xmax
         self.max_y = ymax
 
