@@ -343,6 +343,7 @@ class EditorManager:
             if total_height == height:
                 for f,fx,fy,fwidth,fheight in frames_to_adjust:
                     f.resize(fx,fy,fwidth,fheight)
+                    f.setlborder(fx != 0)
                 return
 
             frames_to_adjust = []
@@ -355,6 +356,7 @@ class EditorManager:
             if total_height == height:
                 for f,fx,fy,fwidth,fheight in frames_to_adjust:
                     f.resize(fx,fy,fwidth,fheight)
+                    f.setlborder(fx != 0)
                 return
 
             frames_to_adjust = []
@@ -367,6 +369,7 @@ class EditorManager:
             if total_width == width:
                 for f,fx,fy,fwidth,fheight in frames_to_adjust:
                     f.resize(fx,fy,fwidth,fheight)
+                    f.setlborder(fx != 0)
                 return
 
             frames_to_adjust = []
@@ -379,6 +382,7 @@ class EditorManager:
             if total_width == width:
                 for f,fx,fy,fwidth,fheight in frames_to_adjust:
                     f.resize(fx,fy,fwidth,fheight)
+                    f.setlborder(fx != 0)
                 return
 
             self.syncFrameEditor()
@@ -561,7 +565,7 @@ class EditorManager:
     def main(self,blocking = True):
         """ this is the main driver for the editor manager it displays the frames and gets it's keystrokes
         from the current frame, only the key events that are released """
-        force = False
+        force = not blocking
 
         curses.mousemask( curses.BUTTON1_PRESSED| curses.BUTTON1_RELEASED| curses.BUTTON1_CLICKED)
 

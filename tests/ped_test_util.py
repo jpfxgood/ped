@@ -7,6 +7,12 @@ import editor_common
 import re
 import keymap
 import keytab
+import subprocess
+
+def screen_size( rows, columns ):
+    cmd = "resize -s %d %d >/dev/null 2>/dev/null"%(rows,columns)
+    subprocess.Popen(cmd,shell=True)
+
 
 def read_str( win, y, x, width ):
     out_str = ''
@@ -135,6 +141,7 @@ def validate_screen( ed, lines_to_test = None, start_line=-1, end_line=-1, start
     return (any_errors,matched_screen,error_screen)
 
 def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
+    screen_size( 30, 100 )
     lines_to_test = ["This is the first line","This is the second line","This is the third line","This is the last line"]
     lines_to_test += [ (("This is line %d "%f)*20).rstrip() for f in range(5,2000) ]
     testfile = testdir.makefile(".txt",*lines_to_test)
@@ -246,8 +253,8 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
     ed.endpg()
     ed.endln()
     ed.main(False)
-#TODO figure out why this is different in wrapped mode
-    assert(ed.getLine(True) == ed.max_y-1 or ed.getLine(True) == ed.max_y-2)
+    sc_line,sc_pos = window_pos(ed,ed.getLine(),ed.getPos())
+    assert(sc_line == ed.max_y-1)
     do_edit_tests(True)
     ed.endfile()
     ed.endln()

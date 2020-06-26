@@ -10,7 +10,7 @@ import re
 import keymap
 import keytab
 import clipboard
-from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro
+from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size
 
 
 def test_BaseFrame(testdir,capsys):
@@ -121,6 +121,7 @@ def test_EditorManager(testdir,capsys):
                 testfile = testdir.makefile(".txt",**args)
                 test_files.append(testfile)
 
+            screen_size( 30, 100 )
             em = editor_manager.EditorManager(stdscr)
             em.addEditor(editor_common.Editor(stdscr,None,str(test_files[0])))
             em.main(False)
@@ -142,9 +143,25 @@ def test_EditorManager(testdir,capsys):
             em.nextFrame()
             assert(cur_name != em.getCurrentEditor().getFilename())
             validate_screen(em.getCurrentEditor())
-
-
-
-
+            play_macro(em,[keytab.KEYTAB_ALTV,keytab.KEYTAB_F04])
+            em.main(False)
+            max_x = em.max_x
+            max_y = em.max_y
+            if max_x == 100 and max_y == 30:
+                assert(len(em.frames) == 3 and em.frames[0].getrect() == (0,0,100,15) and em.frames[1].getrect() == (0,15,50,15) and em.frames[2].getrect() == (50,15,50,15))
+                screen_size(24,80)
+                em.main(False)
+                em.main(False)
+                assert(len(em.frames) == 3 and em.frames[0].getrect() == (0,0,80,12) and em.frames[1].getrect() == (0,12,40,12) and em.frames[2].getrect() == (40,12,40,12))
+                screen_size(30, 100)
+                em.main(False)
+                em.main(False)
+            em.nextEditor()
+            cur_name = em.getCurrentEditor().getFilename()
+            play_macro(em,[keytab.KEYTAB_ALTB,keytab.KEYTAB_DOWN,keytab.KEYTAB_DOWN,'\n','\n'])
+            assert(cur_name != em.getCurrentEditor().getFilename())
+            play_macro(em,[keytab.KEYTAB_ALTF,'\t','\t','\t','\t',keytab.KEYTAB_DOWN]+list("File 4")+['\t','\n',keytab.KEYTAB_DOWN,
+            keytab.KEYTAB_DOWN,keytab.KEYTAB_DOWN,'\n','\t','\t','\t','\t','\t','\t','\t','\n'])
+            assert(em.getCurrentEditor().getFilename().endswith("test_file_4.txt"))
 
         curses.wrapper(main)
