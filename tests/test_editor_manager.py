@@ -163,5 +163,26 @@ def test_EditorManager(testdir,capsys):
             play_macro(em,[keytab.KEYTAB_ALTF,'\t','\t','\t','\t',keytab.KEYTAB_DOWN]+list("File 4")+['\t','\n',keytab.KEYTAB_DOWN,
             keytab.KEYTAB_DOWN,keytab.KEYTAB_DOWN,'\n','\t','\t','\t','\t','\t','\t','\t','\n'])
             assert(em.getCurrentEditor().getFilename().endswith("test_file_4.txt"))
+            play_macro(em,[keytab.KEYTAB_F01])
+            assert(em.getCurrentEditor().getContent(2).startswith("Help for ped James' simple python editor"))
+            em.getCurrentEditor().endfile()
+            line = em.getCurrentEditor().getLine()
+            assert(em.getCurrentEditor().getContent(line-1).startswith("Copyright 2009-2014 James P Goodwin"))
+            em.main(False)
+            validate_screen(em.getCurrentEditor())
+            play_macro(em,[keytab.KEYTAB_ALTN,keytab.KEYTAB_F10]+list("ls -l\n"))
+            for line in range(0,4):
+                assert(em.getCurrentEditor().getContent(line+1).endswith("test_file_%d.txt"%line))
+            play_macro(em,[keytab.KEYTAB_ALTP,keytab.KEYTAB_ALTP])
+            assert(em.getCurrentEditor().getFilename().endswith("test_file_1.txt"))
+            f = em.getCurrentFrame()
+            play_macro(em,[keytab.KEYTAB_ALTK])
+            assert(len(em.frames) == 2 and repr(f) not in [repr(l) for l in em.frames])
+            cur_name = em.getCurrentEditor().getFilename()
+            play_macro(em,[keytab.KEYTAB_ALTD])
+            assert(len(em.editors) == 4 and cur_name not in [e.getFilename() for e in em.editors]) 
+            play_macro(em,[keytab.KEYTAB_ALTV,keytab.KEYTAB_ALTN,keytab.KEYTAB_ALTN,keytab.KEYTAB_ALTZ])
+            assert(len(em.frames) == 1 and em.frames[0].getrect() == (0,0,em.max_x,em.max_y) and em.getCurrentEditor().getFilename().endswith("test_file_4.txt"))
+
 
         curses.wrapper(main)
