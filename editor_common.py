@@ -518,7 +518,7 @@ class Editor:
         self.copies = []
         curses.raw()
         curses.meta(1)
-        
+
     def __copy__(self):
         """ override to just copy the editor state and not the underlying file object """
         result = Editor(self.parent,self.scr,None,self.workfile,self.showname,self.wrap)
@@ -1382,7 +1382,6 @@ class Editor:
         clip = []
         clip_type = clipboard.LINE_CLIP
 
-
         line_idx = mark_line_start
         if self.line_mark:
             if not nocopy:
@@ -1395,7 +1394,6 @@ class Editor:
                 while line_idx <= mark_line_end:
                     self.workfile.deleteLine(mark_line_start)
                     line_idx += 1
-            self.line_mark = False
         elif self.span_mark:
             if not nocopy:
                 clip_type = clipboard.SPAN_CLIP
@@ -1421,7 +1419,6 @@ class Editor:
                         self.workfile.deleteLine(mark_line_start)
                         line_idx += 1
                     self.workfile.insertLine(mark_line_start,first_line[0:mark_pos_start] + last_line[mark_pos_end+1:])
-            self.span_mark = False
         elif self.rect_mark:
             if not nocopy:
                 clip_type = clipboard.RECT_CLIP
@@ -1434,14 +1431,20 @@ class Editor:
                     orig = self.getContent(line_idx,mark_pos_end,True)
                     self.workfile.replaceLine(line_idx,orig[0:mark_pos_start]+orig[mark_pos_end+1:])
                     line_idx += 1
-            self.rect_mark = False
-
-        if delete:
-            self.goto(mark_line_start,mark_pos_start)
 
         # sync the x clipboard
         self.transfer_clipboard()
         self.invalidate_mark()
+        
+        if self.line_mark:
+            self.line_mark = False
+        if self.rect_mark:
+            self.rect_mark = False
+        if self.span_mark:
+            self.span_mark = False
+            
+        if delete:
+            self.goto(mark_line_start,mark_pos_start)
 
         return (clip_type, clip)
 
