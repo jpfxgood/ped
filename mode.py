@@ -5,6 +5,8 @@ import copy
 import curses
 import os
 
+
+
 class Reader:
     """ adapter class to let EditFile be read sequetially from start to end using readline """
     def __init__(self,workfile):

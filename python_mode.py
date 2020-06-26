@@ -33,7 +33,7 @@ def handle(editor,ch):
         wf = editor.getWorkfile()
         line = editor.line + editor.vpos
         above = wf.getLine(line-1)
-        match = re.match(r"^\s*(if|for|while|else|elif|try|except|def|class|finally)\W",above)
+        match = re.match(r"^\s*(if|for|while|else|elif|try|except|def|class|finally|with)\W",above)
         if match:
             stop = wf.get_tab_stop(match.start(1))
             editor.insert(stop*' ')
@@ -44,11 +44,11 @@ def handle(editor,ch):
         if editor.left != old_left or editor.line != old_line:
             editor.flushChanges()
         return 0
-        
+
     return ch
 
 
-def finish(editor):     
+def finish(editor):
     """ this editor is going away do anything required to clean up """
     pass
 
@@ -71,9 +71,9 @@ def redraw(editor):
 
     render(editor, tokens,
     [Token.Operator.Word,Token.Name.Builtin.Pseudo,Token.Keyword,Token.Keyword.Namespace],
-    [Token.Text,Token.String,Token.Literal.String,Token.Literal.String.Doc],
-    [Token.Comment])     
-    
+    [Token.Text,Token.String,Token.Literal.String,Token.Literal.String.Single,Token.Literal.String.Double,Token.Literal.String.Doc],
+    [Token.Comment,Token.Comment.Hashbang,Token.Comment.Multiline,Token.Comment.Single])
+
     return True
 
 def name():

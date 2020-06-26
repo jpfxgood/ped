@@ -33,7 +33,7 @@ def handle(editor,ch):
     return ch
 
 
-def finish(editor):     
+def finish(editor):
     """ this editor is going away do anything required to clean up """
     pass
 
@@ -54,12 +54,12 @@ def redraw(editor):
         detect_mode(editor)
         tokens.refresh(workfile,lexer)
         return False
-        
+
     render(editor,tokens,
             [Token.Name.Tag,Token.Name.Decorator,Token.Keyword.Declaration,Token.Operator.Word,Token.Name.Builtin.Pseudo,Token.Keyword,Token.Keyword.Namespace],
-            [Token.Text,Token.String,Token.Literal.String,Token.Literal.String.Doc],
-            [Token.Comment,Token.Comment.Single])
-            
+            [Token.Text,Token.String,Token.Literal.String,Token.Literal.String.Single,Token.Literal.String.Double,Token.Literal.String.Doc],
+            [Token.Comment,Token.Comment.Hashbang,Token.Comment.Multiline,Token.Comment.Single])
+
     return True
 
 def name():
