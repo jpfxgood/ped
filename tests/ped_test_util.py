@@ -25,7 +25,8 @@ def match_attr( win, y, x, height, width, attr ):
     for iy in range(y,y+height):
         for ix in range(x,x+width):
             rc = win.inch(iy,ix)
-            if not (attr & rc):
+            cc = chr(rc & 0x00FF)
+            if not (attr & rc) and not cc.isspace():
                 return(False)
     return(True)
 
@@ -162,7 +163,7 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
     ed.main(False)
     if wrapped:
         ed.toggle_wrap()
-        ed.main(False)
+    ed.main(False)
 
     validate_screen(ed)
     assert(match_attr(ed.scr,0,0,1,ed.max_x,curses.A_REVERSE))

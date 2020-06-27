@@ -35,9 +35,42 @@ def detect_mode(editor):
 
 def handle(editor,ch):
     """ hook called for each keystroke, can be used for auto-indent or auto-complete """
+    if ch == 10:
+        old_left = editor.left
+        old_line = editor.line
+        editor.cr()
+        wf = editor.getWorkfile()
+        line = editor.line + editor.vpos
+        above = wf.getLine(line-1)
+        match = re.match(r"^\s*(.*)(\{)\s*$",above)
+        if match:
+            if match.start(1) == match.start(2):
+                editor.insert(match.start(1)*' ')
+            else:
+                editor.insert(wf.get_tab_stop(match.start(1))*' ')
+        else:
+            match = re.match(r"^\s*(.*)(\})\s*$",above)
+            if not match:
+                match = re.match(r"^\s*(\S+)",above)
+                if match:
+                    editor.insert(match.start(1)*' ')
+            else:
+                line -= 1
+                while (line > 0):
+                    above = wf.getLine(line-1)
+                    match = re.match(r"^\s*(.*)(\{)\s*$",above)
+                    if match:
+                        editor.insert(match.start(1)*' ')
+                        break
+                    line -= 1
+
+        if editor.left != old_left or editor.line != old_line:
+            editor.flushChanges()
+        return 0
+
     return ch
 
-def finish(editor):     
+def finish(editor):
     """ this editor is going away do anything required to clean up """
     pass
 
@@ -57,12 +90,12 @@ def redraw(editor):
     if not tokens.getTokens() or tokens.getModref() != workfile.getModref():
         tokens.refresh(workfile,copy.copy(lexer))
         return False
-        
+
     render(editor,tokens,
-            [Token.Name.Decorator,Token.Keyword.Declaration,Token.Operator.Word,Token.Name.Builtin.Pseudo,Token.Keyword,Token.Keyword.Namespace],
-            [Token.Text,Token.String,Token.Literal.String,Token.Literal.String.Doc],
-            [Token.Comment,Token.Comment.Single])
-            
+            [Token.Keyword,Token.Operator.Word,Token.Name.Builtin.Pseudo],
+            [Token.Text,Token.String,Token.Literal],
+            [Token.Comment])
+
     return True
 
 def name():

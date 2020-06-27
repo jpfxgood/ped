@@ -125,6 +125,13 @@ def gen_tokens( tokenobj, workfile, lexer ):
     del workfile
     workfile = None
 
+def is_token_in( token, list_token_classes ):
+    """ return true if token is in the list or is a subclass of anything in the list """
+    for c_token in list_token_classes:
+        if token in c_token:
+            return True
+    return False
+
 def render( editor, tokens, keywords, strings, comments ):
     """ using token map (keywords, strings, comments) hilight the tokens in the editor """
     curses.init_pair(1,curses.COLOR_GREEN,curses.COLOR_BLACK)
@@ -172,11 +179,11 @@ def render( editor, tokens, keywords, strings, comments ):
                         if o_srow > (editor.max_y-2):
                             break
 
-                        if t_type in keywords:
+                        if is_token_in(t_type,keywords):
                             attr = cyan
-                        elif t_type in strings:
+                        elif is_token_in(t_type,strings):
                             attr = green
-                        elif t_type in comments:
+                        elif is_token_in(t_type,comments):
                             attr = red
                         else:
                             attr = white
