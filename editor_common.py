@@ -16,9 +16,7 @@ import undo
 import python_mode
 import java_mode
 import cpp_mode
-import makefile_mode
 import guess_mode
-import default_mode
 import copy
 import clipboard
 import subprocess
@@ -475,7 +473,7 @@ class EditFile:
 class Editor:
     """ class that implements the text editor, operates on a file abstraction EditFile """
 
-    modes = [python_mode,cpp_mode,java_mode,makefile_mode,guess_mode,default_mode]
+    modes = [python_mode,cpp_mode,java_mode,guess_mode]
 
     def __init__(self, parent, scr, filename, workfile = None, showname = True, wrap = False ):
         """ takes parent curses screen we're popped up over, scr our curses window, filename we should edit, optionally an already open EditFile """
@@ -1435,14 +1433,14 @@ class Editor:
         # sync the x clipboard
         self.transfer_clipboard()
         self.invalidate_mark()
-        
+
         if self.line_mark:
             self.line_mark = False
         if self.rect_mark:
             self.rect_mark = False
         if self.span_mark:
             self.span_mark = False
-            
+
         if delete:
             self.goto(mark_line_start,mark_pos_start)
 
