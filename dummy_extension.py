@@ -2,6 +2,7 @@
 """ extension to test the extension_manager  """
 from editor_common import Editor
 from message_dialog import message
+import time
 
 
 def ped_ext_info():
@@ -11,5 +12,6 @@ def ped_ext_info():
 
 def ped_ext_invoke( cmd_id, target, ch ):
     """ do our thing with the target object """
-    message( target.scr, "Help Extension", "On our way to help!" )
+    message( target.scr, "Help Extension", "On our way to help!",False )
+    time.sleep(5)
     return True

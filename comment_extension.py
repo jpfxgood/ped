@@ -3,7 +3,7 @@
 from editor_common import Editor
 from message_dialog import message
 
-
+# register shift-F1 to comment the highlighted block
 def ped_ext_info():
     """ return registration information for extension_manager """
     return ( "CMD_COMMENT", "EDITOR", "KEYTAB_F13", "KEYTAB_NOKEY", "comment_extension" )
