@@ -3,6 +3,7 @@ import editor_common
 import curses
 import curses.ascii
 import keytab
+import time
 from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size,match_attr
 
 def test_java_mode(testdir,capsys):
@@ -44,10 +45,13 @@ def test_java_mode(testdir,capsys):
             assert(ed.getLine() == 8 and ed.getPos() == 4)
             ed.insert('if (20 > 18) {')
             ed.main(False,10)
-            ed.insert('System.out.println("20 greater than 18");')
+            time.sleep(1)
+            ed.insert('System.out.println("20 greater than 18");')   
             ed.main(False,10)
+            time.sleep(1)
             ed.insert('}')
             ed.main(False,10)
+            time.sleep(1)
             ed.main(False)
             ed.main(False)
             assert(match_attr(ed.scr,9,4,1,2,cyan))
