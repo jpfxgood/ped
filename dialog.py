@@ -35,7 +35,7 @@ def rect( win, x,y,w,h,label,attr,fill=True ):
     while off < w-1:
         win.addch(y,x+off,curses.ACS_HLINE,attr)
         off += 1
-    win.addch(y,x+(w-1),curses.ACS_URCORNER)
+    win.addch(y,x+(w-1),curses.ACS_URCORNER,attr)
     if label:
         win.addstr(y,x+(w//2)-(len(label)//2),label,attr)
     y += 1
@@ -58,7 +58,7 @@ def rect( win, x,y,w,h,label,attr,fill=True ):
         except:
             pass
         bh -= 1
-        y += 1  
+        y += 1
     try:
         win.addch(y,x,curses.ACS_LLCORNER,attr)
     except:
@@ -71,7 +71,7 @@ def rect( win, x,y,w,h,label,attr,fill=True ):
             pass
         off += 1
     try:
-        win.addch(y,x+(w-1),curses.ACS_LRCORNER)
+        win.addch(y,x+(w-1),curses.ACS_LRCORNER,attr)
     except:
         pass
 
@@ -80,7 +80,7 @@ class Component:
     CMP_KEY_CANCEL = keytab.KEYTAB_DLGCANCEL             # user has canceled the dialog
     CMP_KEY_OK = keytab.KEYTAB_DLGOK                  # user has accepted the dialog
     CMP_KEY_NOP = keytab.KEYTAB_DLGNOP                  # the most recent key requires no action
-    
+
     def __init__(self, name, order ):
         """ all components have a name and a tab order, order == -1 means exclude from tab """
         self.name = name
@@ -98,7 +98,7 @@ class Component:
     def isempty(self):
         """ test if the component entry is empty """
         return False
-        
+
     def setvalue(self,value):
         """ set the components value, may be tuple or other data structure """
         pass
@@ -114,12 +114,12 @@ class Component:
     def mouse_event(self, ox, oy, mtype):
         """ handle mouse events return key value or -1 for not handled """
         return -1
-        
+
     def getorder(self):
         """ get this component's tab order number """
         return self.order
 
-    def getparent(self):  
+    def getparent(self):
         """ get this component's curses target window """
         return self.parent
 
@@ -130,12 +130,12 @@ class Component:
     def getname(self):
         """ get the name of this component """
         return self.name
-        
+
     def setpos(self, x, y ):
         """ set the position of this component """
         self.x = x
         self.y = y
-        
+
     def setsize(self, height, width ):
         """ set the width of this component """
         self.height = height
@@ -152,10 +152,10 @@ class Frame(Component):
         self.w = w
         self.h = h
 
-    def render(self):         
+    def render(self):
         """ frame renders itself as a rectangle with title around window """
         win = self.getparent()
-        if win:  
+        if win:
             if self.x >= 0:
                 x = self.x
                 y = self.y
@@ -165,12 +165,12 @@ class Frame(Component):
                 x = 0
                 y = 0
                 my,mx = win.getmaxyx()
-                
+
             rect(win, x, y, mx, my, self.title, curses.A_NORMAL, False)
             if self.title:
                 win.addstr(y,x+(mx//2)-(len(self.title)//2),self.title)
 
-    
+
 class ListBox(Component):
     def __init__(self, name, order, x, y, height, width, label, selection = 0, lst = []):
         Component.__init__(self,name,order)
@@ -225,7 +225,7 @@ class ListBox(Component):
                 win.move(cy,x)
 
             self.isfocus = False
-            
+
     def focus(self):
         self.isfocus = True
 
@@ -291,7 +291,7 @@ class ListBox(Component):
             self.top = self.selection-(self.height-3)
             if self.top < 0:
                 self.top = 0
-          
+
     def find(self, searchfor ):
         found = False
         if len(self.list):
@@ -307,7 +307,7 @@ class ListBox(Component):
             if self.selection > self.top+(self.height-3):
                 self.top = self.selection-(self.height-3)
         return found
-        
+
     def mouse_event(self, ox, oy, mtype):
         if ox >= self.x and ox < self.x+self.width and oy >= self.y and oy <= self.y+self.height:
             oy = (oy - self.y) - 1
@@ -317,7 +317,7 @@ class ListBox(Component):
                         self.selection = self.top+oy
                         return keytab.KEYTAB_CR
         return -1
-            
+
     def handle(self,ch):
         if len(ch) == 1 and curses.ascii.isprint(ord(ch[0])):
             self.search += ch
@@ -349,7 +349,7 @@ class ListBox(Component):
             self.search = ""
             return ch
         return Component.CMP_KEY_NOP
-                
+
 class Toggle(Component):
     def __init__(self, name, order, x, y, width, selection = 0, lst = []):
         Component.__init__(self,name,order)
@@ -374,7 +374,7 @@ class Toggle(Component):
             if self.isfocus:
                 win.move(y,x)
             self.isfocus = False
-            
+
     def focus(self):
         self.isfocus = True
 
@@ -411,7 +411,7 @@ class Toggle(Component):
                 self.cdown()
                 return Component.CMP_KEY_NOP
         return -1
-            
+
     def handle(self,ch):
         if ch == keytab.KEYTAB_LEFT or ch == keytab.KEYTAB_UP:
             self.cup()
@@ -425,7 +425,7 @@ class Toggle(Component):
             return ch
         elif ch in [keytab.KEYTAB_CR,keytab.KEYTAB_TAB,keytab.KEYTAB_ESC,keytab.KEYTAB_BTAB]:
             return ch
-        
+
         return Component.CMP_KEY_NOP
 
 class Button(Component):
@@ -471,7 +471,7 @@ class Button(Component):
                 self.setvalue(True)
                 return self.key
         return -1
-            
+
     def handle(self,ch):
         if ch == keytab.KEYTAB_SPACE:
             self.setvalue(True)
@@ -484,7 +484,7 @@ class Button(Component):
         elif ch in [keytab.KEYTAB_CR,keytab.KEYTAB_TAB,keytab.KEYTAB_ESC,keytab.KEYTAB_BTAB]:
             return ch
         return Component.CMP_KEY_NOP
-        
+
 class StaticText(Component):
     def __init__(self, name, x, y, prompt, width, value= "" ):
         Component.__init__(self,name,-1)
@@ -499,10 +499,10 @@ class StaticText(Component):
 
     def getvalue(self):
         return self.value
-    
+
     def render(self):
         win = self.getparent()
-            
+
         if win:
             try:
                 max_y,max_x = win.getmaxyx()
@@ -537,7 +537,7 @@ class Prompt(Component):
         else:
             pattr = curses.A_NORMAL
             fattr = curses.A_NORMAL
-            
+
         if win:
             if self.width < 0:
                 (max_y,max_x) = win.getmaxyx()
@@ -547,9 +547,9 @@ class Prompt(Component):
             win.addstr(self.y,self.x+len(self.prompt),pad(self.value,self.width),fattr)
             if self.isfocus:
                 win.move(self.y,self.x+len(self.prompt)+self.pos)
-                
+
         self.isfocus = False
-        
+
     def isempty(self):
         return (len(self.value.strip()) == 0)
 
@@ -591,7 +591,7 @@ class Prompt(Component):
             if mtype & curses.BUTTON1_CLICKED:
                 return Component.CMP_KEY_NOP
         return -1
-            
+
     def insert(self,ch):
         if len(self.value) < self.width:
             if self.pos > len(self.value):
@@ -614,7 +614,7 @@ class Prompt(Component):
         elif ch == keytab.KEYTAB_HOME:
             self.home()
         elif ch == keytab.KEYTAB_END:
-            self.end()            
+            self.end()
         elif ch == keytab.KEYTAB_DOWN:
             self.value = ""
             self.pos = 0
@@ -631,13 +631,13 @@ class Prompt(Component):
                 clipboard.clip = [ self.value ]
         elif ch in [keytab.KEYTAB_CR,keytab.KEYTAB_TAB,keytab.KEYTAB_ESC,keytab.KEYTAB_BTAB,keytab.KEYTAB_UP]:
             return ch
-        
+
         return Component.CMP_KEY_NOP
 
 class PasswordPrompt(Prompt):
     def __init__(self, name, order, x, y, prompt, width, value=""):
         Prompt.__init__(self, name, order, x, y, prompt, width, value)
-        
+
     def render(self):
         win = self.getparent()
         if self.isfocus:
@@ -646,7 +646,7 @@ class PasswordPrompt(Prompt):
         else:
             pattr = curses.A_NORMAL
             fattr = curses.A_NORMAL
-            
+
         if win:
             if self.width < 0:
                 (max_y,max_x) = win.getmaxyx()
@@ -656,24 +656,24 @@ class PasswordPrompt(Prompt):
             win.addstr(self.y,self.x+len(self.prompt),pad(len(self.value)*"*",self.width),fattr)
             if self.isfocus:
                 win.move(self.y,self.x+len(self.prompt)+self.pos)
-                
+
         self.isfocus = False
 
 class Dialog(Component):
     history = {}
-    
+
     def __init__(self, parent, name, height, width, children, y = -1, x = -1 ):
         Component.__init__(self,name,0)
         self.height = height
         self.width = width
         self.children = children
         max_y,max_x = parent.getmaxyx()
-        curses.raw()                                           
+        curses.raw()
         if x < 0:
             self.win = parent.subwin(height,width,(max_y//2)-(height//2),(max_x//2)-(width//2))
         else:
             self.win = parent.subwin(height,width,y,x)
-            
+
         self.win.clear()
         self.win.keypad(1)
         curses.meta(1)
@@ -691,10 +691,10 @@ class Dialog(Component):
         if hasattr(self,"win") and self.win:
             del self.win
             self.win = None
-                                  
+
     def set_history( self, state ):
         self.enable_history = state
-        
+
     def push_history( self, child ):
         if not self.enable_history:
             return
@@ -707,7 +707,7 @@ class Dialog(Component):
                     Dialog.history[key].append(child.getvalue())
             else:
                 Dialog.history[key] = [child.getvalue()]
-                
+
     def pop_history( self, child ):
         if not self.enable_history:
             return
@@ -721,7 +721,7 @@ class Dialog(Component):
                 if self.hist_idx > len(hist):
                     self.hist_idx = 0
                 child.setvalue(hist[-self.hist_idx])
-                
+
     def render(self):
         self.win.leaveok(1)
         for c in self.children:
@@ -758,20 +758,20 @@ class Dialog(Component):
                 value[c.getname()] = c.getvalue()
         return value
 
-    def tab(self):                       
+    def tab(self):
         if self.focus_list:
             self.push_history(self.focus_list[self.current][1])
             self.current += 1
             if self.current >= len(self.focus_list):
                 self.current = 0
 
-    def btab(self):        
+    def btab(self):
         if self.focus_list:
             self.push_history(self.focus_list[self.current][1])
             self.current -= 1
             if self.current < 0:
                 self.current = len(self.focus_list)-1
-                
+
     def goto(self, component):
         """ move focus to this component """
         for i in range(0,len(self.focus_list)):
@@ -781,14 +781,14 @@ class Dialog(Component):
         return False
 
     def handle_mouse(self):
-        if self.focus_list and self.win:           
+        if self.focus_list and self.win:
             try:
                 mid, mx, my, mz, mtype = curses.getmouse()
                 print(mid,mx,my,mz,mtype, file=open("dlgmouse.log","a"))
                 by,bx = self.win.getbegyx()
                 oy = my - by
                 ox = mx - bx
-    
+
                 for i in range(0,len(self.focus_list)):
                     c = self.focus_list[i][1]
                     ret = c.mouse_event(ox,oy,mtype)
@@ -800,16 +800,16 @@ class Dialog(Component):
             except:
                 return -1
 
-    def handle(self, ch):  
+    def handle(self, ch):
         if self.focus_list and ch != keytab.KEYTAB_MOUSE:
             ch = self.focus_list[self.current][1].handle(ch)
-            
+
         cmd_id,ch = keymap.mapseq( keymap.keymap_dialog, ch)
 
         if extension_manager.is_extension(cmd_id):
             if not extension_manager.invoke_extension( cmd_id, self, ch ):
                 return ch
-        
+
         if cmd_id == cmd_names.CMD_DLGNEXT:
             self.tab()
         elif cmd_id == cmd_names.CMD_DLGPREV:
@@ -821,25 +821,28 @@ class Dialog(Component):
         elif cmd_id == cmd_names.CMD_DLGMOUSE:
             ret = self.handle_mouse()
             if ret >= 0:
-                ch = ret                
+                ch = ret
         elif cmd_id == cmd_names.CMD_DLGRESIZE:
             self.resize()
 
         return ch
-        
+
     def resize(self):
         pass
 
-    def main(self,blocking = True):
+    def main(self,blocking = True,force=False,ch_in = None):
         curses.mousemask( curses.BUTTON1_PRESSED| curses.BUTTON1_RELEASED| curses.BUTTON1_CLICKED)
         self.win.nodelay(1)
         self.win.notimeout(0)
         self.win.timeout(0)
         while (1):
-            if not keymap.keypending(self.win):
+            if (not keymap.keypending(self.win)) or force:
                 self.render()
-#                curses.doupdate()
-            ch = self.handle(keymap.get_keyseq(self.win,keymap.getch(self.win)))
+            if not ch_in:
+                ch = self.handle(keymap.get_keyseq(self.win,keymap.getch(self.win)))
+            else:
+                ch = self.handle(ch_in)
+
             if blocking:
                 if ch == Component.CMP_KEY_CANCEL:
                     return {}
@@ -859,7 +862,7 @@ def main(stdscr):
                                           Button("Ok",3,2,16,"OK",Component.CMP_KEY_OK),
                                           Button("Cancel",4,9,16,"CANCEL",Component.CMP_KEY_CANCEL)])
     d.main()
-               
+
 
 if __name__ == '__main__':
     curses.wrapper(main)

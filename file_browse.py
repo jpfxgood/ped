@@ -2,7 +2,7 @@
 """ module to implement a file browse dialog component for the  ped editor """
 import curses
 import curses.ascii
-import dialog                                      
+import dialog
 import editor_common
 import keytab
 
@@ -14,7 +14,7 @@ class FileBrowseComponent(dialog.Component):
         self.x = x
         self.y = y
         self.width = width
-        self.height = height  
+        self.height = height
         self.ewin = None
         self.editor = None
         self.filename = filename
@@ -23,10 +23,10 @@ class FileBrowseComponent(dialog.Component):
         self.isfocus = None
         self.showname = showname
 
-    def __del__(self):  
+    def __del__(self):
         """ clean up window, editor and workfile if we get deleted """
         self.reset()
-        
+
     def reset(self):
         """ reset stuff """
         if self.ewin:
@@ -35,17 +35,17 @@ class FileBrowseComponent(dialog.Component):
         if self.editor:
             self.editor.getWorkfile().close()
             self.editor = None
-            
+
     def setpos(self, x, y ):
         """ set the position """
         self.reset()
         dialog.Component.setpos(self, x, y)
-        
+
     def setsize(self, height, width ):
         """ set the size """
         self.reset()
         dialog.Component.setsize(self, height, width )
-    
+
     def mouse_event(self, ox, oy, mtype):
         """ handle mouse events return key value or -1 for not handled """
         if self.editor and (ox >= self.x and ox < self.x+self.width and oy >= self.y and oy <= self.y+self.height):
@@ -54,7 +54,7 @@ class FileBrowseComponent(dialog.Component):
             if oy >= 0 and ox >= 0 and (mtype & (curses.BUTTON1_CLICKED | curses.BUTTON1_PRESSED | curses.BUTTON1_RELEASED)):
                 self.editor.goto(self.editor.line+oy,self.editor.left+ox)
                 return keytab.KEYTAB_CR
-        
+
         return -1
 
     def render(self):
@@ -76,10 +76,10 @@ class FileBrowseComponent(dialog.Component):
 
             dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr,False)
             if self.editor:
-#                self.editor.invalidate_all()
                 if not self.editor.isMark():
                     self.editor.mark_lines()
                 self.editor.redraw()
+                win.refresh()
                 if self.editor.isMark():
                     self.editor.mark_lines()
         self.isfocus = False

@@ -8,28 +8,39 @@ import re
 import keymap
 import keytab
 import subprocess
+from dialog import Frame,ListBox,Toggle,Button,StaticText,Prompt,Dialog,pad
+from file_browse import FileBrowseComponent
+from stream_select import StreamSelectComponent
 
 def screen_size( rows, columns ):
     cmd = "resize -s %d %d >/dev/null 2>/dev/null"%(rows,columns)
     subprocess.Popen(cmd,shell=True)
 
-
 def read_str( win, y, x, width ):
     out_str = ''
     for ix in range(x,x+width):
         rc = win.inch(y,ix)
-        out_str += chr(rc & 0x00FF)
+        out_str += chr(rc & curses.A_CHARTEXT)
     return out_str
+
+def match_chr( win, y, x, width, match_chr ):
+    for ix in range(x,x+width):
+        if match_chr != (win.inch(y,ix) & (curses.A_ALTCHARSET | curses.A_CHARTEXT)):
+            return False
+    return True
 
 def match_attr( win, y, x, height, width, attr ):
     for iy in range(y,y+height):
         for ix in range(x,x+width):
             rc = win.inch(iy,ix)
-            cc = chr(rc & 0x00FF)
-            if not (attr & rc) and not cc.isspace():
+            cc = chr(rc & curses.A_CHARTEXT)
+            r_attr = (rc & (curses.A_ATTRIBUTES|curses.A_COLOR))&0xFFBFFFFF
+            if not (attr == r_attr) and not cc.isspace():
                 return(False)
     return(True)
 
+def match_attr_str( win, y, x, width, attr ):
+    return match_attr( win, y, x, 1, width, attr)
 
 def undo_all(ed):
     while ed.isChanged():
@@ -496,3 +507,138 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
     assert(clipboard.clip_type == clipboard.SPAN_CLIP and len(clipboard.clip) == (end_line-start_line)+1)
     play_macro(ed, [ keytab.KEYTAB_ALTG, 'down', '4','0','0','\n'] )
     assert(ed.getLine() == 400 )
+
+def validate_rect( win,y,x,height,width,title,attr = curses.A_NORMAL ):
+    """ validate that a rect is rendered correctly """
+    assert(read_str(win,y,x+(width//2)-(len(title)//2),len(title)) == title)
+    assert(match_attr_str(win,y,x+(width//2)-(len(title)//2),len(title),attr))
+    assert(match_chr(win,y,x,1,curses.ACS_ULCORNER))
+    assert(match_attr_str(win,y,x,1,attr))
+    assert(match_chr(win,y,x+1,(width//2)-(len(title)//2)-1,curses.ACS_HLINE))
+    assert(match_chr(win,y,x+(width//2-len(title)//2)+len(title),width-((width//2-len(title)//2)+len(title))-1,curses.ACS_HLINE))
+    assert(match_attr_str(win,y,x+1,width-2,attr))
+    assert(match_chr(win,y+height-1,x+1,width-2,curses.ACS_HLINE))
+    assert(match_attr_str(win,y+height-1,x+1,width-2,attr))
+    assert(match_chr(win,y,x+width-1,1,curses.ACS_URCORNER))
+    assert(match_attr_str(win,y,x+width-1,1,attr))
+    for oy in range(0,height-2):
+        assert(match_chr(win,y+oy+1,x,1,curses.ACS_VLINE))
+        assert(match_attr_str(win,y+oy+1,x,1,attr))
+        assert(match_chr(win,y+oy+1,x+width-1,1,curses.ACS_VLINE))
+        assert(match_attr_str(win,y+oy+1,x+width-1,1,attr))
+    assert(match_chr(win,y+height-1,x,1,curses.ACS_LLCORNER))
+    assert(match_attr_str(win,y+height-1,x,1,attr))
+    assert(match_chr(win,y+height-1,x+width-1,1,curses.ACS_LRCORNER))
+    assert(match_attr_str(win,y+height-1,x+width-1,1,attr))
+
+def validate_dialog( d ):
+    """ validate that a dialog is rendering it's state correctly """
+    for c in d.children:
+        if d.focus_list[d.current][1] == c:
+            c.focus()
+
+        if isinstance(c,Frame):
+            win = c.getparent()
+            if c.x >= 0:
+                x = c.x
+                y = c.y
+                height = c.h
+                width = c.w
+            else:
+                x = 0
+                y = 0
+                height,width = win.getmaxyx()
+            validate_rect( win, y,x,height,width,c.title)
+        elif isinstance(c,ListBox):
+            win = c.getparent()
+            x = c.x
+            y = c.y
+            height = c.height
+            width = c.width
+            validate_rect( win, y,x,height,width,c.label,(curses.A_BOLD if c.isfocus else curses.A_NORMAL))
+            x+=1
+            y+=1
+            width -= 2
+            height -= 2
+
+            top = c.top
+            off = 0
+            cy = -1
+            while top < len(c.list) and off < height:
+                if top == c.selection:
+                    rattr = curses.A_REVERSE
+                    cy = y+off
+                else:
+                    if c.isfocus:
+                        rattr = curses.A_BOLD
+                    else:
+                        rattr = curses.A_NORMAL
+                assert(read_str(win,y+off,x,width) == pad(c.list[top],width)[0:width])
+                assert(match_attr_str(win,y+off,x,width,rattr))
+                top += 1
+                off += 1
+        elif isinstance(c,Toggle):
+            win = c.getparent()
+            if c.isfocus:
+                lattr = curses.A_REVERSE
+            else:
+                lattr = curses.A_NORMAL
+            x = c.x
+            y = c.y
+            width = c.width
+            assert(read_str(win,y,x,width)==pad(c.list[c.selection],width)[0:width])
+            assert(match_attr_str(win,y,x,width,lattr))
+        elif isinstance(c,Button):
+            win = c.getparent()
+            if c.isfocus:
+                battr = curses.A_REVERSE
+            else:
+                battr = curses.A_NORMAL
+            label = "["+c.label+"]"
+            width = len(label)
+            assert(read_str(win,c.y,c.x,width) == label)
+            assert(match_attr_str(win,c.y,c.x,width,battr))
+        elif isinstance(c,StaticText):
+            win = c.getparent()
+            max_y,max_x = win.getmaxyx()
+            width = (max_x - c.x) - 1
+            x = c.x
+            assert(read_str(win,c.y,x,len(c.prompt[-width:])) == c.prompt[-width:])
+            assert(match_attr_str(win,c.y,x,len(c.prompt[-width:]),curses.A_NORMAL))
+            x += len(c.prompt[-width:])
+            width -= len(c.prompt[-width:])
+            if width > 0:
+                assert(read_str(win,c.y,x,c.width) == pad(c.value,c.width)[-width:])
+                assert(match_attr_str(win,c.y,x,c.width,curses.A_NORMAL))
+        elif isinstance(c,Prompt):
+            win = c.getparent()
+            if c.isfocus:
+                pattr = curses.A_BOLD
+                fattr = curses.A_REVERSE
+            else:
+                pattr = curses.A_NORMAL
+                fattr = curses.A_NORMAL
+
+            if c.width < 0:
+                (max_y,max_x) = win.getmaxyx()
+                c.width = max_x - (c.x+len(c.prompt)+2)
+
+            assert(read_str(win,c.y,c.x,len(c.prompt)) == c.prompt)
+            assert(match_attr_str(win,c.y,c.x,len(c.prompt),pattr))
+            assert(read_str(win,c.y,c.x+len(c.prompt),c.width) == pad(c.value,c.width))
+            assert(match_attr_str(win,c.y,c.x+len(c.prompt),c.width,fattr))
+        elif isinstance(c,FileBrowseComponent) or isinstance(c,StreamSelectComponent):
+            win = c.getparent()
+            if c.isfocus:
+                attr = curses.A_BOLD
+            else:
+                attr = curses.A_NORMAL
+
+            validate_rect(win,c.y,c.x,c.height,c.width,c.label,attr)
+            c.editor.main(False)  
+            c.editor.main(False)
+            validate_screen(c.editor)
+
+        if d.focus_list[d.current][1] == c:
+            c.render()
+            c.getparent().refresh()
