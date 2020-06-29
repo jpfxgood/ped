@@ -5,8 +5,6 @@ import copy
 import curses
 import os
 
-
-
 class Reader:
     """ adapter class to let EditFile be read sequetially from start to end using readline """
     def __init__(self,workfile):
@@ -153,8 +151,9 @@ def render( editor, tokens, keywords, strings, comments ):
     else:
         tokens = {}
 
-    lidx = editor.line
-    while lidx < editor.line+(editor.max_y-1):
+    start_line,start_pos = editor.filePos(editor.line,editor.left)
+    lidx = start_line
+    while lidx < start_line+(editor.max_y-1):
         try:
             if editor.isLineChanged(lidx):
                 if lidx in tokens:
@@ -185,68 +184,3 @@ def render( editor, tokens, keywords, strings, comments ):
 
     return True
 
-#def render( editor, tokens, keywords, strings, comments ):
-#    """ using token lists (keywords, strings, comments) hilight the tokens in the editor """
-#    curses.init_pair(1,curses.COLOR_GREEN,curses.COLOR_BLACK)
-#    curses.init_pair(2,curses.COLOR_RED,curses.COLOR_BLACK)
-#    curses.init_pair(3,curses.COLOR_CYAN,curses.COLOR_BLACK)
-#    curses.init_pair(4,curses.COLOR_WHITE,curses.COLOR_BLACK)
-#
-#    green = curses.color_pair(1)
-#    red = curses.color_pair(2)
-#    cyan = curses.color_pair(3)
-#    white = curses.color_pair(4)
-#
-#    token_list = tokens.getTokens()
-#    for (t_type, t_text, (t_srow,t_scol), (t_erow,t_ecol), t_line) in token_list:
-#        f_line = t_srow - 1
-#        o_srow = t_srow - 1
-#        o_erow = t_erow - 1
-#        o_scol = t_scol
-#        o_ecol = t_ecol
-#        (o_srow,o_scol) = editor.scrPos(o_srow,o_scol)
-#        (o_erow,o_ecol) = editor.scrPos(o_erow,o_ecol)
-#        o_srow -= editor.line
-#        o_erow -= editor.line
-#        o_scol -= editor.left
-#        o_ecol -= editor.left
-#        t_start = 0
-#        t_end = len(t_text)
-#
-#        if o_srow < 0 and o_erow < 0:
-#            continue
-#
-#        if (o_scol < 0 and o_ecol < 0) or (o_scol >= editor.max_x-1 and o_ecol >= editor.max_x-1):
-#            continue
-#
-#        if o_srow > (editor.max_y-2):
-#            break
-#
-#        if t_type in keywords:
-#            attr = cyan
-#        elif t_type in strings:
-#            attr = green
-#        elif t_type in comments:
-#            attr = red
-#        else:
-#            attr = white
-#
-#        for ch in range(0,len(t_text)):
-#            if o_srow >= 0 and o_srow < editor.max_y-1 and o_scol >= 0 and o_scol < editor.max_x-1:
-#                try:
-#                    if editor.isLineChanged(f_line):
-#                        editor.addstr(o_srow+1,o_scol,t_text[ch], attr)
-#                except:
-#                    pass
-#            o_scol += 1
-#            if editor.wrap:
-#                if o_scol >= editor.max_x-1:
-#                    o_srow += 1
-#                    f_line += 1
-#                    o_scol = 0
-#            if o_srow > (editor.max_y-2):
-#                break
-#
-#        if o_srow > (editor.max_y-2):
-#            break
-#    return True
