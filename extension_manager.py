@@ -7,22 +7,24 @@ import keymap
 import keytab
 
 extensions = {}
-ped_extension_path = "~/.pedextension"
-if "PED_EXTENSION_PATH" in os.environ:
-    ped_extension_path = os.environ["PED_EXTENSION_PATH"]
-    
-ext_dir = os.path.expanduser( ped_extension_path )
 
 # extension modules are python modules with the following two entry points
 # ped_ext_info which takes no arguments and returns a tuple ( cmd_name, keymap_name {"EDITOR","DIALOG","MANAGER"}, keytab_key_name, keytab_key_name_ret, ext_name )
 # cmd_name can be the same as an existing name which will be an override or it can be a new name
 # keymap_name and keytab_key_name should be None if it is an override, if not it needs to be specified
-# ped_ext_invoke which takes arguments ( Dialog or EditorManager or Editor, key ordinal we entered on ) 
+# ped_ext_invoke which takes arguments ( Dialog or EditorManager or Editor, key ordinal we entered on )
 # returns True to continue cmd processing or False to exit cmd processing allows for augmenting commands
 # with a prior action
 
 def register_extensions():
     """ search the directory ~/.pedextension for python modules that implement ped_ext_info, ped_ext_invoke methods """
+    
+    ped_extension_path = "~/.pedextension"
+    if "PED_EXTENSION_PATH" in os.environ:
+        ped_extension_path = os.environ["PED_EXTENSION_PATH"]
+    
+    ext_dir = os.path.expanduser( ped_extension_path )
+    
     if os.path.exists(ext_dir) and os.path.isdir(ext_dir):
         pwd = os.getcwd()
         os.chdir(ext_dir)

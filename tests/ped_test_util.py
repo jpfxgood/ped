@@ -8,7 +8,7 @@ import re
 import keymap
 import keytab
 import subprocess
-from dialog import Frame,ListBox,Toggle,Button,StaticText,Prompt,Dialog,pad
+from dialog import Frame,ListBox,Toggle,Button,StaticText,Prompt,PasswordPrompt,Dialog,pad
 from file_browse import FileBrowseComponent
 from stream_select import StreamSelectComponent
 
@@ -610,6 +610,23 @@ def validate_dialog( d ):
             if width > 0:
                 assert(read_str(win,c.y,x,c.width) == pad(c.value,c.width)[-width:])
                 assert(match_attr_str(win,c.y,x,c.width,curses.A_NORMAL))
+        elif isinstance(c,PasswordPrompt):
+            win = c.getparent()
+            if c.isfocus:
+                pattr = curses.A_BOLD
+                fattr = curses.A_REVERSE
+            else:
+                pattr = curses.A_NORMAL
+                fattr = curses.A_NORMAL
+
+            if c.width < 0:
+                (max_y,max_x) = win.getmaxyx()
+                c.width = max_x - (c.x+len(c.prompt)+2)
+
+            assert(read_str(win,c.y,c.x,len(c.prompt)) == c.prompt)
+            assert(match_attr_str(win,c.y,c.x,len(c.prompt),pattr))
+            assert(read_str(win,c.y,c.x+len(c.prompt),c.width) == pad(len(c.value)*"*",c.width))
+            assert(match_attr_str(win,c.y,c.x+len(c.prompt),c.width,fattr))
         elif isinstance(c,Prompt):
             win = c.getparent()
             if c.isfocus:
@@ -625,7 +642,7 @@ def validate_dialog( d ):
 
             assert(read_str(win,c.y,c.x,len(c.prompt)) == c.prompt)
             assert(match_attr_str(win,c.y,c.x,len(c.prompt),pattr))
-            assert(read_str(win,c.y,c.x+len(c.prompt),c.width) == pad(c.value,c.width))
+            assert(read_str(win,c.y,c.x+len(c.prompt),c.width) == pad(c.value,c.width)[0:c.width])
             assert(match_attr_str(win,c.y,c.x+len(c.prompt),c.width,fattr))
         elif isinstance(c,FileBrowseComponent) or isinstance(c,StreamSelectComponent):
             win = c.getparent()
@@ -635,7 +652,7 @@ def validate_dialog( d ):
                 attr = curses.A_NORMAL
 
             validate_rect(win,c.y,c.x,c.height,c.width,c.label,attr)
-            c.editor.main(False)  
+            c.editor.main(False)
             c.editor.main(False)
             validate_screen(c.editor)
 
