@@ -514,6 +514,7 @@ class Editor:
         self.wrap_width = -1
         self.display_modref = -1
         self.copies = []
+        self.invalidate_all()
         curses.raw()
         curses.meta(1)
 
@@ -543,6 +544,7 @@ class Editor:
         result.wrap_width = self.wrap_width
         result.display_modref = self.display_modref
         self.copies.append(result)
+        result.invalidate_all()
         return result
 
     def __del__(self):
@@ -727,9 +729,12 @@ class Editor:
                 line_len = self.workfile.length(l)
                 start = 0
                 self.unwrap_lines.append(len(self.wrap_lines))
-                while start < line_len:
-                    self.wrap_lines.append((l,start,min(line_len,start+self.wrap_width)))
-                    start += self.wrap_width
+                if not line_len:
+                    self.wrap_lines.append((l,0,0))
+                else:
+                    while start < line_len:
+                        self.wrap_lines.append((l,start,min(line_len,start+self.wrap_width)))
+                        start += self.wrap_width
 
     def addstr(self,row,col,str,attr = curses.A_NORMAL):
         """ write properly encoded string to screen location """

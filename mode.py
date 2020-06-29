@@ -132,6 +132,10 @@ def is_token_in( token, list_token_classes ):
             return True
     return False
 
+def window_pos(ed,line,pos):
+    sc_line,sc_pos = ed.scrPos(line,pos)
+    return((sc_line-ed.line)+1,sc_pos-ed.left)
+
 def render( editor, tokens, keywords, strings, comments ):
     """ using token map (keywords, strings, comments) hilight the tokens in the editor """
     curses.init_pair(1,curses.COLOR_GREEN,curses.COLOR_BLACK)
@@ -149,7 +153,6 @@ def render( editor, tokens, keywords, strings, comments ):
     else:
         tokens = {}
 
-    y = 1
     lidx = editor.line
     while lidx < editor.line+(editor.max_y-1):
         try:
@@ -157,28 +160,6 @@ def render( editor, tokens, keywords, strings, comments ):
                 if lidx in tokens:
                     line_tokens = tokens[lidx]
                     for (t_type, t_text, (t_srow,t_scol), (t_erow,t_ecol), t_line) in line_tokens:
-                        o_srow = t_srow
-                        o_erow = t_erow
-                        o_scol = t_scol
-                        o_ecol = t_ecol
-                        (o_srow,o_scol) = editor.scrPos(o_srow,o_scol)
-                        (o_erow,o_ecol) = editor.scrPos(o_erow,o_ecol)
-                        o_srow -= editor.line
-                        o_erow -= editor.line
-                        o_scol -= editor.left
-                        o_ecol -= editor.left
-                        t_start = 0
-                        t_end = len(t_text)
-
-                        if o_srow < 0 and o_erow < 0:
-                            continue
-
-                        if (o_scol < 0 and o_ecol < 0) or (o_scol > editor.max_x-1 and o_ecol > editor.max_x-1):
-                            continue
-
-                        if o_srow > (editor.max_y-2):
-                            break
-
                         if is_token_in(t_type,keywords):
                             attr = cyan
                         elif is_token_in(t_type,strings):
@@ -188,37 +169,18 @@ def render( editor, tokens, keywords, strings, comments ):
                         else:
                             attr = white
 
-                        for ch in range(0,len(t_text)):
-                            if o_srow >= 0 and o_srow < editor.max_y-1 and o_scol >= 0 and o_scol <= editor.max_x-1:
-                                try:
-                                    editor.addstr(o_srow+1,o_scol,t_text[ch], attr)
-                                except:
-                                    pass
-                            o_scol += 1
-                            if editor.wrap:
-                                if o_scol > editor.max_x-1:
-                                    o_srow += 1
-                                    o_scol = 0
-                            if o_srow > (editor.max_y-2):
-                                break
-
-                        if o_srow > (editor.max_y-2):
-                            break
-
-                    if line_tokens and o_srow <= (editor.max_y-2):
-                        while o_scol <= editor.max_x-1:
-                            try:
-                                editor.addstr(o_srow+1,o_scol,' ', white)
-                            except:
-                                pass
-                            o_scol += 1
-                    y =  o_srow+1
+                        for ch in t_text:
+                            sc_line,sc_pos = window_pos(editor,t_srow,t_scol)
+                            if sc_line >= 0 and sc_line < editor.max_y and sc_pos >= 0 and sc_pos < editor.max_x:
+                                editor.addstr(sc_line,sc_pos,ch,attr)
+                            t_scol += 1
+                    if sc_line >= 0 and sc_line < editor.max_y and sc_pos+1 >= 0 and sc_pos+1 < editor.max_x:
+                        editor.addstr(sc_line,sc_pos+1,' '*(editor.max_x-(sc_pos+1)),attr)
                 else:
                     l = editor.getContent(lidx,editor.left+editor.max_x,True,True)
                     editor.addstr(y,0,l[editor.left:editor.left+editor.max_x])
         except Exception as e:
             pass
-        y = y + 1
         lidx = lidx + 1
 
     return True
