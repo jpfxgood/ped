@@ -228,20 +228,23 @@ class EditFile:
         if os.path.exists(abs_name):
             self.working = tempfile.NamedTemporaryFile(mode="w+",buffering=1,encoding="utf-8",prefix="ped_",dir=self.get_backup_dir(self.backuproot))
             shutil.copyfile(abs_name,self.working.name)
+            if not self.readonly:
+                self.setReadOnly(not os.access(abs_name,os.W_OK))
         elif not self.readonly:
             self.working = tempfile.NamedTemporaryFile(mode="w+",buffering=1,encoding="utf-8",prefix="ped_",dir=self.get_backup_dir(self.backuproot))
         else:
             raise Exception("File %s does not exist!"%(self.filename))
-        if not self.readonly:
-            self.setReadOnly(not os.access(abs_name,os.W_OK))
         self.filename = abs_name
         self.working.seek(0,0)
 
     def isModifiedOnDisk(self):
         """ return true if the file we're editing has been modified since we started """
-        disk_stat = os.stat(self.filename)
-        temp_stat = os.stat(self.working.name)
-        return disk_stat.st_mtime > temp_stat.st_mtime
+        if os.path.exists(self.filename):
+            disk_stat = os.stat(self.filename)
+            temp_stat = os.stat(self.working.name)
+            return disk_stat.st_mtime > temp_stat.st_mtime
+        else:
+            return False
 
     def close(self):
         """ close the file """
@@ -447,12 +450,14 @@ class EditFile:
                 o.write(txt)
             o.close()
             self.working.close()
-            fstat = os.stat(self.filename)
-
-            backup_path = self.make_backup_dir(self.filename,self.backuproot)
-            retval = shutil.move(self.filename,backup_path)
-            os.rename(self.filename+".sav",self.filename)
-            os.chmod(self.filename,fstat.st_mode)
+            if os.path.exists(self.filename):
+                fstat = os.stat(self.filename)
+                backup_path = self.make_backup_dir(self.filename,self.backuproot)
+                retval = shutil.move(self.filename,backup_path)
+                os.rename(self.filename+".sav",self.filename)
+                os.chmod(self.filename,fstat.st_mode)
+            else:
+                os.rename(self.filename+".sav",self.filename)
             self.load()
 
     def get_tab_stop(self, idx, before=False ):
