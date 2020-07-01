@@ -57,7 +57,7 @@ keymap_editor = {
     keytab.KEYTAB_ALTL:        (cmd_names.CMD_MARKLINES,       keytab.KEYTAB_NOKEY),    # alt-L
     keytab.KEYTAB_ALTM:        (cmd_names.CMD_MARKSPAN,        keytab.KEYTAB_NOKEY),    # alt-M
     keytab.KEYTAB_ALTC:        (cmd_names.CMD_MARKRECT,        keytab.KEYTAB_NOKEY),    # alt-C
-    keytab.KEYTAB_ALTW:        (cmd_names.CMD_SAVE,            keytab.KEYTAB_NOKEY),    # alt-W
+    keytab.KEYTAB_ALTW:        (cmd_names.CMD_SAVE,            keytab.KEYTAB_REFRESH),    # alt-W
     keytab.KEYTAB_ALTo:        (cmd_names.CMD_SAVEAS,          keytab.KEYTAB_REFRESH),  # alt-o
     keytab.KEYTAB_ALTG:        (cmd_names.CMD_PRMTGOTO,        keytab.KEYTAB_REFRESH),    # alt-G
     keytab.KEYTAB_ALTU:        (cmd_names.CMD_UNDO,            keytab.KEYTAB_NOKEY),    # alt-U
@@ -104,12 +104,12 @@ keymap_dialog = {
     keytab.KEYTAB_RESIZE: (cmd_names.CMD_DLGRESIZE, keytab.KEYTAB_DLGNOP ),
     keytab.KEYTAB_MOUSE: (cmd_names.CMD_DLGMOUSE, keytab.KEYTAB_NOKEY),
     }
-    
+
 recording = False
 playback = False
 macro = []
 macro_idx = 0
-keydef_map = {}     
+keydef_map = {}
 
 def insert_keydef( km, oseq, kt ):
     """ insert into the keydef_map an ordinal sequence and a keytab key to map it to """
@@ -137,12 +137,12 @@ def start_recording():
     recording = True
     macro = []
     macro_idx = 0
-    
+
 def stop_recording():
     """ stop recording key sequences into macro list """
     global recording
     recording = False
-    
+
 def toggle_recording():
     """ flip recording on or off """
     global recording,macro
@@ -151,33 +151,33 @@ def toggle_recording():
         stop_recording()
     else:
         start_recording()
-    
+
 def is_recording():
     """ return current state of recording key macro """
     global recording
     return recording
-    
+
 def start_playback():
     """ start playback from macro """
-    global playback, macro_idx 
+    global playback, macro_idx
     playback = True
     macro_idx = 0
     if is_recording():
         stop_recording()
-    
+
 def stop_playback():
     """ stop playback from macro """
     global playback, macro_index
     playback = False
     macro_index = 0
-    
+
 def record_seq( seq ):
     """ record a key sequence into the buffer """
     global macro
     if (len(seq) == 1 and seq[0] == -1) or seq == '\x00':
         return
     macro.append(seq)
-    
+
 def playback_seq():
     """ get the next sequence to play back """
     global macro, macro_idx
@@ -187,7 +187,7 @@ def playback_seq():
         return seq
     stop_playback()
     return keytab.KEYTAB_REFRESH
-    
+
 def is_playback():
     """ return true if we are in playback mode """
     global playback
@@ -208,14 +208,14 @@ def getch( scr ):
         time.sleep(0.01)
         ch = scr.getch()
         return ch
-    
+
 def get_keyseq( scr, ch ):
     """ get the full key sequence to be mapped, parameter is the first key of the sequence """
     global playback, recording
-   
+
     if playback:
         return playback_seq()
-        
+
     if 0<ch<256 and curses.ascii.isprint(ch):
         seq = chr(ch)
     else:
@@ -228,23 +228,23 @@ def get_keyseq( scr, ch ):
                     break
             else:
                 seq = keytab.KEYTAB_NOKEY
-                break           
+                break
             if ch < 0:
                 while ch < 0:
                     ch = scr.getch()
             else:
                 ch = scr.getch()
-        
+
     if recording:
         record_seq( seq )
 
     return seq
-    
+
 def mapkey( scr, keymap_xlate, ch ):
     """ complete fetching the key sequence and get the command and return character as a tuple (cmd_id, retkey) """
     seq = get_keyseq( scr, ch )
     return mapseq( keymap_xlate, seq )
-    
+
 def mapseq( keymap_xlate, seq ):
     """ map a key sequence from the KEYMAP_ constants to a command using the supplied keymap_xlate hash  return (cmd,seq) tuple"""
     ret = (cmd_names.CMD_RETURNKEY,seq)
@@ -286,7 +286,7 @@ def loadkeymap():
                         keymap_dialog[keytab.name_to_key[key]] = ( cmd_names.name_to_cmd[cmd], keytab.name_to_key[ret] )
                     elif mapname == "MANAGER":
                         keymap_manager[keytab.name_to_key[key]] = ( cmd_names.name_to_cmd[cmd], keytab.name_to_key[ret] )
-            
+
 def dumpkeymap():
     """ create a default ~/.pedkeymap keybinding file """
     kmf = os.path.expanduser("~/.pedkeymap")
@@ -322,7 +322,7 @@ def loadkeydef():
                     keytab.name_to_key[key] = eval(value)
                     keytab.key_to_name[eval(value)] = key
         compile_keydef()
-                    
+
 def dumpkeydef():
     """ create a default ~/.pedkeydef keydef file """
     kdf = os.path.expanduser("~/.pedkeydef")
@@ -332,19 +332,19 @@ def dumpkeydef():
             print("%s=%s"%(attr_name,repr(getattr(keytab,attr_name))), file=fkdf)
     for k in keytab.keydef:
         print("KEYDEF=%s,%s"%(",".join([str(f) for f in k[0]]),keytab.key_to_name[k[1]]), file=fkdf)
-            
-    
+
+
 # force the keydef_map to be built on load of module
 if not keydef_map:
     compile_keydef()
-    
+
 def main(stdscr):
     stdscr.nodelay(1)
     stdscr.notimeout(0)
-    stdscr.timeout(0)  
+    stdscr.timeout(0)
     curses.raw()
     line = 0
-    col = 0                    
+    col = 0
     seq = get_keyseq(stdscr, getch(stdscr))
     k = mapseq(keymap_editor,seq)
     while True:
@@ -353,10 +353,10 @@ def main(stdscr):
         if seq != '\x00':
             stdscr.addstr(line,col,"%s == %s               "%(seq,str(k)), curses.A_REVERSE)
             line += 1
-            line = line % 10     
+            line = line % 10
         seq = get_keyseq(stdscr, getch(stdscr))
         k = mapseq(keymap_editor,seq)
-         
+
     stdscr.nodelay(0)
 #        altch = stdscr.getch()
 #        stdscr.nodelay(1)

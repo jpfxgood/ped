@@ -66,6 +66,7 @@ class FileBrowseComponent(dialog.Component):
             if not self.editor and self.filename:
                 self.editor = editor_common.ReadonlyEditor(win,self.ewin,self.filename, self.showname)
                 self.editor.goto(self.start_line,0)
+                self.editor.mark_lines()
                 self.editor.invalidate_all()
                 self.editor.main(False)
 
@@ -76,12 +77,9 @@ class FileBrowseComponent(dialog.Component):
 
             dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr,False)
             if self.editor:
-                if not self.editor.isMark():
-                    self.editor.mark_lines()
                 self.editor.redraw()
                 win.refresh()
-                if self.editor.isMark():
-                    self.editor.mark_lines()
+
         self.isfocus = False
 
     def focus(self):
@@ -111,7 +109,12 @@ class FileBrowseComponent(dialog.Component):
     def handle(self,ch):
         """ translate the editor keys for component use """
         if self.editor:
+            o_line = self.editor.getLine()
             ret_ch = self.editor.main(False,ch)
+            if self.editor.getLine() != o_line or not self.editor.isMark():
+                if self.editor.isMark():
+                    self.editor.mark_lines()
+                self.editor.mark_lines()
         else:
             ret_ch = ch
         if ret_ch in [keytab.KEYTAB_SPACE,keytab.KEYTAB_CR,keytab.KEYTAB_TAB,keytab.KEYTAB_ESC,keytab.KEYTAB_BTAB]:

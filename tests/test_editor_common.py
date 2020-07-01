@@ -25,7 +25,7 @@ def test_EditFile(testdir):
     ef.set_tabs( [ 8, 16] )
     assert(ef.get_tabs() == [ 8, 16 ] )
     w = ef.getWorking()
-    assert( isinstance(w,io.IOBase) and not w.closed )
+    assert( not w.closed )
     assert( ef.getModref() == 0)
     assert( isinstance(ef.getUndoMgr(), editor_common.undo.UndoManager ))
     assert( not ef.isChanged() )
@@ -45,7 +45,7 @@ def test_EditFile(testdir):
     assert( ef.getWorking() == None )
     ef.load()
     w = ef.getWorking()
-    assert( isinstance(w,io.IOBase) and not w.closed )
+    assert( not w.closed )
     for line in range(0,len(lines_to_test)):
         assert(ef.length(line) == len(lines_to_test[line]))
         fl = ef.getLine(line)

@@ -42,7 +42,7 @@ def handle(editor,ch):
             if match:
                 editor.insert(match.start(1)*' ')
         if editor.left != old_left or editor.line != old_line:
-            editor.flushChanges()
+            editor.invalidate_screen()
         return 0
 
     return ch

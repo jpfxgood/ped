@@ -123,31 +123,33 @@ class EditorFrame ( BaseFrame ):
         """ parent is the curses window we're embedded in, x,y are our upper left coordinate, height,width are the size in characters """
         BaseFrame.__init__( self, parent,x,y,height,width,lborder )
         self.editor = None
-        self.chgseq = -1
 
     def __del__(self):
         """ clean up our subwindow when we close """
         BaseFrame.__del__(self)
+        if self.editor.original:
+            self.editor.original.remove_copy(self.editor)
+            self.editor.original = None
+        del self.editor
         self.editor = None
 
     def __copy__(self):
         """ copy of editor frame """
-        return EditorFrame( self.parent, self.x, self.y, self.height, self.width, self.lborder )
+        ef = EditorFrame( self.parent, self.x, self.y, self.height, self.width, self.lborder )
+        return ef
 
     def redraw(self,force=True):
         """ redraw the frame updating the frame and the embedded editor as needed, force == True causes full redraw """
         BaseFrame.redraw( self, force )
         if self.editor:
             self.editor.setWin(self.win)
-            modRef = self.editor.getModref()
-            if modRef > self.chgseq or force:
+            if self.editor.has_changes() or force:
                 if force:
-                    self.editor.flushChanges()
+                    self.editor.invalidate_screen()
                 self.editor.redraw()
                 self.win.leaveok(1)
                 self.win.refresh()
                 self.win.leaveok(0)
-                self.chgseq = modRef
 
     def resize(self,x,y,width,height):
         """ resizes the window, and adjusts the size of the embedded editor """
@@ -158,9 +160,11 @@ class EditorFrame ( BaseFrame ):
 
     def seteditor(self,editor):
         """ installs a new editor into this frame, we copy it each time so we get independent scrolling """
-        self.editor = copy.copy(editor)
+        del self.editor
+        self.editor = editor
+        self.editor.setWin(self.win)
+        self.editor.resize()
         self.changed = True
-        self.chgseq = -1
 
 class DialogFrame ( BaseFrame ):
     """ Each frame keeps track of an editor instance in a subwindow """
@@ -168,7 +172,6 @@ class DialogFrame ( BaseFrame ):
         """ parent is the curses window we're embedded in, x,y are our upper left coordinate, height,width are the size in characters """
         BaseFrame.__init__( self, parent,x,y,height,width, lborder )
         self.dialog = None
-        self.chgseq = -1
 
     def __del__(self):
         """ clean up our subwindow when we close """
@@ -200,7 +203,6 @@ class DialogFrame ( BaseFrame ):
         """ installs a new editor into this frame, we copy it each time so we get independent scrolling """
         self.dialog = copy.copy(dialog)
         self.changed = True
-        self.chgseq = -1
 
 class EditorManager:
     """ class manages a collection of editors and editor frames that tile the full terminal service """
@@ -229,6 +231,17 @@ class EditorManager:
         else:
             return None
 
+    def setEditor(self, frame, editor):
+        """ maintain relationship between frames list and editors list so that each editor in the editor's list occurs only 0 or 1 times in the frames list """
+        for f in self.frames:
+            if f.editor == editor:
+                if repr(f) == repr(frame):
+                    return
+                else:
+                    frame.seteditor(copy.copy(editor))
+                    return
+        frame.seteditor(editor)
+
     def splitFrame(self,horizontal = True):
         """ split the current frame into two frames either vertically (default) or horizontally if horizontal == True """
         (x,y,width,height) = self.frames[self.current_frame].getrect()
@@ -238,7 +251,7 @@ class EditorManager:
             return
         newFrame = copy.copy(self.frames[self.current_frame])
         if  isinstance(newFrame,EditorFrame):
-            newFrame.seteditor(self.frames[self.current_frame].editor)
+            self.setEditor(newFrame,self.frames[self.current_frame].editor)
         else:
             newFrame.setdialog(self.frames[self.current_frame].dialog)
         self.frames.insert(self.current_frame,newFrame)
@@ -265,7 +278,7 @@ class EditorManager:
                 idx += 1
             else:
                 self.editors.insert(self.current,e)
-            self.frames[self.current_frame].seteditor(self.editors[self.current])
+            self.setEditor(self.frames[self.current_frame],self.editors[self.current])
 
     def delEditor( self):
         """ close an editor and remove it from the list, fall back to the previous editor in the current frame """
@@ -278,7 +291,7 @@ class EditorManager:
                 self.current = len(self.editors)-1
             if self.current < 0:
                 self.current = 0
-            self.frames[self.current_frame].seteditor(self.editors[self.current])
+            self.setEditor(self.frames[self.current_frame],self.editors[self.current])
             foundFilename = True
             while foundFilename:
                 for idx in range(0,len(self.frames)):
@@ -300,7 +313,7 @@ class EditorManager:
             self.current += 1
             if self.current > len(self.editors)-1:
                 self.current = 0
-            self.frames[self.current_frame].seteditor(self.editors[self.current])
+            self.setEditor(self.frames[self.current_frame],self.editors[self.current])
 
     def prevEditor(self):
         """ set the previous editor to be current, wrap around in the list """
@@ -308,7 +321,7 @@ class EditorManager:
             self.current -= 1
             if self.current < 0:
                 self.current = len(self.editors)-1
-            self.frames[self.current_frame].seteditor(self.editors[self.current])
+            self.setEditor(self.frames[self.current_frame],self.editors[self.current])
 
     def syncFrameEditor(self):
         """ sync the current frame's editor with the current editor """
@@ -497,7 +510,7 @@ class EditorManager:
         result = buffer_dialog.choose_buffer(self.scr, names )
         if result:
             self.current = names.index(result)
-            self.frames[self.current_frame].seteditor(self.editors[self.current])
+            self.setEditor(self.frames[self.current_frame],self.editors[self.current])
 
     def fileFind( self , fpat=".*",cpat="",recurse=False):
         """ launch the file find dialog box """
@@ -580,7 +593,8 @@ class EditorManager:
                 filename = self.frames[self.current_frame].editor.getFilename()
                 if filename:
                     (path,filename) = os.path.split(filename)
-                    os.chdir(path)
+                    if os.path.exists(path):
+                        os.chdir(path)
 
                 # run the editor in non blocking mode to have it process keystrokes returns unhandled ones
                 cmd_id, seq = keymap.mapseq(keymap.keymap_manager,self.frames[self.current_frame].editor.main(False))

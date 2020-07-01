@@ -11,6 +11,7 @@ import gc
 from prompt_dialog import prompt
 from message_dialog import message
 from replace_dialog import replace,confirm_replace
+from confirm_dialog import confirm
 import file_dialog
 import undo
 import python_mode
@@ -28,6 +29,7 @@ import changes
 import traceback
 import locale
 import codecs
+import tempfile
 
 locale.setlocale(locale.LC_ALL,'')
 def_encoding = locale.getpreferredencoding()
@@ -221,16 +223,25 @@ class EditFile:
 
     def open(self):
         """ open the file or create it if it doesn't exist """
-        if os.path.exists(self.filename):
-            self.working = open(os.path.abspath(self.filename),"r",buffering=1,encoding="utf-8")
+        abs_name = os.path.abspath(self.filename)
+        abs_path = os.path.dirname(abs_name)
+        if os.path.exists(abs_name):
+            self.working = tempfile.NamedTemporaryFile(mode="w+",buffering=1,encoding="utf-8",prefix="ped_",dir=self.get_backup_dir(self.backuproot))
+            shutil.copyfile(abs_name,self.working.name)
         elif not self.readonly:
-            self.working = open(os.path.abspath(self.filename),"w+",buffering=1,encoding="utf-8")
+            self.working = tempfile.NamedTemporaryFile(mode="w+",buffering=1,encoding="utf-8",prefix="ped_",dir=self.get_backup_dir(self.backuproot))
         else:
             raise Exception("File %s does not exist!"%(self.filename))
         if not self.readonly:
-            self.setReadOnly(not os.access(os.path.abspath(self.filename),os.W_OK))
-        self.filename = self.working.name
+            self.setReadOnly(not os.access(abs_name,os.W_OK))
+        self.filename = abs_name
         self.working.seek(0,0)
+
+    def isModifiedOnDisk(self):
+        """ return true if the file we're editing has been modified since we started """
+        disk_stat = os.stat(self.filename)
+        temp_stat = os.stat(self.working.name)
+        return disk_stat.st_mtime > temp_stat.st_mtime
 
     def close(self):
         """ close the file """
@@ -260,17 +271,21 @@ class EditFile:
         self.changed = False
         self.modref = 0
 
-    def isLineChanged(self,line,modref):
+    def hasChanges(self,view):
+        """ return true if there are pending screen updates """
+        return self.change_mgr.has_changes(view)
+
+    def isLineChanged(self,view,line):
         """ return true if a particular line is changed """
         if self.change_mgr and line < len(self.lines):
-            return self.change_mgr.is_changed(line,modref)
+            return self.change_mgr.is_changed(view,line)
         else:
             return True
 
-    def flushChanges(self):
+    def flushChanges(self,view):
         """ reset the change tracking for full screen redraw events """
         if self.change_mgr:
-            self.change_mgr.flush()
+            self.change_mgr.flush(view)
 
     def _deleteLine(self,line,changed = True):
         """ delete a line """
@@ -280,7 +295,7 @@ class EditFile:
         self.changed = changed
         self.modref += 1
         if self.change_mgr:
-            self.change_mgr.changed(line,len(self.lines),self.modref)
+            self.change_mgr.changed(line,len(self.lines))
 
     def _insertLine(self,line,lineObj,changed = True):
         """ insert a line """
@@ -290,7 +305,7 @@ class EditFile:
         self.changed = changed
         self.modref += 1
         if self.change_mgr:
-            self.change_mgr.changed(line,len(self.lines),self.modref)
+            self.change_mgr.changed(line,len(self.lines))
 
 
     def _replaceLine(self,line,lineObj,changed = True):
@@ -301,7 +316,7 @@ class EditFile:
         self.changed = changed
         self.modref += 1
         if self.change_mgr:
-            self.change_mgr.changed(line,line,self.modref)
+            self.change_mgr.changed(line,line)
 
 
     def _appendLine(self,lineObj,changed = True):
@@ -312,13 +327,12 @@ class EditFile:
         self.changed = changed
         self.modref += 1
         if self.change_mgr:
-            self.change_mgr.changed(len(self.lines)-1,len(self.lines)-1,self.modref)
+            self.change_mgr.changed(len(self.lines)-1,len(self.lines)-1)
 
     def touchLine(self, line_start, line_end):
         """ touch a line so it will redraw"""
         if self.change_mgr:
-            self.modref += 1
-            self.change_mgr.changed(min(line_start,line_end),max(line_start,line_end),self.modref)
+            self.change_mgr.changed(min(line_start,line_end),max(line_start,line_end))
 
     def length(self, line ):
         """ return the length of the line """
@@ -385,14 +399,19 @@ class EditFile:
 
         self._replaceLine(line, MemLine(content))
 
-    def make_backup_dir( self, filename, base = "~" ):
-        """ make a backup directory under ~/.pedbackup for filename and return it's name """
+    def get_backup_dir( self, base = "~" ):
+        """ get the backup directory, create it if it doesn't exist """
         base = os.path.expanduser(base)
         if not os.path.exists(base):
             base = os.path.expanduser("~")
         pedbackup = os.path.join(base,".pedbackup")
         if not os.path.exists(pedbackup):
             os.mkdir(pedbackup)
+        return pedbackup
+
+    def make_backup_dir( self, filename, base = "~" ):
+        """ make a backup directory under ~/.pedbackup for filename and return it's name """
+        pedbackup = self.get_backup_dir( base )
 
         (filepath,rest) = os.path.split(os.path.abspath(filename))
         for part in filepath.split("/"):
@@ -481,6 +500,7 @@ class Editor:
             self.workfile = workfile
         else:
             self.workfile = EditFile(filename)
+        self.workfile.change_mgr.add_view(self)
         self.undo_mgr = self.workfile.getUndoMgr()
         self.parent = parent
         self.scr = scr
@@ -512,8 +532,8 @@ class Editor:
         self.unwrap_lines = []
         self.wrap_modref = -1
         self.wrap_width = -1
-        self.display_modref = -1
         self.copies = []
+        self.original = None
         self.invalidate_all()
         curses.raw()
         curses.meta(1)
@@ -542,14 +562,24 @@ class Editor:
         result.unwrap_lines = copy.copy(self.unwrap_lines)
         result.wrap_modref = self.wrap_modref
         result.wrap_width = self.wrap_width
-        result.display_modref = self.display_modref
         self.copies.append(result)
-        result.invalidate_all()
+        result.original = self
         return result
+
+    def remove_copy(self,copy):
+        """ remove reference to copy of view """
+        self.copies.remove(copy)
 
     def __del__(self):
         """ if we're closing then clean some stuff up """
         # let the mode clean up if it needs to
+        if self.original:
+            self.original.remove_copy(self)
+            self.original = None
+
+        if self.workfile and self.workfile.change_mgr:
+            self.workfile.change_mgr.remove_view(self)
+
         if self.mode:
             self.mode.finish(self)
             self.mode = None
@@ -576,7 +606,6 @@ class Editor:
                                                              self.last_search_dir,
                                                              clipboard.clip,
                                                              clipboard.clip_type,
-#                                                             self.clear_mark,
                                                              self.wrap))
     def applyUndo(self,*args):
         """ called by undo to unwind one undo action """
@@ -604,18 +633,20 @@ class Editor:
 
     def undo(self):
         """ undo the last transaction, actually undoes the open transaction and the prior closed one """
+        line = self.line
+        left = self.left
         self.undo_mgr.undo_transaction() # undo the one we're in... probably empty
         self.undo_mgr.undo_transaction() # undo the previous one... probably not empty
-        self.flushChanges()
-        self.invalidate_all()
+        if self.line != line or self.left != left:
+            self.invalidate_screen()
 
     def setWin(self,win):
         """ install a new window to render to """
         self.scr = win
 
     def getModref(self):
-        """ return the current display modref of this editor """
-        return self.display_modref
+        """ return the current modref of this editor """
+        return self.workfile.getModref()
 
     def getWorkfile(self):
         """ return the workfile that this editor is attached to """
@@ -623,7 +654,7 @@ class Editor:
 
     def getFilename(self):
         """ return the filename for this editor """
-        return self.workfile.getWorking().name
+        return self.workfile.getFilename()
 
     def getUndoMgr(self):
         """ get the undo manager that we're using """
@@ -636,15 +667,14 @@ class Editor:
     def isLineChanged(self, line ):
         """ return true if line is changed for the current revisions """
         if self.workfile:
-            return self.workfile.isLineChanged( self.filePos(line,0)[0], self.display_modref )
+            return self.workfile.isLineChanged( self, self.filePos(line,0)[0])
         else:
             return True
 
     def flushChanges( self ):
-        """ flush change tracking if we're going to require a full screen redraw """
+        """ flush change tracking to show we're done updating """
         if self.workfile:
-            self.workfile.flushChanges()
-        self.invalidate_all()
+            self.workfile.flushChanges(self)
 
     def isMark(self):
         """ returns true if there is a mark set """
@@ -751,7 +781,6 @@ class Editor:
         """ worker function to draw the marked section of the file """
         if not self.isMark():
             return
-
 
         (mark_top,mark_left) = self.scrPos(self.mark_line_start,self.mark_pos_start)
         mark_line_start = mark_top
@@ -863,7 +892,6 @@ class Editor:
         if self.scr:
             self.max_y,self.max_x = self.scr.getmaxyx()
             self.rewrap()
-            self.invalidate_all()
             bottom_y = min((self.numLines(True)-1)-self.line,(self.max_y-2))
             if self.vpos > bottom_y:
                 self.vpos = bottom_y
@@ -871,6 +899,7 @@ class Editor:
             if self.pos > right_x:
                 self.left += self.pos-right_x
                 self.pos = right_x
+            self.invalidate_screen()
 
     def redraw(self):
         """ redraw  the editor as needed """
@@ -917,7 +946,7 @@ class Editor:
                     lidx = lidx + 1
             self.draw_mark()
             if mode_redraw:
-                self.display_modref = self.workfile.modref
+                self.flushChanges()
         except:
             log = open(os.path.expanduser("~/ped.log"),"a")
             print("Editor:redraw error state", file=log)
@@ -986,7 +1015,6 @@ class Editor:
     def goto(self,line, pos ):
         """ goto a line in the file and position the cursor to pos offset in the line """
         self.pushUndo()
-        self.rewrap()
         self.invalidate_mark()
 
         if line < 0:
@@ -1001,22 +1029,22 @@ class Editor:
         elif line < self.line:
             self.line = line
             self.vpos = 0
-            self.flushChanges()
+            self.invalidate_screen()
         elif line > self.line+(self.max_y-2):
             self.line = line - (self.max_y-2)
             self.vpos = (self.max_y-2)
-            self.flushChanges()
+            self.invalidate_screen()
 
         if pos >= self.left and pos < self.left+(self.max_x-1):
             self.pos = pos - self.left
         elif pos >= self.left+(self.max_x-1):
             self.left = pos-(self.max_x-1)
             self.pos = self.max_x-1
-            self.flushChanges()
+            self.invalidate_screen()
         else:
             self.left = pos
             self.pos = 0
-            self.flushChanges()
+            self.invalidate_screen()
 
     def endln(self):
         """ go to the end of a line """
@@ -1038,13 +1066,13 @@ class Editor:
     def endfile(self):
         """ go to the end of the file """
         self.pushUndo()
-        self.flushChanges()
 
         ldisp = (self.numLines(True)-1)-self.line
         if ldisp < self.max_y-2:
             return
         self.line = (self.numLines(True)-1) - (self.max_y-2)
         self.vpos = min(self.max_y-2,ldisp)
+        self.invalidate_screen()
 
     def end(self):
         """ once go to end of line, twice end of page, thrice end of file """
@@ -1082,24 +1110,23 @@ class Editor:
             self.vpos = 0
         elif self.home_count == 2:
             self.line = 0
-            self.flushChanges()
+            self.invalidate_screen()
 
     def pageup(self):
         """ go back one page in the file """
         self.pushUndo()
-        self.flushChanges()
         self.invalidate_mark()
 
         offset = self.line - (self.max_y-2)
         if offset < 0:
             offset = 0
         self.line = offset
+        self.invalidate_screen()
 
 
     def pagedown(self):
         """ go forward one page in the file """
         self.pushUndo()
-        self.flushChanges()
         self.invalidate_mark()
 
         offset = self.line + (self.max_y-2)
@@ -1109,6 +1136,7 @@ class Editor:
         ldisp = (self.numLines(True)-1)-self.line
         if self.vpos > ldisp:
             self.vpos = ldisp
+        self.invalidate_screen()
 
 
     def cup(self):
@@ -1120,7 +1148,7 @@ class Editor:
             self.vpos -= 1
         elif self.line:
             self.line -= 1
-            self.flushChanges()
+            self.invalidate_screen()
 
         self.goto(self.getLine(),self.getPos())
 
@@ -1134,7 +1162,7 @@ class Editor:
                 self.vpos += 1
             elif self.line <= self.numLines(True)-self.max_y:
                 self.line += 1
-                self.flushChanges()
+                self.invalidate_screen()
             rept = rept - 1
 
         self.goto(self.getLine(),self.getPos())
@@ -1217,15 +1245,15 @@ class Editor:
     def scroll_left(self):
         """ scroll the page left without moving the current cursor position """
         self.pushUndo()
-        self.flushChanges()
         if self.left:
             self.left -= 1
+            self.invalidate_screen()
 
     def scroll_right(self):
         """ scroll the page right without moving the current cursor position """
         self.pushUndo()
-        self.flushChanges()
         self.left += 1
+        self.invalidate_screen()
 
     def searchagain(self):
         """ repeat the previous search if any """
@@ -1311,6 +1339,15 @@ class Editor:
         """ touch all the lines in the file so everything will redraw """
         self.workfile.touchLine(0,self.workfile.numLines())
 
+    def invalidate_screen(self):
+        """ touch all the lines in the file so everything will redraw """
+        line,pos = self.filePos(self.line,self.left)
+        self.workfile.touchLine(line,line+self.max_y)
+
+    def has_changes(self):
+        """ return true if there are any pending changes """
+        return self.workfile.hasChanges(self)
+
     def mark_span(self):
         """ mark a span of characters that can start and end in the middle of a line """
         self.pushUndo()
@@ -1364,6 +1401,9 @@ class Editor:
             return ()
 
         self.pushUndo()
+
+        if delete:
+            self.invalidate_screen()
 
         mark_pos_start = self.mark_pos_start
         mark_line_start = self.mark_line_start
@@ -1437,7 +1477,6 @@ class Editor:
 
         # sync the x clipboard
         self.transfer_clipboard()
-        self.invalidate_mark()
 
         if self.line_mark:
             self.line_mark = False
@@ -1448,6 +1487,8 @@ class Editor:
 
         if delete:
             self.goto(mark_line_start,mark_pos_start)
+
+        self.invalidate_screen()
 
         return (clip_type, clip)
 
@@ -1591,6 +1632,7 @@ class Editor:
 
     def prmt_goto(self):
         """ prompt for a line to go to and go there """
+        self.invalidate_screen()
         goto_line = prompt(self.parent,"Goto","Enter line number 0-%d :"%(self.numLines()-1),10,name="goto")
         if goto_line:
             self.goto(int(goto_line),self.getPos())
@@ -1602,19 +1644,26 @@ class Editor:
         if choices and choices["file"]:
             self.workfile.save(os.path.join(choices["dir"],choices["file"]))
         self.undo_mgr.flush_undo()
-        self.flushChanges()
+        self.invalidate_screen()
         gc.collect()
 
     def save(self):
         """ save the current buffer """
+        if self.workfile.isModifiedOnDisk():
+            if not confirm(self.parent, "File has changed on disk, overwrite?"):
+                self.invalidate_screen()
+                self.redraw()
+                return
         self.workfile.save()
         self.undo_mgr.flush_undo()
-        self.flushChanges()
+        self.goto(self.getLine(),self.getPos())
+        self.invalidate_screen()
+        self.redraw()
         gc.collect()
 
     def prmt_search(self,down=True):
         """ prompt for a search string then search for it and either put up a message that it was not found or position the cursor to the occurrance """
-        self.flushChanges()
+        self.invalidate_screen()
         if down:
             title = "Search Forward"
         else:
@@ -1626,7 +1675,6 @@ class Editor:
 
     def prmt_replace(self):
         """ prompt for search pattern and replacement string, then confirm replacment or replace all for the occurrences until no more are found """
-        self.flushChanges()
         (pattern,rep) = replace(self.parent)
         if pattern and rep:
             found = self.search(pattern)
@@ -1638,6 +1686,7 @@ class Editor:
                 self.scr.refresh()
                 if not replace_all:
                     answer = confirm_replace(self.parent)
+                    self.invalidate_screen()
                     if answer == 1:
                         do_replace = True
                     elif answer == 2:
@@ -1646,10 +1695,6 @@ class Editor:
                         replace_all = True
                     elif answer == 4:
                         message(self.parent,"Canceled","Replace canceled.")
-                        self.redraw()
-                        self.scr.refresh()
-                        self.scr.leaveok(0)
-                        self.scr.move(self.vpos+1,self.pos)
                         return
 
                 if do_replace or replace_all:
@@ -1658,14 +1703,11 @@ class Editor:
                 found = self.searchagain()
             else:
                 message(self.parent,"Replace","Pattern not found.")
-                self.redraw()
-                self.scr.refresh()
-                self.scr.leaveok(0)
-                self.scr.move(self.vpos+1,self.pos)
+        self.invalidate_screen()
 
     def prmt_searchagain(self):
         """ search again and put up a message if no more are found """
-        self.flushChanges()
+        self.invalidate_screen()
         if not self.searchagain():
             if self.isMark():
                 self.mark_span()
@@ -1714,149 +1756,128 @@ class Editor:
         if self.rect_mark:
             return
         self.pushUndo()
-        self.flushChanges()
         oline = self.getLine()
         opos = self.getPos()
         self.wrap = not self.wrap
+        self.rewrap(True)
+        self.invalidate_all()
         self.goto(oline,opos)
 
     def handle(self,ch):
         """ main character handler dispatches keystrokes to execute editor commands returns characters meant to be processed
             by containing manager or dialog """
 
-        mark_state = self.isMark()
-        top_line = self.line
-        if mark_state:
-            mark_minline = min(self.mark_line_start,self.getLine())
-            mark_maxline = max(self.mark_line_start,self.getLine())
+        self.prev_cmd = self.cmd_id
+        if isinstance(ch,int):
+            self.cmd_id, ret = keymap.mapkey( self.scr, keymap.keymap_editor, ch )
         else:
-            mark_minline = self.getLine()
-            mark_maxline = self.getLine()
+            self.cmd_id, ret = keymap.mapseq( keymap.keymap_editor, ch )
+        if extension_manager.is_extension(self.cmd_id):
+            if not extension_manager.invoke_extension( self.cmd_id, self, ch ):
+                return ret
 
-        try:
-#            if self.clear_mark and self.isMark():
-#                self.mark_span()
-#                self.clear_mark = False
-
-            self.prev_cmd = self.cmd_id
-            if isinstance(ch,int):
-                self.cmd_id, ret = keymap.mapkey( self.scr, keymap.keymap_editor, ch )
-            else:
-                self.cmd_id, ret = keymap.mapseq( keymap.keymap_editor, ch )
-            if extension_manager.is_extension(self.cmd_id):
-                if not extension_manager.invoke_extension( self.cmd_id, self, ch ):
-                    return ret
-
-            if self.cmd_id == cmd_names.CMD_RETURNKEY:
-                if ret in [keytab.KEYTAB_NOKEY,keytab.KEYTAB_REFRESH,keytab.KEYTAB_RESIZE]:
-                    self.cmd_id = self.prev_cmd
-            elif self.cmd_id == cmd_names.CMD_INSERT:
-                self.insert(chr(ret))
-                ret = keytab.KEYTAB_NOKEY
-            elif self.cmd_id == cmd_names.CMD_MARKSPAN:
-                self.mark_span()
-            elif self.cmd_id == cmd_names.CMD_MARKRECT:
-                self.mark_rect()
-            elif self.cmd_id == cmd_names.CMD_COPYMARKED:
-                self.copy_marked()
-            elif self.cmd_id == cmd_names.CMD_PRMTGOTO:
-                self.prmt_goto()
-            elif self.cmd_id == cmd_names.CMD_BACKSPACE:
-                self.backspace()
-            elif self.cmd_id == cmd_names.CMD_FILENAME:
-                if self.getFilename():
-                    message(self.parent,"Filename",self.getFilename())
-            elif self.cmd_id == cmd_names.CMD_CUTMARKED:
-                self.copy_marked(True)
-            elif self.cmd_id == cmd_names.CMD_PASTE:
-                self.paste()
-            elif self.cmd_id == cmd_names.CMD_MARKLINES:
+        if self.cmd_id == cmd_names.CMD_RETURNKEY:
+            if ret in [keytab.KEYTAB_NOKEY,keytab.KEYTAB_REFRESH,keytab.KEYTAB_RESIZE]:
+                self.cmd_id = self.prev_cmd
+        elif self.cmd_id == cmd_names.CMD_INSERT:
+            self.insert(chr(ret))
+            ret = keytab.KEYTAB_NOKEY
+        elif self.cmd_id == cmd_names.CMD_MARKSPAN:
+            self.mark_span()
+        elif self.cmd_id == cmd_names.CMD_MARKRECT:
+            self.mark_rect()
+        elif self.cmd_id == cmd_names.CMD_COPYMARKED:
+            self.copy_marked()
+        elif self.cmd_id == cmd_names.CMD_PRMTGOTO:
+            self.prmt_goto()
+        elif self.cmd_id == cmd_names.CMD_BACKSPACE:
+            self.backspace()
+        elif self.cmd_id == cmd_names.CMD_FILENAME:
+            if self.getFilename():
+                message(self.parent,"Filename",self.getFilename())
+        elif self.cmd_id == cmd_names.CMD_CUTMARKED:
+            self.copy_marked(True)
+        elif self.cmd_id == cmd_names.CMD_PASTE:
+            self.paste()
+        elif self.cmd_id == cmd_names.CMD_MARKLINES:
+            self.mark_lines()
+        elif self.cmd_id == cmd_names.CMD_CR:
+            self.cr()
+        elif self.cmd_id == cmd_names.CMD_TAB:
+            self.tab()
+        elif self.cmd_id == cmd_names.CMD_SAVE:
+            self.save()
+        elif self.cmd_id == cmd_names.CMD_SAVEAS:
+            self.saveas()
+        elif self.cmd_id == cmd_names.CMD_UNDO:
+            self.undo()
+        elif self.cmd_id == cmd_names.CMD_TOGGLEWRAP:
+            self.toggle_wrap()
+        elif self.cmd_id == cmd_names.CMD_MARKCOPYLINE:
+            if not self.isMark():
                 self.mark_lines()
-            elif self.cmd_id == cmd_names.CMD_CR:
-                self.cr()
-            elif self.cmd_id == cmd_names.CMD_TAB:
-                self.tab()
-            elif self.cmd_id == cmd_names.CMD_SAVE:
-                self.save()
-            elif self.cmd_id == cmd_names.CMD_SAVEAS:
-                self.saveas()
-            elif self.cmd_id == cmd_names.CMD_UNDO:
-                self.undo()
-            elif self.cmd_id == cmd_names.CMD_TOGGLEWRAP:
-                self.toggle_wrap()
-            elif self.cmd_id == cmd_names.CMD_MARKCOPYLINE:
-                if not self.isMark():
-                    self.mark_lines()
-                self.copy_marked()
-            elif self.cmd_id == cmd_names.CMD_MARKCUTLINE:
-                if not self.isMark():
-                    self.mark_lines()
-                self.copy_marked(True)
-            elif self.cmd_id == cmd_names.CMD_BTAB:
-                self.btab()
-            elif self.cmd_id == cmd_names.CMD_PREVWORD:
-                self.prev_word()
-            elif self.cmd_id == cmd_names.CMD_NEXTWORD:
-                self.next_word()
-            elif self.cmd_id == cmd_names.CMD_HOME1:
-                self.pushUndo()
-                self.prev_cmd = cmd_names.CMD_HOME
-                self.cmd_id = cmd_names.CMD_HOME
-                self.home_count = 0
-                self.home()
-                self.home()
-                self.home()
-            elif self.cmd_id == cmd_names.CMD_END1:
-                self.pushUndo()
-                self.prev_cmd = cmd_names.CMD_END
-                self.cmd_id = cmd_names.CMD_END
-                self.end_count = 0
-                self.end()
-                self.end()
-                self.end()
-            elif self.cmd_id == cmd_names.CMD_UP:
-                self.cup()
-            elif self.cmd_id == cmd_names.CMD_DOWN:
-                self.cdown()
-            elif self.cmd_id == cmd_names.CMD_LEFT:
-                self.cleft()
-            elif self.cmd_id == cmd_names.CMD_RIGHT:
-                self.cright()
-            elif self.cmd_id == cmd_names.CMD_DELC:
-                self.delc()
-            elif self.cmd_id == cmd_names.CMD_HOME:
-                self.home()
-            elif self.cmd_id == cmd_names.CMD_END:
-                self.end()
-            elif self.cmd_id == cmd_names.CMD_PAGEUP:
-                self.pageup()
-            elif self.cmd_id == cmd_names.CMD_PAGEDOWN:
-                self.pagedown()
-            elif self.cmd_id == cmd_names.CMD_PRMTSEARCH:
-                self.prmt_search()
-            elif self.cmd_id == cmd_names.CMD_PRMTREPLACE:
-                self.prmt_replace()
-            elif self.cmd_id == cmd_names.CMD_TRANSFERCLIPIN:
-                self.transfer_clipboard(False)
-            elif self.cmd_id == cmd_names.CMD_TRANSFERCLIPOUT:
-                self.transfer_clipboard(True)
-            elif self.cmd_id == cmd_names.CMD_PRMTSEARCHBACK:
-                self.prmt_search(False)
-            elif self.cmd_id == cmd_names.CMD_SEARCHAGAIN:
-                self.prmt_searchagain()
-            elif self.cmd_id == cmd_names.CMD_TOGGLERECORD:
-                keymap.toggle_recording()
-            elif self.cmd_id == cmd_names.CMD_PLAYBACK:
-                keymap.start_playback()
-        finally:
-            if mark_state or self.isMark():
-                if self.line == top_line:
-                    mark_minline = min(mark_minline,self.getLine())
-                else:
-                    mark_minline = self.line
-                mark_maxline = max(mark_maxline,self.getLine())
-                if self.workfile and self.workfile.change_mgr:
-                    self.workfile.change_mgr.changed(mark_minline,mark_maxline,self.workfile.modref)
+            self.copy_marked()
+        elif self.cmd_id == cmd_names.CMD_MARKCUTLINE:
+            if not self.isMark():
+                self.mark_lines()
+            self.copy_marked(True)
+        elif self.cmd_id == cmd_names.CMD_BTAB:
+            self.btab()
+        elif self.cmd_id == cmd_names.CMD_PREVWORD:
+            self.prev_word()
+        elif self.cmd_id == cmd_names.CMD_NEXTWORD:
+            self.next_word()
+        elif self.cmd_id == cmd_names.CMD_HOME1:
+            self.pushUndo()
+            self.prev_cmd = cmd_names.CMD_HOME
+            self.cmd_id = cmd_names.CMD_HOME
+            self.home_count = 0
+            self.home()
+            self.home()
+            self.home()
+        elif self.cmd_id == cmd_names.CMD_END1:
+            self.pushUndo()
+            self.prev_cmd = cmd_names.CMD_END
+            self.cmd_id = cmd_names.CMD_END
+            self.end_count = 0
+            self.end()
+            self.end()
+            self.end()
+        elif self.cmd_id == cmd_names.CMD_UP:
+            self.cup()
+        elif self.cmd_id == cmd_names.CMD_DOWN:
+            self.cdown()
+        elif self.cmd_id == cmd_names.CMD_LEFT:
+            self.cleft()
+        elif self.cmd_id == cmd_names.CMD_RIGHT:
+            self.cright()
+        elif self.cmd_id == cmd_names.CMD_DELC:
+            self.delc()
+        elif self.cmd_id == cmd_names.CMD_HOME:
+            self.home()
+        elif self.cmd_id == cmd_names.CMD_END:
+            self.end()
+        elif self.cmd_id == cmd_names.CMD_PAGEUP:
+            self.pageup()
+        elif self.cmd_id == cmd_names.CMD_PAGEDOWN:
+            self.pagedown()
+        elif self.cmd_id == cmd_names.CMD_PRMTSEARCH:
+            self.prmt_search()
+        elif self.cmd_id == cmd_names.CMD_PRMTREPLACE:
+            self.prmt_replace()
+        elif self.cmd_id == cmd_names.CMD_TRANSFERCLIPIN:
+            self.transfer_clipboard(False)
+        elif self.cmd_id == cmd_names.CMD_TRANSFERCLIPOUT:
+            self.transfer_clipboard(True)
+        elif self.cmd_id == cmd_names.CMD_PRMTSEARCHBACK:
+            self.prmt_search(False)
+        elif self.cmd_id == cmd_names.CMD_SEARCHAGAIN:
+            self.prmt_searchagain()
+        elif self.cmd_id == cmd_names.CMD_TOGGLERECORD:
+            keymap.toggle_recording()
+        elif self.cmd_id == cmd_names.CMD_PLAYBACK:
+            keymap.start_playback()
+
         return ret
 
     def main(self,blocking = True, start_ch = None):
@@ -1954,14 +1975,6 @@ class StreamEditor(Editor):
         """ override getFilename so we can return None to indicate no file stuff should be done """
         return None
 
-    def redraw(self):
-        """ hook the redraw so we can show the marked line """
-        if self.select and not self.isMark():
-            self.mark_lines()
-        Editor.redraw(self)
-        if self.select and self.isMark():
-            self.mark_lines()
-
     def handle(self,ch):
         """ override normal keystroke handling if in select mode
         and move about doing selection and return on enter """
@@ -1969,8 +1982,7 @@ class StreamEditor(Editor):
         if not self.select:
             return Editor.handle(self,ch)
 
-        if self.isMark():
-            self.mark_lines()
+        o_line = self.getLine()
 
         if isinstance(ch,int):
             ch = keymap.get_keyseq( self.scr, ch )
@@ -2032,8 +2044,6 @@ class StreamEditor(Editor):
                     self.cdown()
                     if line == self.getLine():
                         self.undo_mgr.undo_transaction()
-                        if self.isMark():
-                            self.mark_lines()
                         break
             elif direction < 0:
                 while True:
@@ -2045,11 +2055,13 @@ class StreamEditor(Editor):
                     self.cup()
                     if line == self.getLine():
                         self.undo_mgr.undo_transaction()
-                        if self.isMark():
-                            self.mark_lines()
                         break
 
-        self.mark_lines()
+        if self.getLine() != o_line or not self.isMark():
+            if self.isMark():
+                self.mark_lines()
+            self.mark_lines()
+
         return ret_ch
 
 class ReadonlyEditor(Editor):
@@ -2071,8 +2083,7 @@ class ReadonlyEditor(Editor):
     def handle(self,ch):
         """ handle override to only do read only actions to the file """
 
-        if self.isMark():
-            self.mark_lines()
+        o_line = self.getLine()
 
         if isinstance(ch,int):
             ch = keymap.get_keyseq( self.scr, ch )
@@ -2107,7 +2118,11 @@ class ReadonlyEditor(Editor):
         elif ch == keytab.KEYTAB_F03:
             self.prmt_searchagain()
 
-        self.mark_lines()
+        if self.getLine() != o_line or not self.isMark():
+            if self.isMark():
+                self.mark_lines()
+            self.mark_lines()
+
         return ret_ch
 
 def main(stdscr):

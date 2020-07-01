@@ -151,13 +151,15 @@ def render( editor, tokens, keywords, strings, comments ):
     else:
         tokens = {}
 
-    start_line,start_pos = editor.filePos(editor.line,editor.left)
+    start_line = editor.line
     lidx = start_line
+    max_sc_line = 1
     while lidx < start_line+(editor.max_y-1):
         try:
-            if editor.isLineChanged(lidx):
-                if lidx in tokens:
-                    line_tokens = tokens[lidx]
+            f_line,f_pos = editor.filePos(lidx,0)
+            if editor.workfile.isLineChanged(editor,f_line):
+                if f_line in tokens:
+                    line_tokens = tokens[f_line]
                     for (t_type, t_text, (t_srow,t_scol), (t_erow,t_ecol), t_line) in line_tokens:
                         if is_token_in(t_type,keywords):
                             attr = cyan
@@ -175,12 +177,28 @@ def render( editor, tokens, keywords, strings, comments ):
                             t_scol += 1
                     if sc_line >= 0 and sc_line < editor.max_y and sc_pos+1 >= 0 and sc_pos+1 < editor.max_x:
                         editor.addstr(sc_line,sc_pos+1,' '*(editor.max_x-(sc_pos+1)),attr)
+                    if sc_line > max_sc_line:
+                        max_sc_line = sc_line
                 else:
-                    l = editor.getContent(lidx,editor.left+editor.max_x,True,True)
-                    editor.addstr(y,0,l[editor.left:editor.left+editor.max_x])
+                    if lidx >= editor.numLines(True):
+                        max_sc_line += 1
+                        editor.addstr(max_sc_line,0,' '*editor.max_x)
+                    else:
+                        sc_line,sc_pos = window_pos(editor,f_line,f_pos)
+                        l = self.getContent(lidx,self.left+self.max_x,True,True)
+                        self.addstr(sc_line,0,l[self.left:self.left+self.max_x])
+                        if sc_line > max_sc_line:
+                            max_sc_line = sc_line
+            else:
+                if lidx >= editor.numLines(True):
+                    max_sc_line += 1
+                else:
+                    sc_line,sc_pos = window_pos(editor,f_line,f_pos)
+                    if sc_line > max_sc_line:
+                        max_sc_line = sc_line
+
         except Exception as e:
             pass
         lidx = lidx + 1
 
     return True
-

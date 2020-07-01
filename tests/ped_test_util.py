@@ -11,6 +11,7 @@ import subprocess
 from dialog import Frame,ListBox,Toggle,Button,StaticText,Prompt,PasswordPrompt,Dialog,pad
 from file_browse import FileBrowseComponent
 from stream_select import StreamSelectComponent
+from editor_common import Editor
 
 def screen_size( rows, columns ):
     cmd = "resize -s %d %d >/dev/null 2>/dev/null"%(rows,columns)
@@ -95,6 +96,9 @@ def validate_mark( ed, lines_to_test, start_line, end_line, start_pos, end_pos, 
     return match_tuple
 
 def validate_screen( ed, lines_to_test = None, start_line=-1, end_line=-1, start_pos=-1, end_pos=-1, do_validation=True ):
+    while ed.has_changes():
+        ed.main(False)
+
     if start_line < 0:
         start_line = ed.line
     if end_line < 0:
