@@ -53,7 +53,6 @@ def test_extension_manager(testdir,capsys):
 
         def main(stdscr):
             screen_size( 30, 100 )
-            curses.resizeterm( 30, 100 )
             ed = editor_common.Editor(stdscr,None,str(testfile))
             ed.setWin(stdscr.subwin(ed.max_y,ed.max_x,0,0))
             ed.main(False)

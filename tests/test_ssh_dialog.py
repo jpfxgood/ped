@@ -50,7 +50,6 @@ def test_ssh_dialog(sftp_testdir,capsys):
     with capsys.disabled():
         def main(stdscr):
             screen_size( 30, 100 )
-            curses.resizeterm( 30, 100 )
 
             d = SSHFileDialog(stdscr,   title = "SFTP File Manager",
                                         remote_path=sftp_testdir["ssh_basepath"],

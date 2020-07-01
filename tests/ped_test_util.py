@@ -16,6 +16,7 @@ from editor_common import Editor
 def screen_size( rows, columns ):
     cmd = "resize -s %d %d >/dev/null 2>/dev/null"%(rows,columns)
     subprocess.Popen(cmd,shell=True)
+    curses.resizeterm( rows, columns )
 
 def read_str( win, y, x, width ):
     out_str = ''
@@ -169,10 +170,13 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
     else:
         ed = editor
         ed.workfile.close()
+        if ed.mode:
+            ed.mode.finish(ed)
         ed.workfile.filename = fn
         ed.workfile.load()
         ed.undo_mgr.flush_undo()
         ed.flushChanges()
+        ed.invalidate_all()
         gc.collect()
 
     ed.main(False)
@@ -212,7 +216,7 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
         before_string = ed.getContent(f_line)
         ed.insert('X')
         assert(ed.isChanged())
-        assert(ed.isLineChanged(target_line))
+        assert(ed.isLineChanged(target_line,False))
         ed.main(False)
         after_string = ed.getContent(f_line)
         assert(after_string == before_string[:f_pos]+'X'+before_string[f_pos:])
@@ -226,7 +230,7 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
         if cur_line <= ed.numLines()-1 and cur_pos < len(before_string)-1:
             ed.delc()
             assert(ed.isChanged())
-            assert(ed.isLineChanged(cur_line))
+            assert(ed.isLineChanged(cur_line,False))
             ed.main(False)
             after_string = ed.getContent(cur_line)
             if cur_pos+1 < len(before_string):
@@ -243,7 +247,7 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
 
         ed.backspace()
         assert(ed.isChanged())
-        assert(ed.isLineChanged(cur_line))
+        assert(ed.isLineChanged(cur_line,False))
         ed.main(False)
         if cur_pos+1 < len(before_string):
             compare_string = before_string[:cur_pos-1] + before_string[cur_pos:]

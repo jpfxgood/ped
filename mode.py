@@ -156,9 +156,11 @@ def render( editor, tokens, keywords, strings, comments ):
     max_sc_line = 1
     while lidx < start_line+(editor.max_y-1):
         try:
-            f_line,f_pos = editor.filePos(lidx,0)
+            f_line,f_pos = editor.filePos(lidx,editor.left)
             if editor.workfile.isLineChanged(editor,f_line):
                 if f_line in tokens:
+                    sc_line,sc_pos = window_pos(editor,f_line,f_pos)
+                    editor.addstr(sc_line,0,' '*editor.max_x)
                     line_tokens = tokens[f_line]
                     for (t_type, t_text, (t_srow,t_scol), (t_erow,t_ecol), t_line) in line_tokens:
                         if is_token_in(t_type,keywords):
@@ -169,14 +171,11 @@ def render( editor, tokens, keywords, strings, comments ):
                             attr = red
                         else:
                             attr = white
-
                         for ch in t_text:
                             sc_line,sc_pos = window_pos(editor,t_srow,t_scol)
                             if sc_line >= 0 and sc_line < editor.max_y and sc_pos >= 0 and sc_pos < editor.max_x:
                                 editor.addstr(sc_line,sc_pos,ch,attr)
                             t_scol += 1
-                    if sc_line >= 0 and sc_line < editor.max_y and sc_pos+1 >= 0 and sc_pos+1 < editor.max_x:
-                        editor.addstr(sc_line,sc_pos+1,' '*(editor.max_x-(sc_pos+1)),attr)
                     if sc_line > max_sc_line:
                         max_sc_line = sc_line
                 else:

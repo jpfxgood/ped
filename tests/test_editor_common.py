@@ -125,7 +125,10 @@ def test_EditFile(testdir):
     expanded_string = "01234   56789012        3456789"
     assert(ef.expand_tabs(tabby_string) == expanded_string)
 
-def test_Editor(testdir,capsys):
+def test_Editor_unwrapped(testdir,capsys):
     with capsys.disabled():
         curses.wrapper(editor_test_suite,testdir,False,None)
+
+def test_Editor_wrapped(testdir,capsys):
+    with capsys.disabled():
         curses.wrapper(editor_test_suite,testdir,True,None)

@@ -664,10 +664,13 @@ class Editor:
         """ returns true if the file we're working on has unsaved changes """
         return self.workfile.isChanged()
 
-    def isLineChanged(self, line ):
+    def isLineChanged(self, line, display=True ):
         """ return true if line is changed for the current revisions """
         if self.workfile:
-            return self.workfile.isLineChanged( self, self.filePos(line,0)[0])
+            if display:
+                return self.workfile.isLineChanged( self, self.filePos(line,0)[0])
+            else:
+                return self.workfile.isLineChanged( self, line )
         else:
             return True
 
@@ -1437,6 +1440,7 @@ class Editor:
                 while line_idx <= mark_line_end:
                     self.workfile.deleteLine(mark_line_start)
                     line_idx += 1
+                self.rewrap()
         elif self.span_mark:
             if not nocopy:
                 clip_type = clipboard.SPAN_CLIP
@@ -1455,6 +1459,7 @@ class Editor:
                     orig = self.getContent(line_idx)
                     orig = orig[0:mark_pos_start] + orig[mark_pos_end+1:]
                     self.workfile.replaceLine(line_idx,orig)
+                    self.rewrap()
                 else:
                     first_line = self.getContent(mark_line_start)
                     last_line = self.getContent(mark_line_end)
@@ -1462,6 +1467,7 @@ class Editor:
                         self.workfile.deleteLine(mark_line_start)
                         line_idx += 1
                     self.workfile.insertLine(mark_line_start,first_line[0:mark_pos_start] + last_line[mark_pos_end+1:])
+                    self.rewrap()
         elif self.rect_mark:
             if not nocopy:
                 clip_type = clipboard.RECT_CLIP
@@ -1519,6 +1525,7 @@ class Editor:
                 for line in clipboard.clip:
                     self.workfile.insertLine(target,line)
                     target += 1
+                self.rewrap()
                 self.goto(target,pos)
             elif clipboard.clip_type == clipboard.SPAN_CLIP:
                 target = self.getLine()
@@ -1531,18 +1538,22 @@ class Editor:
                         if not idx:
                             self.workfile.replaceLine(target,orig[0:pos]+line)
                             self.workfile.insertLine(target+1,orig[pos:])
+                            self.rewrap()
                             self.goto(target, pos+len(line))
                             target += 1
                         else:
                             self.workfile.insertLine(target,line)
+                            self.rewrap()
                             self.goto(target, len(line))
                             target += 1
                     else:
                         if not idx:
                             self.workfile.replaceLine(target,orig[0:pos]+line+orig[pos:])
+                            self.rewrap()
                             self.goto(target, pos+len(line))
                         else:
                             self.workfile.replaceLine(target,line+orig)
+                            self.rewrap()
                             self.goto(target, len(line))
                     idx += 1
             elif clipboard.clip_type == clipboard.RECT_CLIP:
@@ -1560,6 +1571,7 @@ class Editor:
         orig = self.getContent(self.getLine(),self.getPos(),True)
         self.workfile.replaceLine(self.getLine(),orig[0:self.getPos()])
         self.workfile.insertLine(self.getLine()+1,orig[self.getPos():])
+        self.rewrap()
         self.goto(self.getLine()+1,0)
 
     def instab(self, line, pos, move_cursor = True ):

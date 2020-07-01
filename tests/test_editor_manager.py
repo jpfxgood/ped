@@ -143,10 +143,12 @@ def test_EditorManager(testdir,capsys):
             if max_x == 100 and max_y == 30:
                 assert(len(em.frames) == 3 and em.frames[0].getrect() == (0,0,100,15) and em.frames[1].getrect() == (0,15,50,15) and em.frames[2].getrect() == (50,15,50,15))
                 screen_size(24,80)
+                em.resize()
                 em.main(False)
                 em.main(False)
                 assert(len(em.frames) == 3 and em.frames[0].getrect() == (0,0,80,12) and em.frames[1].getrect() == (0,12,40,12) and em.frames[2].getrect() == (40,12,40,12))
                 screen_size(30, 100)
+                em.resize()
                 em.main(False)
                 em.main(False)
             em.nextEditor()

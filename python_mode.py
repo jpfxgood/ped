@@ -50,7 +50,12 @@ def handle(editor,ch):
 
 def finish(editor):
     """ this editor is going away do anything required to clean up """
-    pass
+    wf = editor.getWorkfile()
+    if wf:
+        if hasattr(wf,"python_mode_tokens"):
+            del wf.python_mode_tokens
+            wf.python_mode_tokens = None
+            delattr(wf,"python_mode_tokens")
 
 def redraw(editor):
     """ redraw the colorization based on the current token set, regenerate it if needed """

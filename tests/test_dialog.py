@@ -11,7 +11,6 @@ def test_dialog(testdir,capsys):
     with capsys.disabled():
         def main(stdscr):
             screen_size( 30, 100 )
-            curses.resizeterm( 30, 100 )
             lines_to_test = [
                 "import editor_manager",
                 "import editor_common",
