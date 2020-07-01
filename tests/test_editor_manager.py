@@ -3,6 +3,7 @@ import editor_common
 import curses
 import curses.ascii
 import keytab
+import os
 from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size,wait_for_screen
 
 
@@ -123,6 +124,17 @@ def test_EditorManager(testdir,capsys):
             play_macro(em,[keytab.KEYTAB_ALTE]+list(test_files[1].basename)+['\n','\n','\n'])
             assert(em.getCurrentEditor().getFilename() == str(test_files[1]))
             validate_screen(em.getCurrentEditor())
+            play_macro(em,[keytab.KEYTAB_ALTE,keytab.KEYTAB_TAB,keytab.KEYTAB_DOWN]+list("new_save_file.txt")+['\n','\n']+list("This is test text line one\nLine two\nLine three\n"))
+            assert(em.getCurrentEditor().getFilename().endswith("new_save_file.txt"))
+            assert(em.getCurrentEditor().getContent(0) == "This is test text line one")
+            new_filename = em.getCurrentEditor().getFilename()
+            assert(not os.path.exists(new_filename))
+            play_macro(em,[keytab.KEYTAB_ALTW])
+            assert(os.path.exists(new_filename))
+            assert(open(new_filename,"r").readline() == "This is test text line one\n")
+            validate_screen(em.getCurrentEditor())
+            play_macro(em,[keytab.KEYTAB_ALTD])
+            os.remove(new_filename)
             play_macro(em,[keytab.KEYTAB_ALTV,keytab.KEYTAB_F04,keytab.KEYTAB_ALTN])
             cur_rect = em.getCurrentFrame().getrect()
             assert(cur_rect[0] == 0 and cur_rect[1] == 0)
