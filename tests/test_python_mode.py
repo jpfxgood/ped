@@ -3,7 +3,7 @@ import editor_common
 import curses
 import curses.ascii
 import keytab
-from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size,match_attr
+from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size,match_attr,wait_for_screen
 
 def test_python_mode(testdir,capsys):
     with capsys.disabled():
@@ -32,8 +32,6 @@ def test_python_mode(testdir,capsys):
 
             ed = editor_common.Editor(stdscr,None,str(testfile))
             ed.setWin(stdscr.subwin(ed.max_y,ed.max_x,0,0))
-            ed.main(False)
-            ed.main(False)
             validate_screen(ed)
             assert(ed.mode and ed.mode.name() == "python_mode")
             match_list = [(0,0,6,cyan),(4,0,19,red),(6,18,5,green),(11,19,31,red)]
@@ -44,8 +42,7 @@ def test_python_mode(testdir,capsys):
             ed.main(False,10)
             assert(ed.getLine() == 7 and ed.getPos() == 8)
             ed.insert('foo = "A double quoted string"')
-            ed.main(False)
-            ed.main(False)
+            wait_for_screen(ed)
             assert(match_attr(ed.scr,8,8,1,3,white))
             assert(match_attr(ed.scr,8,14,1,24,green))
 

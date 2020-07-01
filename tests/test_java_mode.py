@@ -3,8 +3,7 @@ import editor_common
 import curses
 import curses.ascii
 import keytab
-import time
-from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size,match_attr
+from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size,match_attr,wait_for_screen
 
 def test_java_mode(testdir,capsys):
     with capsys.disabled():
@@ -32,8 +31,6 @@ def test_java_mode(testdir,capsys):
 
             ed = editor_common.Editor(stdscr,None,str(testfile))
             ed.setWin(stdscr.subwin(ed.max_y,ed.max_x,0,0))
-            ed.main(False)
-            ed.main(False)
             validate_screen(ed)
             assert(ed.mode and ed.mode.name() == "java_mode")
             match_list = [(0,0,32,red),(2,0,5,cyan),(4,4,44,red),(8,27,14,green)]
@@ -45,15 +42,11 @@ def test_java_mode(testdir,capsys):
             assert(ed.getLine() == 8 and ed.getPos() == 4)
             ed.insert('if (20 > 18) {')
             ed.main(False,10)
-            time.sleep(1)
-            ed.insert('System.out.println("20 greater than 18");')   
+            ed.insert('System.out.println("20 greater than 18");')
             ed.main(False,10)
-            time.sleep(1)
             ed.insert('}')
             ed.main(False,10)
-            time.sleep(1)
-            ed.main(False)
-            ed.main(False)
+            wait_for_screen(ed)
             assert(match_attr(ed.scr,9,4,1,2,cyan))
             assert(match_attr(ed.scr,10,27,1,20,green))
             assert(ed.getLine() == 11 and ed.getPos() == 4)

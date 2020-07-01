@@ -3,7 +3,7 @@ import editor_common
 import curses
 import curses.ascii
 import keytab
-from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size
+from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size,wait_for_screen
 
 
 def test_BaseFrame(testdir,capsys):

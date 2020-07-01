@@ -285,14 +285,18 @@ class EditorManager:
         if isinstance(self.frames[self.current_frame],EditorFrame):
             if len(self.editors) == 1:
                 return
-            filename = self.editors[self.current].workfile.filename
-            del self.editors[self.current]
+
+            editor = self.editors[self.current]
+            filename = editor.workfile.filename
+            self.editors.remove(editor)
             if self.current >= len(self.editors):
                 self.current = len(self.editors)-1
             if self.current < 0:
                 self.current = 0
             self.setEditor(self.frames[self.current_frame],self.editors[self.current])
+
             foundFilename = True
+
             while foundFilename:
                 for idx in range(0,len(self.frames)):
                     if isinstance(self.frames[idx],EditorFrame):
@@ -306,6 +310,7 @@ class EditorManager:
                             break
                 else:
                     foundFilename = False
+            del editor
 
     def nextEditor(self):
         """ set the next editor to be current, wrap around in the list """

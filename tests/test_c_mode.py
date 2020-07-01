@@ -3,7 +3,7 @@ import editor_common
 import curses
 import curses.ascii
 import keytab
-from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size,match_attr
+from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size,match_attr,wait_for_screen
 
 def test_c_mode(testdir,capsys):
     with capsys.disabled():
@@ -24,10 +24,8 @@ def test_c_mode(testdir,capsys):
             cyan = curses.color_pair(3)
             white = curses.color_pair(4)
 
-            ed = editor_common.Editor(stdscr,None,str(testfile))
-            ed.setWin(stdscr.subwin(ed.max_y,ed.max_x,0,0))
-            ed.main(False)
-            ed.main(False)
+            max_y,max_x = stdscr.getmaxyx()
+            ed = editor_common.Editor(stdscr,stdscr.subwin(max_y,max_x,0,0),str(testfile))
             validate_screen(ed)
             assert(ed.mode and ed.mode.name() == "C")
             match_list = [(0,0,18,red),(2,2,48,red),(3,2,6,white),(3,9,15,green),(4,9,1,green),(1,0,3,cyan),(4,2,6,cyan)]
@@ -38,8 +36,7 @@ def test_c_mode(testdir,capsys):
             ed.main(False,10)
             assert(ed.getLine() == 2 and ed.getPos() == 2)
             ed.insert('if (foo == 12) {')
-            ed.main(False)
-            ed.main(False)
+            wait_for_screen(ed)
             assert(match_attr(ed.scr,3,2,1,2,cyan))
             assert(match_attr(ed.scr,3,6,1,3,white))
             assert(match_attr(ed.scr,3,13,1,2,green))
@@ -51,8 +48,6 @@ def test_c_mode(testdir,capsys):
             ed.insert('}')
             ed.main(False,10)
             assert(ed.getLine() == 5 and ed.getPos() == 2)
-            ed.main(False)
-            ed.main(False)
 
             lines_to_test = [
                 "// Your First C++ Program",
@@ -67,10 +62,7 @@ def test_c_mode(testdir,capsys):
             args = { "cpp_test":"\n".join(lines_to_test)}
             testfile = testdir.makefile(".cpp", **args)
 
-            ed = editor_common.Editor(stdscr,None,str(testfile))
-            ed.setWin(stdscr.subwin(ed.max_y,ed.max_x,0,0))
-            ed.main(False)
-            ed.main(False)
+            ed = editor_common.Editor(stdscr,stdscr.subwin(max_y,max_x,0,0),str(testfile))
             validate_screen(ed)
             assert(ed.mode and ed.mode.name() == "C++")
             match_list = [(0,0,25,red),(2,0,19,red),(5,2,12,white),(5,15,14,green),(6,9,1,green),(4,0,3,cyan),(6,2,6,cyan)]

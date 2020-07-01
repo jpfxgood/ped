@@ -10,7 +10,7 @@ import keymap
 import keytab
 import clipboard
 import extension_manager
-from ped_test_util import read_str, match_attr, undo_all, window_pos, play_macro, validate_mark, validate_screen, editor_test_suite, screen_size
+from ped_test_util import read_str, match_attr, undo_all, window_pos, play_macro, validate_mark, validate_screen, editor_test_suite, screen_size, wait_for_screen
 
 
 def test_extension_manager(testdir,capsys):
@@ -55,21 +55,16 @@ def test_extension_manager(testdir,capsys):
             screen_size( 30, 100 )
             ed = editor_common.Editor(stdscr,None,str(testfile))
             ed.setWin(stdscr.subwin(ed.max_y,ed.max_x,0,0))
-            ed.main(False)
-            ed.main(False)
             validate_screen(ed)
 
             ed.goto(6,0)
             ed.mark_lines()
             ed.goto(9,0)
-            ed.main(False)
             validate_screen(ed)
 
             ed.main(False,keytab.KEYTAB_F13)
             for line in range(6,10):
                 assert(ed.getContent(line)[0] == '#')
-
-            ed.main(False)
             validate_screen(ed)
 
         curses.wrapper(main)

@@ -1563,6 +1563,7 @@ class Editor:
                     orig = self.getContent(target,self.getPos(),True)
                     self.workfile.replaceLine(target,orig[0:self.getPos()]+line+orig[self.getPos():])
                     target += 1
+                self.rewrap()
                 self.goto(target,pos)
 
     def cr(self):
@@ -1580,6 +1581,7 @@ class Editor:
         stop = self.workfile.get_tab_stop(pos)
         orig = orig[0:pos] + ' '*(stop-(pos)) + orig[pos:]
         self.workfile.replaceLine(line,orig)
+        self.rewrap()
         if move_cursor:
             self.goto(line,stop)
 
@@ -1623,6 +1625,7 @@ class Editor:
         if start > stop:
             orig = orig[0:stop]+orig[start+1:]
             self.workfile.replaceLine(line,orig)
+            self.rewrap()
             if move_cursor:
                 self.goto(line,stop)
 

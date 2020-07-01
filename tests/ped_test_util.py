@@ -63,6 +63,7 @@ def play_macro( ed_or_dialog, macro ):
         ed_or_dialog.main(False)
 
 def validate_mark( ed, lines_to_test, start_line, end_line, start_pos, end_pos, do_validation = True, clip_type = clipboard.SPAN_CLIP ):
+    wait_for_screen(ed)
     match_tuple = ( clip_type, [ "" for f in range(start_line,end_line+1)  ] )
     lidx = 0
     for f_line in range(start_line,end_line+1):
@@ -96,9 +97,13 @@ def validate_mark( ed, lines_to_test, start_line, end_line, start_pos, end_pos, 
         assert(marked_tuple == match_tuple)
     return match_tuple
 
-def validate_screen( ed, lines_to_test = None, start_line=-1, end_line=-1, start_pos=-1, end_pos=-1, do_validation=True ):
+def wait_for_screen(ed):
     while ed.has_changes():
         ed.main(False)
+
+def validate_screen( ed, lines_to_test = None, start_line=-1, end_line=-1, start_pos=-1, end_pos=-1, do_validation=True ):
+
+    wait_for_screen(ed)
 
     if start_line < 0:
         start_line = ed.line
@@ -165,8 +170,8 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
     fn = str(testfile)
 
     if not editor:
-        ed = editor_common.Editor(stdscr,None,fn)
-        ed.setWin(stdscr.subwin(ed.max_y,ed.max_x,0,0))
+        max_y,max_x = stdscr.getmaxyx()
+        ed = editor_common.Editor(stdscr,stdscr.subwin(max_y,max_x,0,0),fn)
     else:
         ed = editor
         ed.workfile.close()
@@ -179,10 +184,8 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
         ed.invalidate_all()
         gc.collect()
 
-    ed.main(False)
     if wrapped:
         ed.toggle_wrap()
-    ed.main(False)
 
     validate_screen(ed)
     assert(match_attr(ed.scr,0,0,1,ed.max_x,curses.A_REVERSE))
@@ -204,7 +207,6 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
             target_line = editor_test_suite.target_line
             target_pos = editor_test_suite.target_pos
             ed.goto(target_line,target_pos)
-        ed.main(False)
         line = ed.getLine(True)
         pos = ed.getPos(True)
         (f_line,f_pos) = ed.filePos(line,pos)
@@ -217,7 +219,6 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
         ed.insert('X')
         assert(ed.isChanged())
         assert(ed.isLineChanged(target_line,False))
-        ed.main(False)
         after_string = ed.getContent(f_line)
         assert(after_string == before_string[:f_pos]+'X'+before_string[f_pos:])
         validate_screen(ed)
@@ -231,7 +232,6 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
             ed.delc()
             assert(ed.isChanged())
             assert(ed.isLineChanged(cur_line,False))
-            ed.main(False)
             after_string = ed.getContent(cur_line)
             if cur_pos+1 < len(before_string):
                 compare_string = before_string[:cur_pos] + before_string[cur_pos+1:]
@@ -248,7 +248,6 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
         ed.backspace()
         assert(ed.isChanged())
         assert(ed.isLineChanged(cur_line,False))
-        ed.main(False)
         if cur_pos+1 < len(before_string):
             compare_string = before_string[:cur_pos-1] + before_string[cur_pos:]
         else:
@@ -272,30 +271,24 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
     ed.goto(0,0)
     ed.endpg()
     ed.endln()
-    ed.main(False)
     sc_line,sc_pos = window_pos(ed,ed.getLine(),ed.getPos())
     assert(sc_line == ed.max_y-1)
     do_edit_tests(True)
     ed.endfile()
     ed.endln()
-    ed.main(False)
     assert(ed.getLine(True) == ed.numLines(True)-1)
     do_edit_tests(True)
     start_line = ed.getLine(True)
     ed.pageup()
-    ed.main(False)
     assert(ed.getLine(True) == start_line - (ed.max_y-2))
     do_edit_tests(True)
     ed.pagedown()
-    ed.main(False)
     assert(ed.getLine(True) == start_line)
     do_edit_tests(True)
     ed.cup()
-    ed.main(False)
     assert(ed.getLine(True) == start_line -1 )
     do_edit_tests(True)
     ed.cdown()
-    ed.main(False)
     assert(ed.getLine(True) == start_line )
     do_edit_tests(True)
     word_pos = []
@@ -312,7 +305,6 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
         if wrapped and rfunc == ed.scroll_right:
             break
         ed.goto(editor_test_suite.target_line,0)
-        ed.main(False)
         prev_pos = ed.getPos()
         while ed.getPos() < len(lines_to_test[editor_test_suite.target_line])-2:
             rfunc()
@@ -322,7 +314,6 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
             prev_pos = ed.getPos()
             s_line,s_pos = ed.filePos(ed.getLine(True),ed.left)
             assert(ed.getPos() >= s_pos and ed.getPos() < s_pos+ed.max_x)
-            ed.main(False)
             validate_screen(ed)
 
         while ed.getPos() > 0:
@@ -335,24 +326,20 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
             prev_pos = ed.getPos()
             s_line,s_pos = ed.filePos(ed.getLine(True),ed.left)
             assert(ed.getPos() >= s_pos and ed.getPos() < s_pos+ed.max_x)
-            ed.main(False)
             validate_screen(ed)
 
     ed.search("This is line 1010",True,False)
     assert(ed.getLine() == 1009 and ed.getPos() == 16 and ed.isMark() and ed.mark_line_start == 1009 and ed.mark_pos_start == 0 and ed.getContent(ed.mark_line_start)[ed.mark_pos_start:ed.getPos()+1] == "This is line 1010")
-    ed.main(False)
     validate_screen(ed)
 
     ed.search("This is line 990",False,False)
     assert(ed.getLine() == 989 and ed.getPos() == 338 and ed.isMark() and ed.mark_line_start == 989 and ed.mark_pos_start == 339-len("This is line 990") and ed.getContent(ed.mark_line_start)[ed.mark_pos_start:ed.getPos()+1] == "This is line 990")
-    ed.main(False)
     validate_screen(ed)
 
     success_count = 0
     search_succeeded = ed.search("This is line 100[0,1,2]",down = True, next = False)
     while search_succeeded:
         success_count += 1
-        ed.main(False)
         found_str = ""
         if ed.isMark():
             found_str = ed.getContent(ed.mark_line_start)[ed.mark_pos_start:ed.getPos()+1]
@@ -363,46 +350,35 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
     assert(success_count == 60)
 
     ed.goto(307,0)
-    ed.main(False)
     play_macro(ed, [ 'fk06','down','l','i','n','e',' ','3','0','8','\t','down','l','i','n','e',' ','6','6','6','\t','\n','\t','\t','\n','\n' ] )
     ed.goto(307,0)
-    ed.main(False)
     assert(ed.getContent(ed.getLine()) == lines_to_test[ed.getLine()].replace('line 308','line 666'))
     validate_screen(ed)
 
     ed.goto(editor_test_suite.target_line,0)
-    ed.main(False)
     ed.mark_span()
     ed.goto(editor_test_suite.target_line,15)
-    ed.main(False)
     validate_mark(ed, lines_to_test, editor_test_suite.target_line, editor_test_suite.target_line, 0, 15 )
 
     ed.goto(editor_test_suite.target_line,15)
-    ed.main(False)
     ed.mark_span()
     ed.goto(editor_test_suite.target_line+5,25)
-    ed.main(False)
     validate_mark(ed, lines_to_test, editor_test_suite.target_line, editor_test_suite.target_line+5, 15, 25 )
 
     ed.goto(editor_test_suite.target_line,15)
-    ed.main(False)
     ed.mark_span()
     ed.goto(editor_test_suite.target_line+5,ed.max_x)
     ed.cright()
-    ed.main(False)
     validate_mark(ed, lines_to_test, editor_test_suite.target_line,editor_test_suite.target_line+5,15,ed.getPos())
 
     ed.goto(editor_test_suite.target_line,15)
-    ed.main(False)
     ed.mark_span()
     ed.goto(editor_test_suite.target_line+5,ed.max_x)
     ed.cright()
-    ed.main(False)
     match_tuple = validate_mark(ed, lines_to_test, editor_test_suite.target_line,editor_test_suite.target_line+5,15,ed.getPos(),False)
     ed.copy_marked()
     ed.goto(editor_test_suite.target_line+25,0)
     ed.paste()
-    ed.main(False)
     for line in range(0,5):
         assert(ed.getContent(editor_test_suite.target_line+25+line) == match_tuple[1][line].rstrip())
     assert(ed.getContent(editor_test_suite.target_line+25+5).startswith(match_tuple[1][5]))
@@ -410,22 +386,18 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
     for line in range(0,6):
         assert(ed.getContent(editor_test_suite.target_line+25+line).startswith(lines_to_test[editor_test_suite.target_line+25+line]))
     ed.goto(editor_test_suite.target_line,15)
-    ed.main(False)
     ed.mark_span()
     ed.goto(editor_test_suite.target_line+5,ed.max_x)
     ed.cright()
     f_line = ed.getLine()
     f_pos = ed.getPos()
-    ed.main(False)
     ed.copy_marked(True,False)
-    ed.main(False)
     assert(ed.getLine()==editor_test_suite.target_line and ed.getPos()==15)
     target_contents = ed.getContent(editor_test_suite.target_line)
     match_contents = lines_to_test[editor_test_suite.target_line][0:15]+lines_to_test[f_line][f_pos+1:]
     assert(target_contents.startswith(match_contents))
     ed.goto(editor_test_suite.target_line+25,0)
     ed.paste()
-    ed.main(False)
     for line in range(0,5):
         assert(ed.getContent(editor_test_suite.target_line+25+line) == match_tuple[1][line].rstrip())
     assert(ed.getContent(editor_test_suite.target_line+25+5).startswith(match_tuple[1][5]))
@@ -434,26 +406,19 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
         assert(ed.getContent(editor_test_suite.target_line+25+line).startswith(lines_to_test[editor_test_suite.target_line+25+line]))
 
     ed.goto(editor_test_suite.target_line,15)
-    ed.main(False)
     ed.mark_lines()
     ed.goto(editor_test_suite.target_line+5,25)
-    ed.main(False)
     validate_mark(ed,lines_to_test,editor_test_suite.target_line,editor_test_suite.target_line+5,15,25,True, clipboard.LINE_CLIP)
 
     if not wrapped:
         ed.goto(editor_test_suite.target_line,0)
-        ed.main(False)
         ed.goto(editor_test_suite.target_line,15)
-        ed.main(False)
         ed.mark_rect()
         ed.goto(editor_test_suite.target_line+5,25)
-        ed.main(False)
         validate_mark(ed,lines_to_test,editor_test_suite.target_line,editor_test_suite.target_line+5,15,25,True, clipboard.RECT_CLIP)
 
     ed.goto(editor_test_suite.target_line,15)
-    ed.main(False)
     ed.cr()
-    ed.main(False)
     first_line = ed.getContent(editor_test_suite.target_line)
     second_line = ed.getContent(editor_test_suite.target_line+1)
     assert(len(first_line)==15 and first_line == lines_to_test[editor_test_suite.target_line][0:15])
@@ -462,18 +427,16 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
     undo_all(ed)
     validate_screen(ed)
 
+    while ed.isMark():
+        ed.mark_lines()
     ed.goto(editor_test_suite.target_line,0)
-    ed.main(False)
     ed.mark_lines()
     ed.goto(editor_test_suite.target_line+5,0)
-    ed.main(False)
     ed.tab()
-    ed.main(False)
     for line in range(0,6):
         assert(ed.getContent(editor_test_suite.target_line+line).startswith(' '*ed.workfile.get_tab_stop(0)))
     validate_screen(ed)
     ed.btab()
-    ed.main(False)
     for line in range(0,6):
         assert(ed.getContent(editor_test_suite.target_line+line).startswith(lines_to_test[editor_test_suite.target_line+line].rstrip()))
     validate_screen(ed)
@@ -492,9 +455,7 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
 
     ed.invalidate_all()
     ed.goto(editor_test_suite.target_line,15)
-    ed.main(False)
     ed.insert('A test change')
-    ed.main(False)
     ed.save()
 
     lidx = 0
