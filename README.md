@@ -11,15 +11,13 @@ I wrote ped since 2009  basically for my own use. I wanted an editor that emulat
 
 I guess this was an act of vanity, stupidity, or stubbornness, but it was fun and I got what I wanted in the end and have been using the editor and extending it since then. I don't expect that this will be anyone's favorite editor but mine, but there might be some snippets of code or modules that others find useful, so please use the code as you like.
 
-If you find bugs let me know or send me a fix I may apply it or fix the bug or not. I don't warrant that this code is good for any particular purpose. I wouldn't use it in a product without considerable hardening, re-factoring, and testing.
-
-I'm not interested in code reviews or critiques, I know it's a hack and that many parts of it are sloppy ill-considered, inefficient, under-implemented, buggy or just dangerous, please take this as read. If you're new to programming, don't take this as an example of good coding style. If you're someone google-stalking me about a job, please understand that this is not representative of my professional work, it's something I do in moments of scarce free time and with the above caveats.
+If you find bugs let me know or send me a fix I may apply it or fix the bug or not. I don't warrant that this code is good for any particular purpose.
 
 
 Installation
 ============
 
-Check out the source code to a path.
+Check out the source code to a path OR download the release .zip file and unzip there.
 
 Put the path on your operating system's execution path.
 
@@ -41,7 +39,7 @@ You can run them by doing the following in the source directory:
     python -m pytest tests
 OR with coverage:
     coverage run --source=. --omit=comment_extension.py,dummy_extension.py,lib/*,tests/* -m pytest tests
-    
+
 
 Documentation
 =============
