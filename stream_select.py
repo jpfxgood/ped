@@ -4,13 +4,13 @@ import curses
 import curses.ascii
 import sys
 import tempfile
-import dialog                                      
+import dialog
 import editor_common
-import keytab 
+import keytab
 
 
 class StreamSelectComponent(dialog.Component):
-    """ Component subclass that embeds a StreamEditor in a dialog used for selecting 
+    """ Component subclass that embeds a StreamEditor in a dialog used for selecting
     from very long lists stored in temp files """
     def __init__(self, name, order, x, y, width, height, label, stream, line_re = None ):
         """ takes name, order is tab order, x, y are offset inside dialog, width,height are in characters,
@@ -19,7 +19,7 @@ class StreamSelectComponent(dialog.Component):
         self.x = x
         self.y = y
         self.width = width
-        self.height = height  
+        self.height = height
         self.ewin = None
         self.editor = None
         self.stream = stream
@@ -33,7 +33,7 @@ class StreamSelectComponent(dialog.Component):
             self.stream.close()
             self.stream = None
         self.reset()
-    
+
     def reset(self):
         """ reset things """
         if self.ewin:
@@ -42,12 +42,12 @@ class StreamSelectComponent(dialog.Component):
         if self.editor:
             self.editor.getWorkfile().close()
             self.editor = None
-            
+
     def setpos(self, x, y ):
         """ set the position """
         self.reset()
         dialog.Component.setpos(self, x, y)
-        
+
     def setsize(self, height, width ):
         """ set the size """
         self.reset()
@@ -61,7 +61,7 @@ class StreamSelectComponent(dialog.Component):
             if oy >= 0 and ox >= 0 and (mtype & (curses.BUTTON1_CLICKED | curses.BUTTON1_PRESSED | curses.BUTTON1_RELEASED)):
                 self.editor.goto(self.editor.line+oy,self.editor.left+ox)
                 return keytab.KEYTAB_CR
-        
+
         return -1
 
     def render(self):
@@ -74,12 +74,12 @@ class StreamSelectComponent(dialog.Component):
                 self.editor = editor_common.StreamEditor(win,self.ewin,self.name,self.stream,select=True,line_re = self.line_re)
                 self.editor.invalidate_all()
                 self.editor.main(False)
-             
+
             if self.isfocus:
                 attr = curses.A_BOLD
             else:
                 attr = curses.A_NORMAL
-
+            self.editor.setfocus(self.isfocus)
             dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr,False)
             self.editor.redraw()
         self.isfocus = False
@@ -92,7 +92,7 @@ class StreamSelectComponent(dialog.Component):
         """ setvalue for this component is a no op, maybe a goto in the future """
         pass
 
-    def getvalue(self): 
+    def getvalue(self):
         """ our value is always the current line in the embedded editor """
         return self.editor.getCurrentLine()
 

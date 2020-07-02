@@ -77,6 +77,7 @@ class FileBrowseComponent(dialog.Component):
 
             dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr,False)
             if self.editor:
+                self.editor.setfocus(self.isfocus)
                 self.editor.redraw()
                 win.refresh()
 

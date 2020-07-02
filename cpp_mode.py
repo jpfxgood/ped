@@ -78,7 +78,7 @@ def finish(editor):
             del wf.cpp_mode_tokens
             wf.cpp_mode_tokens = None
             delattr(wf,"cpp_mode_tokens")
-        
+
 def redraw(editor):
     """ redraw the colorization based on the current token set, regenerate it if needed """
     workfile = editor.getWorkfile()
@@ -93,7 +93,7 @@ def redraw(editor):
         return False
 
     if not tokens.getTokens() or tokens.getModref() != workfile.getModref():
-        tokens.refresh(workfile,copy.copy(lexer))
+        tokens.refresh(editor,copy.copy(lexer))
         return False
 
     render(editor,tokens,

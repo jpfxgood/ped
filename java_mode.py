@@ -79,7 +79,7 @@ def redraw(editor):
         return False
 
     if not tokens.getTokens() or tokens.getModref() != workfile.getModref():
-        tokens.refresh(workfile,JavaLexer())
+        tokens.refresh(editor,JavaLexer())
         return False
 
     render( editor, tokens,

@@ -725,7 +725,8 @@ class Dialog(Component):
     def render(self):
         self.win.leaveok(1)
         for c in self.children:
-            c.render()
+            if not self.focus_list or self.focus_list[self.current][1] != c:
+                c.render()
         self.win.leaveok(0)
         if self.focus_list:
             self.focus_list[self.current][1].focus()
@@ -835,6 +836,7 @@ class Dialog(Component):
         self.win.nodelay(1)
         self.win.notimeout(0)
         self.win.timeout(0)
+        old_cursor = curses.curs_set(1)
         while (1):
             if (not keymap.keypending(self.win)) or force:
                 self.render()
@@ -845,13 +847,17 @@ class Dialog(Component):
 
             if blocking:
                 if ch == Component.CMP_KEY_CANCEL:
+                    curses.curs_set(0)
                     return {}
                 elif ch == Component.CMP_KEY_OK:
+                    curses.curs_set(0)
                     return self.getvalue()
             else:
                 if ch == Component.CMP_KEY_CANCEL:
+                    curses.curs_set(0)
                     return (ch, {})
                 else:
+                    curses.curs_set(0)
                     return (ch, self.getvalue())
 
 def main(stdscr):

@@ -71,7 +71,7 @@ def redraw(editor):
         return False
 
     if not tokens.getTokens() or tokens.getModref() != workfile.getModref():
-        tokens.refresh(workfile,PythonLexer())
+        tokens.refresh(editor,PythonLexer())
         return False
 
     render(editor, tokens,

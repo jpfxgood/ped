@@ -149,8 +149,8 @@ class EditFile:
         result.tabs = self.tabs
         result.changed = self.changed
         result.readonly = True
-        result.undo_mgr = self.undo_mgr
-        result.change_mgr = self.change_mgr
+        result.undo_mgr = copy.copy(self.undo_mgr)
+        result.change_mgr = copy.copy(self.change_mgr)
         result.modref = self.modref
         result.lines = []
         for l in self.lines:
@@ -537,8 +537,9 @@ class Editor:
         self.unwrap_lines = []
         self.wrap_modref = -1
         self.wrap_width = -1
-        self.copies = []
-        self.original = None
+        self.show_cursor = True
+        self.prev_pos = (0,0)
+        self.focus = True
         self.invalidate_all()
         curses.raw()
         curses.meta(1)
@@ -567,21 +568,15 @@ class Editor:
         result.unwrap_lines = copy.copy(self.unwrap_lines)
         result.wrap_modref = self.wrap_modref
         result.wrap_width = self.wrap_width
-        self.copies.append(result)
-        result.original = self
+        result.show_cursor = self.show_cursor
+        result.focus = self.focus
+        result.prev_pos = copy.copy(self.prev_pos)
         return result
 
-    def remove_copy(self,copy):
-        """ remove reference to copy of view """
-        self.copies.remove(copy)
 
     def __del__(self):
         """ if we're closing then clean some stuff up """
         # let the mode clean up if it needs to
-        if self.original:
-            self.original.remove_copy(self)
-            self.original = None
-
         if self.workfile and self.workfile.change_mgr:
             self.workfile.change_mgr.remove_view(self)
 
@@ -611,6 +606,8 @@ class Editor:
                                                              self.last_search_dir,
                                                              clipboard.clip,
                                                              clipboard.clip_type,
+                                                             self.show_cursor,
+                                                             self.focus,
                                                              self.wrap))
     def applyUndo(self,*args):
         """ called by undo to unwind one undo action """
@@ -632,9 +629,11 @@ class Editor:
         self.last_search_dir,
         clipboard.clip,
         clipboard.clip_type,
+        self.show_cursor,
+        self.focus,
         self.wrap ) = args
-        for c in self.copies:
-            c.applyUndo(*args)
+        self.invalidate_screen()
+        self.invalidate_mark()
 
     def undo(self):
         """ undo the last transaction, actually undoes the open transaction and the prior closed one """
@@ -749,6 +748,17 @@ class Editor:
             print("getContent (not wrap) =", line,pad,trim,display,self.wrap,"return =",orig,file=open("/home/james/ped.log","a"))
         return orig
 
+    def getLength(self, line, display=False ):
+        """ get the length of a line """
+        length = 0
+        if self.wrap and display:
+            if line < len(self.wrap_lines):
+                length = self.workfile.length(self.wrap_lines[line][0])
+        else:
+            length = self.workfile.length(line)
+
+        return length
+
     def numLines(self,display=False):
         """ get the number of lines in the editor """
         if self.wrap and display:
@@ -784,6 +794,34 @@ class Editor:
             if isdebug():
                 print("addstr exception =",row,col,str,attr, file=open("/home/james/ped.log","a"))
             return 0
+
+    def window_pos(self,line,pos):
+        sc_line,sc_pos = self.scrPos(line,pos)
+        return((sc_line-self.line)+1,sc_pos-self.left)
+
+    def showcursor(self,state):
+        """ set flag to turn cursor on or off """
+        old_cursor_state = self.show_cursor
+        self.show_cursor = state
+        return old_cursor_state
+        
+    def setfocus(self,state):
+        """ set this editor to have focus or not """
+        old_focus_state = self.focus
+        self.focus = state
+        return old_focus_state
+
+    def draw_cursor(self):
+        """ worker function to draw the current cursor position """
+        if self.show_cursor:
+            line = self.getLine()
+            pos = self.getPos()
+            if pos < self.getLength(line):
+                cursor_ch = self.getContent(line)[pos]
+            else:
+                cursor_ch = ' '
+            sc_line,sc_pos = self.window_pos(line,pos)
+            self.addstr(sc_line,sc_pos,cursor_ch,curses.A_REVERSE)
 
     def draw_mark(self):
         """ worker function to draw the marked section of the file """
@@ -909,6 +947,14 @@ class Editor:
                 self.pos = right_x
             self.invalidate_screen()
 
+    def move(self):
+        """ update the previous cursor position from the current """
+        self.prev_pos = (self.getLine(),self.getPos())
+
+    def prevPos(self):
+        """ get the previous cursor position """
+        return self.prev_pos
+
     def redraw(self):
         """ redraw  the editor as needed """
         try:
@@ -932,20 +978,29 @@ class Editor:
             status = "%d : %d : %d : %s : %s : %s"%(self.numLines(),self.getLine(),self.getPos(),changed,filename, "REC" if keymap.is_recording() else "PBK" if keymap.is_playback() else "   " )
             if len(status) < self.max_x:
                 status += (self.max_x-len(status))*' '
-
-            self.addstr(0,0,status[0:self.max_x],curses.A_REVERSE)
+            
+            if self.focus:
+                self.addstr(0,0,status[0:self.max_x],curses.A_REVERSE|curses.A_BOLD)
+            else:
+                self.addstr(0,0,status[0:self.max_x],curses.A_REVERSE)
             # if the mode is rendering then don't do the default rendering as well
             mode_redraw = False
             if self.mode:
                 mode_redraw = self.mode.redraw(self)
             if not mode_redraw:
+                cursor_line,cursor_pos = self.window_pos(*self.prevPos())
                 y = 1
                 lidx = self.line
                 while lidx < self.line+(self.max_y-1):
                     try:
-                        if self.isLineChanged(lidx):
+                        line_changed = self.isLineChanged(lidx)
+                        is_cursor_line = (y == cursor_line)
+                        if line_changed or is_cursor_line:
                             l = self.getContent(lidx,self.left+self.max_x,True,True)
-                            self.addstr(y,0,l[self.left:self.left+self.max_x])
+                            if line_changed:
+                                self.addstr(y,0,l[self.left:self.left+self.max_x])
+                            else:
+                                self.addstr(y,cursor_pos,l[self.left+cursor_pos])
                     except Exception as e:
 #                        if isdebug():
 #                            print >>open("ped.log","a"),traceback.format_exc()
@@ -953,6 +1008,8 @@ class Editor:
                     y = y + 1
                     lidx = lidx + 1
             self.draw_mark()
+            self.move()
+            self.draw_cursor()
             if mode_redraw:
                 self.flushChanges()
         except:
@@ -1013,10 +1070,13 @@ class Editor:
         line = self.getLine()
         pos = self.getPos()
         if pos:
-            self.goto(line,pos-1)
-            self.delc()
+            if pos <= self.getLength(line):
+                self.goto(line,pos-1)
+                self.delc()
+            else:
+                self.goto(line,pos-1)
         elif line:
-            pos = len(self.getContent(line-1))-1
+            pos = self.getLength(line-1)-1
             self.goto(line-1,pos)
             self.delc()
 
@@ -1227,7 +1287,7 @@ class Editor:
 
         if self.wrap:
             if line:
-                offset = len(self.getContent(line-1))-(rept-pos)
+                offset = self.getLength(line-1)-(rept-pos)
                 self.goto(line-1,offset)
         else:
             self.goto(line,0)
@@ -1239,7 +1299,7 @@ class Editor:
         pos = self.getPos()
         line = self.getLine()
         if self.wrap:
-            llen = len(self.getContent(line))
+            llen = self.getLength(line)
             if pos + rept < llen:
                 self.goto(line,pos+rept)
                 return
@@ -1664,7 +1724,7 @@ class Editor:
         if choices and choices["file"]:
             self.workfile.save(os.path.join(choices["dir"],choices["file"]))
         self.undo_mgr.flush_undo()
-        self.invalidate_screen()
+        self.invalidate_all()
         gc.collect()
 
     def save(self):
@@ -1677,7 +1737,7 @@ class Editor:
         self.workfile.save()
         self.undo_mgr.flush_undo()
         self.goto(self.getLine(),self.getPos())
-        self.invalidate_screen()
+        self.invalidate_all()
         self.redraw()
         gc.collect()
 
@@ -1700,10 +1760,10 @@ class Editor:
             found = self.search(pattern)
             replace_all = False
             do_replace = False
-            self.scr.leaveok(1)
             while found:
                 self.redraw()
                 self.scr.refresh()
+
                 if not replace_all:
                     answer = confirm_replace(self.parent)
                     self.invalidate_screen()
@@ -1903,6 +1963,7 @@ class Editor:
     def main(self,blocking = True, start_ch = None):
         """ main driver loop for editor, if blocking = False exits on each keystroke to allow embedding,
             start_ch is a character read externally that hould be processed on startup """
+        curses.curs_set(0)
         self.rewrap()
         self.scr.nodelay(1)
         self.scr.notimeout(0)
@@ -1921,10 +1982,6 @@ class Editor:
                     self.mode = None
 
             self.redraw()
-            try:
-                self.scr.move(self.vpos+1,self.pos)
-            except Exception as e:
-                pass
 
             if start_ch:
                 ch = start_ch

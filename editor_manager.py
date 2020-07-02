@@ -42,7 +42,7 @@ class BaseFrame:
         if self.lborder:
            self.win = parent.subwin(height,width-1,y,x+1)
         else:
-            self.win = parent.subwin(height,width,y,x)
+           self.win = parent.subwin(height,width,y,x)
 
     def __lt__(self, other):
         if self.y == other.y:
@@ -127,9 +127,6 @@ class EditorFrame ( BaseFrame ):
     def __del__(self):
         """ clean up our subwindow when we close """
         BaseFrame.__del__(self)
-        if self.editor.original:
-            self.editor.original.remove_copy(self.editor)
-            self.editor.original = None
         del self.editor
         self.editor = None
 
@@ -578,6 +575,18 @@ class EditorManager:
         except:
             return
 
+    def redraw(self, force = False):
+        """ redraw the editor manager and all the subframes, do minimal updates unless force is True """
+        for f in self.frames:
+            if isinstance(f,EditorFrame):
+                new_cursor_state = (f == self.frames[self.current_frame])
+                old_cursor_state = f.editor.showcursor(new_cursor_state)
+                f.editor.setfocus(new_cursor_state)
+                force = force or (old_cursor_state != new_cursor_state)
+            f.redraw(force)
+        self.scr.leaveok(1)
+        self.scr.refresh()
+        self.scr.leaveok(0)
 
 
     def main(self,blocking = True):
@@ -588,11 +597,10 @@ class EditorManager:
         curses.mousemask( curses.BUTTON1_PRESSED| curses.BUTTON1_RELEASED| curses.BUTTON1_CLICKED)
 
         while len(self.editors):
-            for f in self.frames:
-                f.redraw(force)
-            if force:
-                self.scr.noutrefresh()
-            force = True
+            self.redraw(force)
+#            if force:
+#                self.scr.noutrefresh()
+#            force = True
             if isinstance(self.frames[self.current_frame],EditorFrame):
                 # if the buffer has a real filename then when it is current be in its directory
                 filename = self.frames[self.current_frame].editor.getFilename()
@@ -618,9 +626,7 @@ class EditorManager:
             elif cmd_id == cmd_names.CMD_RESIZE:
                 self.resize()
             elif cmd_id == cmd_names.CMD_REFRESH:
-                for f in self.frames:
-                    f.redraw(True)
-                self.scr.refresh()  # this is here to signal refresh
+                self.redraw(True)
             elif cmd_id == cmd_names.CMD_NEXTFRAME:
                 self.nextFrame()
             elif cmd_id == cmd_names.CMD_BUFFERLIST:
@@ -679,8 +685,10 @@ class EditorManager:
                         return keytab.KEYTAB_ESC
                 else:
                     return keytab.KEYTAB_ESC
-            else:
-                force = False
+            if seq == keytab.KEYTAB_REFRESH:
+                self.redraw(True)
+#            else:
+#                force = False
 
             if not blocking:
                 self.scr.refresh()

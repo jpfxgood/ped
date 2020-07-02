@@ -47,7 +47,7 @@ def match_attr_str( win, y, x, width, attr ):
 def undo_all(ed):
     while ed.isChanged():
         ed.undo()
-    ed.main(False)
+    wait_for_screen(ed)
 
 def window_pos(ed,line,pos):
     sc_line,sc_pos = ed.scrPos(line,pos)
@@ -98,8 +98,11 @@ def validate_mark( ed, lines_to_test, start_line, end_line, start_pos, end_pos, 
     return match_tuple
 
 def wait_for_screen(ed):
+    ed.showcursor(False)
+    ed.main(False)
     while ed.has_changes():
         ed.main(False)
+    ed.showcursor(True)
 
 def validate_screen( ed, lines_to_test = None, start_line=-1, end_line=-1, start_pos=-1, end_pos=-1, do_validation=True ):
 
@@ -188,7 +191,7 @@ def editor_test_suite(stdscr,testdir,wrapped,editor = None ):
         ed.toggle_wrap()
 
     validate_screen(ed)
-    assert(match_attr(ed.scr,0,0,1,ed.max_x,curses.A_REVERSE))
+    assert(match_attr(ed.scr,0,0,1,ed.max_x,curses.A_REVERSE|curses.A_BOLD))
     ef = ed.getWorkfile()
 
     assert(isinstance(ef,editor_common.EditFile))
