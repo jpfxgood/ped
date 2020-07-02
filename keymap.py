@@ -19,7 +19,7 @@ keymap_manager = {
     keytab.KEYTAB_F04: (cmd_names.CMD_NEXTFRAME,keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_ALTB: (cmd_names.CMD_BUFFERLIST,keytab.KEYTAB_REFRESH),
     keytab.KEYTAB_ALTF: (cmd_names.CMD_FILEFIND,keytab.KEYTAB_REFRESH),
-    keytab.KEYTAB_F22: (cmd_names.CMD_SFTP,keytab.KEYTAB_NOKEY),
+    keytab.KEYTAB_F22: (cmd_names.CMD_SFTP,keytab.KEYTAB_REFRESH),
     keytab.KEYTAB_ALTX: (cmd_names.CMD_SAVEEXIT,keytab.KEYTAB_REFRESH),
     keytab.KEYTAB_F01: (cmd_names.CMD_HELP, keytab.KEYTAB_NOKEY),
     keytab.KEYTAB_ALTI: (cmd_names.CMD_HELP, keytab.KEYTAB_NOKEY),

@@ -847,17 +847,17 @@ class Dialog(Component):
 
             if blocking:
                 if ch == Component.CMP_KEY_CANCEL:
-                    curses.curs_set(0)
+                    curses.curs_set(old_cursor)
                     return {}
                 elif ch == Component.CMP_KEY_OK:
-                    curses.curs_set(0)
+                    curses.curs_set(old_cursor)
                     return self.getvalue()
             else:
                 if ch == Component.CMP_KEY_CANCEL:
-                    curses.curs_set(0)
+                    curses.curs_set(old_cursor)
                     return (ch, {})
                 else:
-                    curses.curs_set(0)
+                    curses.curs_set(old_cursor)
                     return (ch, self.getvalue())
 
 def main(stdscr):

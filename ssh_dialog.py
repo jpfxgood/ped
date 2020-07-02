@@ -17,7 +17,7 @@ def get_dir_ssh( path, ssh_username, ssh_password, showhidden=False ):
     """ get a directory listing of a ssh remote path, for a particular username and password """
     def get_config():
         return { "ssh_username":ssh_username, "ssh_password":ssh_password }
-        
+
     dir_list = ssh_mod.ssh_ls(path,False,get_config,False)
     dirnames = []
     filenames = []
@@ -34,21 +34,21 @@ def get_dir_ssh( path, ssh_username, ssh_password, showhidden=False ):
         dirnames = [d for d in dirnames if d[0] != "."]
         filenames = [f for f in filenames if f[0] != "." and f[-1] != "~" and not f.endswith(".bak")]
     dirnames.sort()
-    filenames.sort()             
+    filenames.sort()
     dirnames = ["<DIR> .."] + ["<DIR> "+d for d in dirnames]
     return((path,dirnames,filenames))
-        
-    
-def get_dir(path,showhidden=False):    
-    """ get a directory listing of path, directories are prefixed with <DIR> 
-        if showhidden == False hidden files are not include, otherwise they are 
+
+
+def get_dir(path,showhidden=False):
+    """ get a directory listing of path, directories are prefixed with <DIR>
+        if showhidden == False hidden files are not include, otherwise they are
         returns the directory path, the list of directories and list of files as a tuple"""
     (dirpath, dirnames, filenames) = next(os.walk(path))
     if not showhidden:
         dirnames = [d for d in dirnames if d[0] != "."]
         filenames = [f for f in filenames if f[0] != "." and f[-1] != "~" and not f.endswith(".bak")]
     dirnames.sort()
-    filenames.sort()             
+    filenames.sort()
     dirnames = ["<DIR> .."] + ["<DIR> "+d for d in dirnames]
     return (dirpath, dirnames, filenames)
 
@@ -112,17 +112,18 @@ class SSHFileDialog(dialog.Dialog):
                                                                 self.cancel_button
                                                             ])
         self.refresh()
-        
+
     def refresh(self,force=False):
         """ populate all of the fields if something changed """
-        values = self.getvalue()                                                                                                  
+        values = self.getvalue()
         ssh_path = ""
         ssh_dirnames = []
-        ssh_filenames = []                  
+        ssh_filenames = []
         set_values={}
         if values["ssh_username"] and values["ssh_password"] and values["ssh_dir"]:
             new_ssh = values["ssh_username"] + values["ssh_password"] + values["ssh_dir"]
             if new_ssh != self.prior_ssh or force:
+                self.prior_ssh = new_ssh
                 try:
                     (ssh_path,ssh_dirnames,ssh_filenames) = get_dir_ssh( values["ssh_dir"], values["ssh_username"], values["ssh_password"], False)
                     self.prior_ssh = new_ssh
@@ -133,7 +134,7 @@ class SSHFileDialog(dialog.Dialog):
         local_path = ""
         local_dirnames = []
         local_filenames = []
-        if values["local_dir"]: 
+        if values["local_dir"]:
             if self.prior_local != values["local_dir"] or force:
                 try:
                     (local_path, local_dirnames,local_filenames) = get_dir(values["local_dir"],False)
@@ -143,11 +144,11 @@ class SSHFileDialog(dialog.Dialog):
                 except:
                     print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
                     confirm(self.win, "File Error! Try Again ?")
-        self.setvalue(set_values)           
-        
+        self.setvalue(set_values)
+
 
     def handle(self,ch):
-        """ key handler for selection from the file and directory list, 
+        """ key handler for selection from the file and directory list,
             browsing another directory selecting a file or entering one """
         focus_index = self.current
         focus_field = self.focus_list[self.current][1]
@@ -191,7 +192,7 @@ class SSHFileDialog(dialog.Dialog):
                 try:
                     if not self.file_name.getvalue() or not self.ssh_file_name.getvalue():
                         confirm(self.win, "Source or destination filename not set, retry ?")
-                    else:         
+                    else:
                         message(self.win, "Putting File", "Transfering %s"%(self.file_name.getvalue()),False)
                         ssh_mod.ssh_put(os.path.join(self.current_dir.getvalue(),self.file_name.getvalue()),
                         self.ssh_current_dir.getvalue()+"/"+self.ssh_file_name.getvalue(),
@@ -201,7 +202,7 @@ class SSHFileDialog(dialog.Dialog):
                     print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
                     confirm(self.win, "SSH Error! Try Again ?")
             elif focus_field == self.get_button:
-                try:     
+                try:
                     if not self.file_name.getvalue() or not self.ssh_file_name.getvalue():
                         confirm(self.win, "Source or destination filename not set, retry ?")
                     else:
@@ -214,7 +215,7 @@ class SSHFileDialog(dialog.Dialog):
                     print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
                     confirm(self.win, "SSH Error! Try Again ?")
             elif focus_field == self.open_button:
-                try:     
+                try:
                     if not self.file_name.getvalue() or not self.ssh_file_name.getvalue():
                         confirm(self.win, "Source or destination filename not set, retry ?")
                     else:
@@ -226,11 +227,11 @@ class SSHFileDialog(dialog.Dialog):
                 except:
                     print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
                     confirm(self.win, "SSH Error! Try Again ?")
-             
-             
-                    
+
+
+
         return ret_ch
-                        
+
 def sftpDialog( scr, title = "SFTP File Manager", remote_path="", ssh_username="", ssh_password="", local_path="."):
     d = SSHFileDialog( scr, title, remote_path=remote_path, ssh_username=ssh_username, ssh_password=ssh_password, local_path=local_path )
     values = d.main()
