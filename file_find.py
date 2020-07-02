@@ -5,7 +5,7 @@ import curses.ascii
 import sys
 import os
 import tempfile
-import dialog                                      
+import dialog
 import editor_common
 import re
 import traceback
@@ -31,20 +31,20 @@ def sanitize( text ):
         index = index + 1
     return outtext
 
-def contains(fullpath, pattern, found):   
+def contains(fullpath, pattern, found):
     """ test to see if the file referenced by fullpath contains pattern write result lines to file object found """
     try:
         line = 0
         fl = open(fullpath, "r")
-        inline = fl.readline(132)
+        inline = fl.readline(2048)
         while inline:
             sl = sanitize(inline)
-            if re.search(pattern,sl):                     
+            if re.search(pattern,sl):
                 print("%s:%d:%s"%(fullpath,line,sl.rstrip()), file=found)
-            inline = fl.readline(132)
-            line += 1                                     
+            inline = fl.readline(2048)
+            line += 1
     except Exception as e:
-        print("%s:%d:ERROR %s",(fullpath,line,str(e)), file=found)
+        print("%s:%d:ERROR %s"%(fullpath,line,str(e)), file=found)
 
 def where( path, fpat, cpat, recurse, scr ):
     """ recursively search for a pattern in files starting with path, files matchin re fpat, containing re cpat,
@@ -84,17 +84,17 @@ class FileFindDialog(dialog.Dialog):
         the current file in the editor, search again, and cancel """
     def __init__(self,scr,title = "File Find Dialog",fpat=".*",cpat="",recurse=False):
         """ takes the curses window to pop up over, title to display, will dynamically size to parent window """
-        max_y,max_x = scr.getmaxyx()                         
+        max_y,max_x = scr.getmaxyx()
         pw = (max_x - 4)
         ph = ((max_y-7) // 2)
         cx = max_x // 2
         y = 1
         self.found_list = StreamSelectComponent("found",7,cx-(pw//2),y,pw,ph,"Found",where(os.getcwd(),fpat,cpat,recurse,scr))
-        y += ph        
+        y += ph
         self.preview = FileBrowseComponent("browse",8,cx-(pw//2),y,pw,ph,"Preview",None)
         y += ph
         self.start_dir = dialog.Prompt("dir",1,2,y,"Path: ",max_x-10,os.getcwd())
-        y += 1        
+        y += 1
         self.recurse = dialog.Toggle("recurse",2,2,y,20,1,["Search Subdirs","Don't Search Subdirs"])
         y += 1
         self.file_name = dialog.Prompt("file",2,2,y,"File: ",max_x-10,fpat)
@@ -129,7 +129,7 @@ class FileFindDialog(dialog.Dialog):
                 self.preview.setfilename(fname,int(number))
             else:
                 values = self.getvalue()
-                if values["search"]:                                     
+                if values["search"]:
                     (recurse,choices) = values["recurse"]
                     self.found_list.setstream(where(values["dir"],values["file"],values["contains"],not recurse,self.getparent()))
                     values["search"] = False
