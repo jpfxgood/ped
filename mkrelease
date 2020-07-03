@@ -1,0 +1,22 @@
+#!/bin/bash -x
+if [ -f ped_$1.zip ];
+    then rm ped_$1.zip;
+fi
+./mkdocs
+zip_python () {
+    if [ -d $1 ];
+         then return;
+    elif [[ $1 == *.py ]];
+        then zip -q ped_$2.zip $1;
+    elif [ `grep -c "\#\!.*python" $1` -eq 1 ];
+        then zip -q ped_$2.zip $1;
+    fi
+}
+for f in *;
+do zip_python $f $1;
+done
+zip -q ped_$1.zip docs/*
+zip -q ped_$1.zip requirements.txt
+zip -q ped_$1.zip LICENSE
+zip -q ped_$1.zip README.md
+unzip -l ped_$1.zip

@@ -33,11 +33,17 @@ Notes
 I've recently added a suite of pytest tests that cover about 78% of the code.
 
 You can run them by doing the following in the source directory:
+
     export SSH_DIALOG_BASEPATH= { an ssh path of the form ssh://host/dir:port that points to a test sftp server where files can be get/put and directories created }
+
     export SSH_DIALOG_USERNAME= { ssh username to run the test as, needs permissions for the above }
+
     export SSH_DIALOG_PASSWORD= { ssh password for that user, you are responsible for the security of it }
+
     python -m pytest tests
+
 OR with coverage:
+
     coverage run --source=. --omit=comment_extension.py,dummy_extension.py,lib/*,tests/* -m pytest tests
 
 

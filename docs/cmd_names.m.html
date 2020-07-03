@@ -1,0 +1,1868 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>cmd_names API documentation</title>
+    <meta name="description" content="" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    max-width: 850px;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow: hidden;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#cmd_names.CMD_BACKSPACE">CMD_BACKSPACE</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_BTAB">CMD_BTAB</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_BUFFERLIST">CMD_BUFFERLIST</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_COPYMARKED">CMD_COPYMARKED</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_CR">CMD_CR</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_CUTMARKED">CMD_CUTMARKED</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_DELC">CMD_DELC</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_DELEDITOR">CMD_DELEDITOR</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_DLGMOUSE">CMD_DLGMOUSE</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_DLGNEXT">CMD_DLGNEXT</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_DLGPREV">CMD_DLGPREV</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_DLGRESIZE">CMD_DLGRESIZE</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_DLGUP">CMD_DLGUP</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_DOWN">CMD_DOWN</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_END">CMD_END</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_END1">CMD_END1</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_EXITNOSAVE">CMD_EXITNOSAVE</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_FILEFIND">CMD_FILEFIND</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_FILENAME">CMD_FILENAME</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_HELP">CMD_HELP</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_HOME">CMD_HOME</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_HOME1">CMD_HOME1</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_HORZSPLIT">CMD_HORZSPLIT</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_INSERT">CMD_INSERT</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_KILLFRAME">CMD_KILLFRAME</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_LEFT">CMD_LEFT</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_MARKCOPYLINE">CMD_MARKCOPYLINE</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_MARKCUTLINE">CMD_MARKCUTLINE</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_MARKLINES">CMD_MARKLINES</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_MARKRECT">CMD_MARKRECT</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_MARKSPAN">CMD_MARKSPAN</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_MOUSE">CMD_MOUSE</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_NEXTEDITOR">CMD_NEXTEDITOR</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_NEXTFRAME">CMD_NEXTFRAME</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_NEXTWORD">CMD_NEXTWORD</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_NOP">CMD_NOP</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_OPENEDITOR">CMD_OPENEDITOR</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_PAGEDOWN">CMD_PAGEDOWN</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_PAGEUP">CMD_PAGEUP</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_PASTE">CMD_PASTE</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_PLAYBACK">CMD_PLAYBACK</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_PREVEDITOR">CMD_PREVEDITOR</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_PREVWORD">CMD_PREVWORD</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_PRMTGOTO">CMD_PRMTGOTO</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_PRMTREPLACE">CMD_PRMTREPLACE</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_PRMTSEARCH">CMD_PRMTSEARCH</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_PRMTSEARCHBACK">CMD_PRMTSEARCHBACK</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_REFRESH">CMD_REFRESH</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_RESIZE">CMD_RESIZE</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_RETURNKEY">CMD_RETURNKEY</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_RIGHT">CMD_RIGHT</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_SAVE">CMD_SAVE</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_SAVEAS">CMD_SAVEAS</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_SAVEEXIT">CMD_SAVEEXIT</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_SEARCHAGAIN">CMD_SEARCHAGAIN</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_SFTP">CMD_SFTP</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_SHELLCMD">CMD_SHELLCMD</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_TAB">CMD_TAB</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_TOGGLERECORD">CMD_TOGGLERECORD</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_TOGGLEWRAP">CMD_TOGGLEWRAP</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_TRANSFERCLIPIN">CMD_TRANSFERCLIPIN</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_TRANSFERCLIPOUT">CMD_TRANSFERCLIPOUT</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_UNDO">CMD_UNDO</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_UP">CMD_UP</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_VERTSPLIT">CMD_VERTSPLIT</a></li>
+    <li class="mono"><a href="#cmd_names.CMD_ZOOMFRAME">CMD_ZOOMFRAME</a></li>
+    <li class="mono"><a href="#cmd_names.cmd">cmd</a></li>
+    <li class="mono"><a href="#cmd_names.cmd_to_name">cmd_to_name</a></li>
+    <li class="mono"><a href="#cmd_names.name">name</a></li>
+    <li class="mono"><a href="#cmd_names.name_to_cmd">name_to_cmd</a></li>
+  </ul>
+
+    </li>
+
+
+
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">cmd_names</span> module</h1>
+  
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-cmd_names', this);">Show source &equiv;</a></p>
+  <div id="source-cmd_names" class="source">
+    <div class="codehilite"><pre><span class="c1"># Copyright 2009-2012 James P Goodwin ped tiny python editor</span>
+<span class="n">CMD_NOP</span><span class="o">=-</span><span class="mi">1</span>
+<span class="n">CMD_INSERT</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">CMD_RETURNKEY</span><span class="o">=</span><span class="mi">15</span>
+
+<span class="n">CMD_MARKSPAN</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">CMD_MARKRECT</span><span class="o">=</span><span class="mi">2</span>
+<span class="n">CMD_COPYMARKED</span><span class="o">=</span><span class="mi">3</span>
+<span class="n">CMD_PRMTGOTO</span><span class="o">=</span><span class="mi">4</span>
+<span class="n">CMD_BACKSPACE</span><span class="o">=</span><span class="mi">5</span>
+<span class="n">CMD_FILENAME</span><span class="o">=</span><span class="mi">6</span>
+<span class="n">CMD_CUTMARKED</span><span class="o">=</span><span class="mi">7</span>
+<span class="n">CMD_PASTE</span><span class="o">=</span><span class="mi">38</span>
+<span class="n">CMD_MARKLINES</span><span class="o">=</span><span class="mi">8</span>
+<span class="n">CMD_CR</span><span class="o">=</span><span class="mi">9</span>
+<span class="n">CMD_TAB</span><span class="o">=</span><span class="mi">10</span>
+<span class="n">CMD_SAVE</span><span class="o">=</span><span class="mi">11</span>
+<span class="n">CMD_SAVEAS</span><span class="o">=</span><span class="mi">12</span>
+<span class="n">CMD_UNDO</span><span class="o">=</span><span class="mi">13</span>
+<span class="n">CMD_TOGGLEWRAP</span><span class="o">=</span><span class="mi">14</span>
+<span class="n">CMD_BTAB</span><span class="o">=</span><span class="mi">16</span>
+<span class="n">CMD_PREVWORD</span><span class="o">=</span><span class="mi">17</span>
+<span class="n">CMD_NEXTWORD</span><span class="o">=</span><span class="mi">18</span>
+<span class="n">CMD_HOME</span><span class="o">=</span><span class="mi">19</span>
+<span class="n">CMD_END</span><span class="o">=</span><span class="mi">20</span>
+<span class="n">CMD_UP</span><span class="o">=</span><span class="mi">21</span>
+<span class="n">CMD_DOWN</span><span class="o">=</span><span class="mi">22</span>
+<span class="n">CMD_LEFT</span><span class="o">=</span><span class="mi">23</span>
+<span class="n">CMD_RIGHT</span><span class="o">=</span><span class="mi">24</span>
+<span class="n">CMD_DELC</span><span class="o">=</span><span class="mi">25</span>
+<span class="n">CMD_PAGEUP</span><span class="o">=</span><span class="mi">26</span>
+<span class="n">CMD_PAGEDOWN</span><span class="o">=</span><span class="mi">27</span>
+<span class="n">CMD_PRMTSEARCH</span><span class="o">=</span><span class="mi">28</span>
+<span class="n">CMD_PRMTREPLACE</span><span class="o">=</span><span class="mi">29</span>
+<span class="n">CMD_TRANSFERCLIPOUT</span><span class="o">=</span><span class="mi">30</span>
+<span class="n">CMD_TRANSFERCLIPIN</span><span class="o">=</span><span class="mi">31</span>
+<span class="n">CMD_PRMTSEARCHBACK</span><span class="o">=</span><span class="mi">32</span>
+<span class="n">CMD_SEARCHAGAIN</span><span class="o">=</span><span class="mi">33</span>
+<span class="n">CMD_MARKCOPYLINE</span><span class="o">=</span><span class="mi">34</span>
+<span class="n">CMD_MARKCUTLINE</span><span class="o">=</span><span class="mi">35</span>
+<span class="n">CMD_HOME1</span><span class="o">=</span><span class="mi">36</span>
+<span class="n">CMD_END1</span><span class="o">=</span><span class="mi">37</span>
+<span class="n">CMD_NEXTEDITOR</span><span class="o">=</span><span class="mi">39</span>
+<span class="n">CMD_RESIZE</span><span class="o">=</span><span class="mi">40</span>
+<span class="n">CMD_REFRESH</span><span class="o">=</span><span class="mi">41</span>
+<span class="n">CMD_NEXTFRAME</span><span class="o">=</span><span class="mi">42</span>
+<span class="n">CMD_BUFFERLIST</span><span class="o">=</span><span class="mi">43</span>
+<span class="n">CMD_FILEFIND</span><span class="o">=</span><span class="mi">44</span>
+<span class="n">CMD_SAVEEXIT</span><span class="o">=</span><span class="mi">45</span>
+<span class="c1"># CMD_BROWSESVN=46 free slot now</span>
+<span class="n">CMD_HELP</span><span class="o">=</span><span class="mi">47</span>
+<span class="n">CMD_SHELLCMD</span><span class="o">=</span><span class="mi">48</span>
+<span class="n">CMD_OPENEDITOR</span><span class="o">=</span><span class="mi">49</span>
+<span class="n">CMD_PREVEDITOR</span><span class="o">=</span><span class="mi">50</span>
+<span class="n">CMD_HORZSPLIT</span><span class="o">=</span><span class="mi">51</span>
+<span class="n">CMD_VERTSPLIT</span><span class="o">=</span><span class="mi">52</span>
+<span class="n">CMD_ZOOMFRAME</span><span class="o">=</span><span class="mi">53</span>
+<span class="n">CMD_KILLFRAME</span><span class="o">=</span><span class="mi">54</span>
+<span class="n">CMD_DELEDITOR</span><span class="o">=</span><span class="mi">55</span>
+<span class="n">CMD_EXITNOSAVE</span><span class="o">=</span><span class="mi">56</span>
+<span class="n">CMD_DLGNEXT</span><span class="o">=</span><span class="mi">57</span>
+<span class="n">CMD_DLGPREV</span><span class="o">=</span><span class="mi">58</span>
+<span class="n">CMD_DLGUP</span><span class="o">=</span><span class="mi">59</span>
+<span class="n">CMD_DLGRESIZE</span><span class="o">=</span><span class="mi">60</span>
+<span class="c1"># CMD_READNEWS=61 free slot now</span>
+<span class="n">CMD_TOGGLERECORD</span><span class="o">=</span><span class="mi">62</span>
+<span class="n">CMD_PLAYBACK</span><span class="o">=</span><span class="mi">63</span>
+<span class="n">CMD_MOUSE</span><span class="o">=</span><span class="mi">64</span>
+<span class="n">CMD_DLGMOUSE</span><span class="o">=</span><span class="mi">64</span>
+<span class="n">CMD_SFTP</span><span class="o">=</span><span class="mi">65</span>
+
+
+<span class="n">name_to_cmd</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s2">&quot;CMD_MARKSPAN&quot;</span><span class="p">:</span><span class="n">CMD_MARKSPAN</span><span class="p">,</span>
+<span class="s2">&quot;CMD_MARKRECT&quot;</span><span class="p">:</span><span class="n">CMD_MARKRECT</span><span class="p">,</span>
+<span class="s2">&quot;CMD_COPYMARKED&quot;</span><span class="p">:</span><span class="n">CMD_COPYMARKED</span><span class="p">,</span>
+<span class="s2">&quot;CMD_PRMTGOTO&quot;</span><span class="p">:</span><span class="n">CMD_PRMTGOTO</span><span class="p">,</span>
+<span class="s2">&quot;CMD_BACKSPACE&quot;</span><span class="p">:</span><span class="n">CMD_BACKSPACE</span><span class="p">,</span>
+<span class="s2">&quot;CMD_FILENAME&quot;</span><span class="p">:</span><span class="n">CMD_FILENAME</span><span class="p">,</span>
+<span class="s2">&quot;CMD_CUTMARKED&quot;</span><span class="p">:</span><span class="n">CMD_CUTMARKED</span><span class="p">,</span>
+<span class="s2">&quot;CMD_PASTE&quot;</span><span class="p">:</span><span class="n">CMD_PASTE</span><span class="p">,</span>
+<span class="s2">&quot;CMD_MARKLINES&quot;</span><span class="p">:</span><span class="n">CMD_MARKLINES</span><span class="p">,</span>
+<span class="s2">&quot;CMD_CR&quot;</span><span class="p">:</span><span class="n">CMD_CR</span><span class="p">,</span>
+<span class="s2">&quot;CMD_TAB&quot;</span><span class="p">:</span><span class="n">CMD_TAB</span><span class="p">,</span>
+<span class="s2">&quot;CMD_SAVE&quot;</span><span class="p">:</span><span class="n">CMD_SAVE</span><span class="p">,</span>
+<span class="s2">&quot;CMD_SAVEAS&quot;</span><span class="p">:</span><span class="n">CMD_SAVEAS</span><span class="p">,</span>
+<span class="s2">&quot;CMD_UNDO&quot;</span><span class="p">:</span><span class="n">CMD_UNDO</span><span class="p">,</span>
+<span class="s2">&quot;CMD_TOGGLEWRAP&quot;</span><span class="p">:</span><span class="n">CMD_TOGGLEWRAP</span><span class="p">,</span>
+<span class="s2">&quot;CMD_BTAB&quot;</span><span class="p">:</span><span class="n">CMD_BTAB</span><span class="p">,</span>
+<span class="s2">&quot;CMD_PREVWORD&quot;</span><span class="p">:</span><span class="n">CMD_PREVWORD</span><span class="p">,</span>
+<span class="s2">&quot;CMD_NEXTWORD&quot;</span><span class="p">:</span><span class="n">CMD_NEXTWORD</span><span class="p">,</span>
+<span class="s2">&quot;CMD_HOME&quot;</span><span class="p">:</span><span class="n">CMD_HOME</span><span class="p">,</span>
+<span class="s2">&quot;CMD_END&quot;</span><span class="p">:</span><span class="n">CMD_END</span><span class="p">,</span>
+<span class="s2">&quot;CMD_UP&quot;</span><span class="p">:</span><span class="n">CMD_UP</span><span class="p">,</span>
+<span class="s2">&quot;CMD_DOWN&quot;</span><span class="p">:</span><span class="n">CMD_DOWN</span><span class="p">,</span>
+<span class="s2">&quot;CMD_LEFT&quot;</span><span class="p">:</span><span class="n">CMD_LEFT</span><span class="p">,</span>
+<span class="s2">&quot;CMD_RIGHT&quot;</span><span class="p">:</span><span class="n">CMD_RIGHT</span><span class="p">,</span>
+<span class="s2">&quot;CMD_DELC&quot;</span><span class="p">:</span><span class="n">CMD_DELC</span><span class="p">,</span>
+<span class="s2">&quot;CMD_PAGEUP&quot;</span><span class="p">:</span><span class="n">CMD_PAGEUP</span><span class="p">,</span>
+<span class="s2">&quot;CMD_PAGEDOWN&quot;</span><span class="p">:</span><span class="n">CMD_PAGEDOWN</span><span class="p">,</span>
+<span class="s2">&quot;CMD_PRMTSEARCH&quot;</span><span class="p">:</span><span class="n">CMD_PRMTSEARCH</span><span class="p">,</span>
+<span class="s2">&quot;CMD_PRMTREPLACE&quot;</span><span class="p">:</span><span class="n">CMD_PRMTREPLACE</span><span class="p">,</span>
+<span class="s2">&quot;CMD_TRANSFERCLIPOUT&quot;</span><span class="p">:</span><span class="n">CMD_TRANSFERCLIPOUT</span><span class="p">,</span>
+<span class="s2">&quot;CMD_TRANSFERCLIPIN&quot;</span><span class="p">:</span><span class="n">CMD_TRANSFERCLIPIN</span><span class="p">,</span>
+<span class="s2">&quot;CMD_PRMTSEARCHBACK&quot;</span><span class="p">:</span><span class="n">CMD_PRMTSEARCHBACK</span><span class="p">,</span>
+<span class="s2">&quot;CMD_SEARCHAGAIN&quot;</span><span class="p">:</span><span class="n">CMD_SEARCHAGAIN</span><span class="p">,</span>
+<span class="s2">&quot;CMD_MARKCOPYLINE&quot;</span><span class="p">:</span><span class="n">CMD_MARKCOPYLINE</span><span class="p">,</span>
+<span class="s2">&quot;CMD_MARKCUTLINE&quot;</span><span class="p">:</span><span class="n">CMD_MARKCUTLINE</span><span class="p">,</span>
+<span class="s2">&quot;CMD_HOME1&quot;</span><span class="p">:</span><span class="n">CMD_HOME1</span><span class="p">,</span>
+<span class="s2">&quot;CMD_END1&quot;</span><span class="p">:</span><span class="n">CMD_END1</span><span class="p">,</span>
+<span class="s2">&quot;CMD_NEXTEDITOR&quot;</span><span class="p">:</span><span class="n">CMD_NEXTEDITOR</span><span class="p">,</span>
+<span class="s2">&quot;CMD_RESIZE&quot;</span><span class="p">:</span><span class="n">CMD_RESIZE</span><span class="p">,</span>
+<span class="s2">&quot;CMD_REFRESH&quot;</span><span class="p">:</span><span class="n">CMD_REFRESH</span><span class="p">,</span>
+<span class="s2">&quot;CMD_NEXTFRAME&quot;</span><span class="p">:</span><span class="n">CMD_NEXTFRAME</span><span class="p">,</span>
+<span class="s2">&quot;CMD_BUFFERLIST&quot;</span><span class="p">:</span><span class="n">CMD_BUFFERLIST</span><span class="p">,</span>
+<span class="s2">&quot;CMD_FILEFIND&quot;</span><span class="p">:</span><span class="n">CMD_FILEFIND</span><span class="p">,</span>
+<span class="s2">&quot;CMD_SAVEEXIT&quot;</span><span class="p">:</span><span class="n">CMD_SAVEEXIT</span><span class="p">,</span>
+<span class="c1"># &quot;CMD_BROWSESVN&quot;:CMD_BROWSESVN,</span>
+<span class="s2">&quot;CMD_HELP&quot;</span><span class="p">:</span><span class="n">CMD_HELP</span><span class="p">,</span>
+<span class="s2">&quot;CMD_SHELLCMD&quot;</span><span class="p">:</span><span class="n">CMD_SHELLCMD</span><span class="p">,</span>
+<span class="s2">&quot;CMD_OPENEDITOR&quot;</span><span class="p">:</span><span class="n">CMD_OPENEDITOR</span><span class="p">,</span>
+<span class="s2">&quot;CMD_PREVEDITOR&quot;</span><span class="p">:</span><span class="n">CMD_PREVEDITOR</span><span class="p">,</span>
+<span class="s2">&quot;CMD_HORZSPLIT&quot;</span><span class="p">:</span><span class="n">CMD_HORZSPLIT</span><span class="p">,</span>
+<span class="s2">&quot;CMD_VERTSPLIT&quot;</span><span class="p">:</span><span class="n">CMD_VERTSPLIT</span><span class="p">,</span>
+<span class="s2">&quot;CMD_ZOOMFRAME&quot;</span><span class="p">:</span><span class="n">CMD_ZOOMFRAME</span><span class="p">,</span>
+<span class="s2">&quot;CMD_KILLFRAME&quot;</span><span class="p">:</span><span class="n">CMD_KILLFRAME</span><span class="p">,</span>
+<span class="s2">&quot;CMD_DELEDITOR&quot;</span><span class="p">:</span><span class="n">CMD_DELEDITOR</span><span class="p">,</span>
+<span class="s2">&quot;CMD_EXITNOSAVE&quot;</span><span class="p">:</span><span class="n">CMD_EXITNOSAVE</span><span class="p">,</span>
+<span class="s2">&quot;CMD_DLGNEXT&quot;</span><span class="p">:</span><span class="n">CMD_DLGNEXT</span><span class="p">,</span>
+<span class="s2">&quot;CMD_DLGPREV&quot;</span><span class="p">:</span><span class="n">CMD_DLGPREV</span><span class="p">,</span>
+<span class="s2">&quot;CMD_DLGUP&quot;</span><span class="p">:</span><span class="n">CMD_DLGUP</span><span class="p">,</span>
+<span class="s2">&quot;CMD_DLGRESIZE&quot;</span><span class="p">:</span><span class="n">CMD_DLGRESIZE</span><span class="p">,</span>
+<span class="c1"># &quot;CMD_READNEWS&quot;:CMD_READNEWS,</span>
+<span class="s2">&quot;CMD_TOGGLERECORD&quot;</span><span class="p">:</span><span class="n">CMD_TOGGLERECORD</span><span class="p">,</span>
+<span class="s2">&quot;CMD_PLAYBACK&quot;</span><span class="p">:</span><span class="n">CMD_PLAYBACK</span><span class="p">,</span>
+<span class="s2">&quot;CMD_NOP&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+<span class="s2">&quot;CMD_INSERT&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="s2">&quot;CMD_RETURNKEY&quot;</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span>
+<span class="s2">&quot;CMD_MOUSE&quot;</span><span class="p">:</span><span class="n">CMD_MOUSE</span><span class="p">,</span>
+<span class="s2">&quot;CMD_DLGMOUSE&quot;</span><span class="p">:</span><span class="n">CMD_DLGMOUSE</span><span class="p">,</span>
+<span class="s2">&quot;CMD_SFTP&quot;</span><span class="p">:</span><span class="n">CMD_SFTP</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">cmd_to_name</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span><span class="n">cmd</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">name_to_cmd</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+    <span class="n">cmd_to_name</span><span class="p">[</span><span class="n">cmd</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+</pre></div>
+
+  </div>
+
+  </header>
+
+  <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="cmd_names.CMD_BACKSPACE" class="name">var <span class="ident">CMD_BACKSPACE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_BTAB" class="name">var <span class="ident">CMD_BTAB</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_BUFFERLIST" class="name">var <span class="ident">CMD_BUFFERLIST</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_COPYMARKED" class="name">var <span class="ident">CMD_COPYMARKED</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_CR" class="name">var <span class="ident">CMD_CR</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_CUTMARKED" class="name">var <span class="ident">CMD_CUTMARKED</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_DELC" class="name">var <span class="ident">CMD_DELC</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_DELEDITOR" class="name">var <span class="ident">CMD_DELEDITOR</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_DLGMOUSE" class="name">var <span class="ident">CMD_DLGMOUSE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_DLGNEXT" class="name">var <span class="ident">CMD_DLGNEXT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_DLGPREV" class="name">var <span class="ident">CMD_DLGPREV</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_DLGRESIZE" class="name">var <span class="ident">CMD_DLGRESIZE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_DLGUP" class="name">var <span class="ident">CMD_DLGUP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_DOWN" class="name">var <span class="ident">CMD_DOWN</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_END" class="name">var <span class="ident">CMD_END</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_END1" class="name">var <span class="ident">CMD_END1</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_EXITNOSAVE" class="name">var <span class="ident">CMD_EXITNOSAVE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_FILEFIND" class="name">var <span class="ident">CMD_FILEFIND</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_FILENAME" class="name">var <span class="ident">CMD_FILENAME</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_HELP" class="name">var <span class="ident">CMD_HELP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_HOME" class="name">var <span class="ident">CMD_HOME</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_HOME1" class="name">var <span class="ident">CMD_HOME1</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_HORZSPLIT" class="name">var <span class="ident">CMD_HORZSPLIT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_INSERT" class="name">var <span class="ident">CMD_INSERT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_KILLFRAME" class="name">var <span class="ident">CMD_KILLFRAME</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_LEFT" class="name">var <span class="ident">CMD_LEFT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_MARKCOPYLINE" class="name">var <span class="ident">CMD_MARKCOPYLINE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_MARKCUTLINE" class="name">var <span class="ident">CMD_MARKCUTLINE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_MARKLINES" class="name">var <span class="ident">CMD_MARKLINES</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_MARKRECT" class="name">var <span class="ident">CMD_MARKRECT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_MARKSPAN" class="name">var <span class="ident">CMD_MARKSPAN</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_MOUSE" class="name">var <span class="ident">CMD_MOUSE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_NEXTEDITOR" class="name">var <span class="ident">CMD_NEXTEDITOR</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_NEXTFRAME" class="name">var <span class="ident">CMD_NEXTFRAME</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_NEXTWORD" class="name">var <span class="ident">CMD_NEXTWORD</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_NOP" class="name">var <span class="ident">CMD_NOP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_OPENEDITOR" class="name">var <span class="ident">CMD_OPENEDITOR</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_PAGEDOWN" class="name">var <span class="ident">CMD_PAGEDOWN</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_PAGEUP" class="name">var <span class="ident">CMD_PAGEUP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_PASTE" class="name">var <span class="ident">CMD_PASTE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_PLAYBACK" class="name">var <span class="ident">CMD_PLAYBACK</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_PREVEDITOR" class="name">var <span class="ident">CMD_PREVEDITOR</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_PREVWORD" class="name">var <span class="ident">CMD_PREVWORD</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_PRMTGOTO" class="name">var <span class="ident">CMD_PRMTGOTO</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_PRMTREPLACE" class="name">var <span class="ident">CMD_PRMTREPLACE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_PRMTSEARCH" class="name">var <span class="ident">CMD_PRMTSEARCH</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_PRMTSEARCHBACK" class="name">var <span class="ident">CMD_PRMTSEARCHBACK</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_REFRESH" class="name">var <span class="ident">CMD_REFRESH</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_RESIZE" class="name">var <span class="ident">CMD_RESIZE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_RETURNKEY" class="name">var <span class="ident">CMD_RETURNKEY</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_RIGHT" class="name">var <span class="ident">CMD_RIGHT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_SAVE" class="name">var <span class="ident">CMD_SAVE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_SAVEAS" class="name">var <span class="ident">CMD_SAVEAS</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_SAVEEXIT" class="name">var <span class="ident">CMD_SAVEEXIT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_SEARCHAGAIN" class="name">var <span class="ident">CMD_SEARCHAGAIN</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_SFTP" class="name">var <span class="ident">CMD_SFTP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_SHELLCMD" class="name">var <span class="ident">CMD_SHELLCMD</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_TAB" class="name">var <span class="ident">CMD_TAB</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_TOGGLERECORD" class="name">var <span class="ident">CMD_TOGGLERECORD</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_TOGGLEWRAP" class="name">var <span class="ident">CMD_TOGGLEWRAP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_TRANSFERCLIPIN" class="name">var <span class="ident">CMD_TRANSFERCLIPIN</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_TRANSFERCLIPOUT" class="name">var <span class="ident">CMD_TRANSFERCLIPOUT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_UNDO" class="name">var <span class="ident">CMD_UNDO</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_UP" class="name">var <span class="ident">CMD_UP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_VERTSPLIT" class="name">var <span class="ident">CMD_VERTSPLIT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.CMD_ZOOMFRAME" class="name">var <span class="ident">CMD_ZOOMFRAME</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.cmd" class="name">var <span class="ident">cmd</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.cmd_to_name" class="name">var <span class="ident">cmd_to_name</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.name" class="name">var <span class="ident">name</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="cmd_names.name_to_cmd" class="name">var <span class="ident">name_to_cmd</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+
+
+
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
+</div>
+</body>
+</html>

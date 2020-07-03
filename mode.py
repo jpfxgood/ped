@@ -104,6 +104,9 @@ def gen_tokens( tokenobj, editor, lexer ):
             elif line in tokens:
                 del tokens[line]
         row = row + 1
+    for l in list(tokens.keys()):
+        if l >= workfile.numLines():
+            del tokens[l]
     tokenobj.setTokens(tokens)
     tokenobj.setModref(workfile.getModref())
     tokenobj.setThread(None)

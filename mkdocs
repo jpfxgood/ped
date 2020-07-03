@@ -1,0 +1,19 @@
+#!/bin/bash
+rm docs/*
+export PYTHONPATH="."
+gen_doc () {
+    local module_name="`basename $1 .py`"
+    pdoc --html --template-dir templates --html-dir docs $module_name
+    echo "<li><a href=\"./$module_name.m.html\">$module_name</a></li>" >>docs/index.html
+    }
+cat templates/header.html >docs/index.html
+markdown LICENSE >>docs/index.html
+markdown README.md >>docs/index.html
+echo "<h1>API Documentation</h1>" >>docs/index.html
+echo "<h3>Modules</h3>" >>docs/index.html
+echo "<ul>" >>docs/index.html
+for source_file in *.py;
+do gen_doc $source_file;
+done
+echo "</ul>" >>docs/index.html
+cat templates/footer.html >>docs/index.html
