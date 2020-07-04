@@ -3,13 +3,13 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>editor_common API documentation</title>
-    <meta name="description" content="module that implements the guts of the ped editor, the file abstraction and the editor" />
+    <title>ped_core.clipboard API documentation</title>
+    <meta name="description" content="clipboard module shared by editor and dialogs" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
-
+  
   <style type="text/css">
-
+  
 * {
   box-sizing: border-box;
 }
@@ -550,7 +550,7 @@ table {
   </style>
 
   <style type="text/css">
-
+  
   html, body {
     margin: 0;
     padding: 0;
@@ -651,7 +651,7 @@ table {
 
   code {
     background: #f9f9f9;
-  }
+  } 
 
   pre {
     background: #fefefe;
@@ -668,7 +668,7 @@ table {
     .codehilite pre {
       margin: 0;
     }
-    .codehilite .err { background: #ff3300; color: #fff !important; }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
 
   table#module-list {
     font-size: 110%;
@@ -779,7 +779,7 @@ table {
       text-transform: uppercase;
       color: #fff;
       text-shadow: 1px 1px 0 #f4b700;
-
+      
       padding: 3px 8px;
       border-radius: 2px;
       transition: background .3s ease-in-out;
@@ -901,8 +901,10 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -913,14 +915,16 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
   <style type="text/css">
-
+  
 /* ==========================================================================
    EXAMPLE Media Queries for Responsive Design.
    These examples override the primary ('mobile first') styles.
@@ -1028,123 +1032,131 @@ table {
   </script>
 </head>
 <body>
+<a href="#" id="top">Top</a>
+
 <div id="container">
-<article id="content">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#ped_core.clipboard.LINE_CLIP">LINE_CLIP</a></li>
+    <li class="mono"><a href="#ped_core.clipboard.NONE_CLIP">NONE_CLIP</a></li>
+    <li class="mono"><a href="#ped_core.clipboard.RECT_CLIP">RECT_CLIP</a></li>
+    <li class="mono"><a href="#ped_core.clipboard.SPAN_CLIP">SPAN_CLIP</a></li>
+    <li class="mono"><a href="#ped_core.clipboard.clip">clip</a></li>
+    <li class="mono"><a href="#ped_core.clipboard.clip_type">clip_type</a></li>
+  </ul>
 
-<p>The MIT License (MIT)</p>
+    </li>
 
-<p>Copyright (c) 2020 James P Goodwin</p>
 
-<p>Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:</p>
 
-<p>The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.</p>
+    </ul>
+  </div>
 
-<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</p>
-<h1>ped</h1>
+    <article id="content">
+      
+  
 
-<p>ped is an editor and accompanying tools written in python.</p>
+  
 
-<h1>Background</h1>
 
-<p>I wrote ped since 2009  basically for my own use. I wanted an editor that emulated Brief(TM) and that I could easily extend and that would run in terminals on linux or other places that curses was available. I had been using a Brief(TM) emulation macro in emacs, but that was very limited and emacs is complicated to extend because of all of the mass of features and variants that exist. When I started the project I was working in python almost exclusively, and I realized that a lot of sophisticated features would be made relatively easy because python packages existed for them, so I embarked on writing my own editor.</p>
+  <header id="section-intro">
+  <h1 class="title"><span class="name">ped_core.clipboard</span> module</h1>
+  <p>clipboard module shared by editor and dialogs</p>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.clipboard', this);">Show source &equiv;</a></p>
+  <div id="source-ped_core.clipboard" class="source">
+    <div class="codehilite"><pre><span></span><span class="c1"># Copyright 2009 James P Goodwin ped tiny python editor</span>
+<span class="sd">&quot;&quot;&quot; clipboard module shared by editor and dialogs &quot;&quot;&quot;</span>
 
-<p>I guess this was an act of vanity, stupidity, or stubbornness, but it was fun and I got what I wanted in the end and have been using the editor and extending it since then. I don't expect that this will be anyone's favorite editor but mine, but there might be some snippets of code or modules that others find useful, so please use the code as you like.</p>
+<span class="c1"># types of clipboard contents, set of lines, span of characters, rectangular set of partial lines, or nothing</span>
+<span class="n">LINE_CLIP</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">SPAN_CLIP</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">RECT_CLIP</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">NONE_CLIP</span> <span class="o">=</span> <span class="mi">0</span>
 
-<p>If you find bugs let me know or send me a fix I may apply it or fix the bug or not. I don't warrant that this code is good for any particular purpose.</p>
+<span class="c1"># clipboard list adn type shared across editor instances</span>
+<span class="n">clip</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">clip_type</span> <span class="o">=</span> <span class="n">NONE_CLIP</span>
+</pre></div>
 
-<h1>Installation</h1>
+  </div>
 
-<p>Install from pypy:</p>
+  </header>
 
-<pre><code>pip install ped-editor
-</code></pre>
+  <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="ped_core.clipboard.LINE_CLIP" class="name">var <span class="ident">LINE_CLIP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
 
-<p>OR</p>
+      </div>
+      <div class="item">
+      <p id="ped_core.clipboard.NONE_CLIP" class="name">var <span class="ident">NONE_CLIP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
 
-<p>Check out the source code to a path OR download the release .zip file and unzip there.</p>
+      </div>
+      <div class="item">
+      <p id="ped_core.clipboard.RECT_CLIP" class="name">var <span class="ident">RECT_CLIP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
 
-<p>Put the path on your operating system's execution path.</p>
+      </div>
+      <div class="item">
+      <p id="ped_core.clipboard.SPAN_CLIP" class="name">var <span class="ident">SPAN_CLIP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
 
-<p>Requires python 3.8 or better.</p>
+      </div>
+      <div class="item">
+      <p id="ped_core.clipboard.clip" class="name">var <span class="ident">clip</span></p>
+      
+  
+  <div class="source_cont">
+</div>
 
-<p>Requires a terminal that works with the python curses module.</p>
+      </div>
+      <div class="item">
+      <p id="ped_core.clipboard.clip_type" class="name">var <span class="ident">clip_type</span></p>
+      
+  
+  <div class="source_cont">
+</div>
 
-<p>There is a requirements.txt file, you can do: pip install -r requirements.txt</p>
+      </div>
 
-<h1>Notes</h1>
 
-<p>I've recently added a suite of pytest tests that cover about 78% of the code.</p>
 
-<p>You can run them by doing the following in the source directory:</p>
+  </section>
 
-<pre><code>export SSH_DIALOG_BASEPATH= { an ssh path of the form ssh://host/dir:port that points to a test sftp server where files can be get/put and directories created }
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
 
-export SSH_DIALOG_USERNAME= { ssh username to run the test as, needs permissions for the above }
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
 
-export SSH_DIALOG_PASSWORD= { ssh password for that user, you are responsible for the security of it }
-
-python -m pytest tests
-</code></pre>
-
-<p>OR with coverage:</p>
-
-<pre><code>coverage run --source=. --omit=comment_extension.py,dummy_extension.py,lib/*,tests/* -m pytest tests
-</code></pre>
-
-<h1>Documentation</h1>
-
-<p>Have a look at the wiki page for usage and configuration documentation.</p>
-<h1>API Documentation</h1>
-<h3>Modules</h3>
-<ul>
-<li><a href="./ped_core/changes.m.html">ped_core.changes</a></li>
-<li><a href="./ped_core/clipboard.m.html">ped_core.clipboard</a></li>
-<li><a href="./ped_core/cmd_names.m.html">ped_core.cmd_names</a></li>
-<li><a href="./ped_core/cpp_mode.m.html">ped_core.cpp_mode</a></li>
-<li><a href="./ped_core/editor_common.m.html">ped_core.editor_common</a></li>
-<li><a href="./ped_core/editor_manager.m.html">ped_core.editor_manager</a></li>
-<li><a href="./ped_core/extension_manager.m.html">ped_core.extension_manager</a></li>
-<li><a href="./ped_core/guess_mode.m.html">ped_core.guess_mode</a></li>
-<li><a href="./ped_core/__init__.m.html">ped_core.__init__</a></li>
-<li><a href="./ped_core/java_mode.m.html">ped_core.java_mode</a></li>
-<li><a href="./ped_core/keymap.m.html">ped_core.keymap</a></li>
-<li><a href="./ped_core/keytab.m.html">ped_core.keytab</a></li>
-<li><a href="./ped_core/mode.m.html">ped_core.mode</a></li>
-<li><a href="./ped_core/ped_help.m.html">ped_core.ped_help</a></li>
-<li><a href="./ped_core/python_mode.m.html">ped_core.python_mode</a></li>
-<li><a href="./ped_core/undo.m.html">ped_core.undo</a></li>
-<li><a href="./ped_dialog/buffer_dialog.m.html">ped_dialog.buffer_dialog</a></li>
-<li><a href="./ped_dialog/confirm_dialog.m.html">ped_dialog.confirm_dialog</a></li>
-<li><a href="./ped_dialog/dialog.m.html">ped_dialog.dialog</a></li>
-<li><a href="./ped_dialog/file_browse.m.html">ped_dialog.file_browse</a></li>
-<li><a href="./ped_dialog/file_dialog.m.html">ped_dialog.file_dialog</a></li>
-<li><a href="./ped_dialog/file_find.m.html">ped_dialog.file_find</a></li>
-<li><a href="./ped_dialog/__init__.m.html">ped_dialog.__init__</a></li>
-<li><a href="./ped_dialog/message_dialog.m.html">ped_dialog.message_dialog</a></li>
-<li><a href="./ped_dialog/prompt_dialog.m.html">ped_dialog.prompt_dialog</a></li>
-<li><a href="./ped_dialog/replace_dialog.m.html">ped_dialog.replace_dialog</a></li>
-<li><a href="./ped_dialog/stream_select.m.html">ped_dialog.stream_select</a></li>
-<li><a href="./ped_ssh_dialog/file_mod.m.html">ped_ssh_dialog.file_mod</a></li>
-<li><a href="./ped_ssh_dialog/__init__.m.html">ped_ssh_dialog.__init__</a></li>
-<li><a href="./ped_ssh_dialog/ssh_dialog.m.html">ped_ssh_dialog.ssh_dialog</a></li>
-<li><a href="./ped_ssh_dialog/ssh_mod.m.html">ped_ssh_dialog.ssh_mod</a></li>
-<li><a href="./ped_extensions/comment_extension.m.html">ped_extensions.comment_extension</a></li>
-<li><a href="./ped_extensions/dummy_extension.m.html">ped_extensions.dummy_extension</a></li>
-<li><a href="./ped_extensions/__init__.m.html">ped_extensions.__init__</a></li>
-</ul>
-</article>
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
 </div>
 </body>
 </html>

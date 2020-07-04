@@ -1,0 +1,2944 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>ped_core.keytab API documentation</title>
+    <meta name="description" content="module that contains the symbolic names of the keys" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    max-width: 850px;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow: hidden;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTA">KEYTAB_ALTA</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTB">KEYTAB_ALTB</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTC">KEYTAB_ALTC</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTD">KEYTAB_ALTD</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTE">KEYTAB_ALTE</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTF">KEYTAB_ALTF</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTG">KEYTAB_ALTG</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTH">KEYTAB_ALTH</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTI">KEYTAB_ALTI</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTJ">KEYTAB_ALTJ</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTK">KEYTAB_ALTK</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTL">KEYTAB_ALTL</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTM">KEYTAB_ALTM</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTN">KEYTAB_ALTN</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTO">KEYTAB_ALTO</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTP">KEYTAB_ALTP</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTQ">KEYTAB_ALTQ</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTR">KEYTAB_ALTR</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTS">KEYTAB_ALTS</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTT">KEYTAB_ALTT</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTU">KEYTAB_ALTU</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTV">KEYTAB_ALTV</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTW">KEYTAB_ALTW</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTX">KEYTAB_ALTX</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTY">KEYTAB_ALTY</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTZ">KEYTAB_ALTZ</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ALTo">KEYTAB_ALTo</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_BACKSPACE">KEYTAB_BACKSPACE</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_BACKTAB">KEYTAB_BACKTAB</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_BTAB">KEYTAB_BTAB</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CR">KEYTAB_CR</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLA">KEYTAB_CTRLA</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLB">KEYTAB_CTRLB</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLC">KEYTAB_CTRLC</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLD">KEYTAB_CTRLD</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLE">KEYTAB_CTRLE</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLEND">KEYTAB_CTRLEND</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLF">KEYTAB_CTRLF</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLG">KEYTAB_CTRLG</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLH">KEYTAB_CTRLH</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLHOME">KEYTAB_CTRLHOME</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLI">KEYTAB_CTRLI</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLJ">KEYTAB_CTRLJ</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLK">KEYTAB_CTRLK</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLL">KEYTAB_CTRLL</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLLEFT">KEYTAB_CTRLLEFT</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLM">KEYTAB_CTRLM</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLN">KEYTAB_CTRLN</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLO">KEYTAB_CTRLO</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLP">KEYTAB_CTRLP</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLQ">KEYTAB_CTRLQ</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLR">KEYTAB_CTRLR</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLRIGHT">KEYTAB_CTRLRIGHT</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLS">KEYTAB_CTRLS</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLT">KEYTAB_CTRLT</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLU">KEYTAB_CTRLU</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLV">KEYTAB_CTRLV</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLW">KEYTAB_CTRLW</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLX">KEYTAB_CTRLX</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLY">KEYTAB_CTRLY</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_CTRLZ">KEYTAB_CTRLZ</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_DELC">KEYTAB_DELC</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_DLGCANCEL">KEYTAB_DLGCANCEL</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_DLGNOP">KEYTAB_DLGNOP</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_DLGOK">KEYTAB_DLGOK</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_DOWN">KEYTAB_DOWN</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_END">KEYTAB_END</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_ESC">KEYTAB_ESC</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F00">KEYTAB_F00</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F01">KEYTAB_F01</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F02">KEYTAB_F02</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F03">KEYTAB_F03</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F04">KEYTAB_F04</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F05">KEYTAB_F05</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F06">KEYTAB_F06</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F07">KEYTAB_F07</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F08">KEYTAB_F08</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F09">KEYTAB_F09</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F10">KEYTAB_F10</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F11">KEYTAB_F11</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F12">KEYTAB_F12</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F13">KEYTAB_F13</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F14">KEYTAB_F14</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F15">KEYTAB_F15</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F16">KEYTAB_F16</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F17">KEYTAB_F17</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F18">KEYTAB_F18</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F19">KEYTAB_F19</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F20">KEYTAB_F20</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F21">KEYTAB_F21</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F22">KEYTAB_F22</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F23">KEYTAB_F23</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F24">KEYTAB_F24</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F25">KEYTAB_F25</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F26">KEYTAB_F26</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F27">KEYTAB_F27</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F28">KEYTAB_F28</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F29">KEYTAB_F29</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F30">KEYTAB_F30</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F31">KEYTAB_F31</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F32">KEYTAB_F32</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F33">KEYTAB_F33</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F34">KEYTAB_F34</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F35">KEYTAB_F35</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F36">KEYTAB_F36</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F37">KEYTAB_F37</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F38">KEYTAB_F38</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F39">KEYTAB_F39</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F40">KEYTAB_F40</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F41">KEYTAB_F41</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F42">KEYTAB_F42</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F43">KEYTAB_F43</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F44">KEYTAB_F44</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F45">KEYTAB_F45</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F46">KEYTAB_F46</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F47">KEYTAB_F47</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F48">KEYTAB_F48</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F49">KEYTAB_F49</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F50">KEYTAB_F50</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F51">KEYTAB_F51</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F52">KEYTAB_F52</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F53">KEYTAB_F53</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F54">KEYTAB_F54</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F55">KEYTAB_F55</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F56">KEYTAB_F56</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F57">KEYTAB_F57</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F58">KEYTAB_F58</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F59">KEYTAB_F59</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F60">KEYTAB_F60</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F61">KEYTAB_F61</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F62">KEYTAB_F62</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_F63">KEYTAB_F63</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_HOME">KEYTAB_HOME</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_INSERT">KEYTAB_INSERT</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_KEYPADPLUS">KEYTAB_KEYPADPLUS</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_KEYTPADMINUS">KEYTAB_KEYTPADMINUS</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_LEFT">KEYTAB_LEFT</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_MOUSE">KEYTAB_MOUSE</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_NOKEY">KEYTAB_NOKEY</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_PAGEDOWN">KEYTAB_PAGEDOWN</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_PAGEUP">KEYTAB_PAGEUP</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_REFRESH">KEYTAB_REFRESH</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_RESIZE">KEYTAB_RESIZE</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_RIGHT">KEYTAB_RIGHT</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_SPACE">KEYTAB_SPACE</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_TAB">KEYTAB_TAB</a></li>
+    <li class="mono"><a href="#ped_core.keytab.KEYTAB_UP">KEYTAB_UP</a></li>
+    <li class="mono"><a href="#ped_core.keytab.key">key</a></li>
+    <li class="mono"><a href="#ped_core.keytab.key_to_name">key_to_name</a></li>
+    <li class="mono"><a href="#ped_core.keytab.keydef">keydef</a></li>
+    <li class="mono"><a href="#ped_core.keytab.name">name</a></li>
+    <li class="mono"><a href="#ped_core.keytab.name_to_key">name_to_key</a></li>
+  </ul>
+
+    </li>
+
+
+
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">ped_core.keytab</span> module</h1>
+  <p>module that contains the symbolic names of the keys</p>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.keytab', this);">Show source &equiv;</a></p>
+  <div id="source-ped_core.keytab" class="source">
+    <div class="codehilite"><pre><span></span><span class="c1"># Copyright 2009-2012 James P Goodwin ped tiny python editor</span>
+<span class="sd">&quot;&quot;&quot; module that contains the symbolic names of the keys &quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">curses</span>
+
+<span class="n">KEYTAB_NOKEY</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">KEYTAB_ALTA</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;a&#39;</span>
+<span class="n">KEYTAB_ALTB</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;b&#39;</span>
+<span class="n">KEYTAB_ALTC</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;c&#39;</span>
+<span class="n">KEYTAB_ALTD</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;d&#39;</span>
+<span class="n">KEYTAB_ALTE</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;e&#39;</span>
+<span class="n">KEYTAB_ALTF</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;f&#39;</span>
+<span class="n">KEYTAB_ALTG</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;g&#39;</span>
+<span class="n">KEYTAB_ALTH</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;h&#39;</span>
+<span class="n">KEYTAB_ALTI</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;i&#39;</span>
+<span class="n">KEYTAB_ALTJ</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;j&#39;</span>
+<span class="n">KEYTAB_ALTK</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;k&#39;</span>
+<span class="n">KEYTAB_ALTL</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;l&#39;</span>
+<span class="n">KEYTAB_ALTM</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;m&#39;</span>
+<span class="n">KEYTAB_ALTN</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;n&#39;</span>
+<span class="n">KEYTAB_ALTo</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;o&#39;</span>
+<span class="n">KEYTAB_ALTO</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;O&#39;</span>
+<span class="n">KEYTAB_ALTP</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;p&#39;</span>
+<span class="n">KEYTAB_ALTQ</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;q&#39;</span>
+<span class="n">KEYTAB_ALTR</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;r&#39;</span>
+<span class="n">KEYTAB_ALTS</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;s&#39;</span>
+<span class="n">KEYTAB_ALTT</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;t&#39;</span>
+<span class="n">KEYTAB_ALTU</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;u&#39;</span>
+<span class="n">KEYTAB_ALTV</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;v&#39;</span>
+<span class="n">KEYTAB_ALTW</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;w&#39;</span>
+<span class="n">KEYTAB_ALTX</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;x&#39;</span>
+<span class="n">KEYTAB_ALTY</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;y&#39;</span>
+<span class="n">KEYTAB_ALTZ</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;z&#39;</span>
+<span class="n">KEYTAB_BACKSPACE</span><span class="o">=</span><span class="s2">&quot;backspace&quot;</span>
+<span class="n">KEYTAB_BACKSPACE</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">KEYTAB_BACKTAB</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;[Z&#39;</span>
+<span class="n">KEYTAB_BTAB</span><span class="o">=</span><span class="s2">&quot;btab&quot;</span>
+<span class="n">KEYTAB_CR</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLA</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLB</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLC</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLD</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLE</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLF</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLG</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLH</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLI</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLJ</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLK</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLL</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLM</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLN</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLO</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLP</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLQ</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">17</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLR</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLS</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">19</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLT</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLU</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">21</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLV</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">22</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLW</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLX</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLY</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLZ</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">26</span><span class="p">)</span>
+<span class="n">KEYTAB_CTRLLEFT</span><span class="o">=</span><span class="s1">&#39;ctrl-left&#39;</span>
+<span class="n">KEYTAB_CTRLRIGHT</span><span class="o">=</span><span class="s1">&#39;ctrl-right&#39;</span>
+<span class="n">KEYTAB_CTRLHOME</span><span class="o">=</span><span class="s1">&#39;ctrl-home&#39;</span>
+<span class="n">KEYTAB_CTRLEND</span><span class="o">=</span><span class="s1">&#39;ctrl-end&#39;</span>
+<span class="n">KEYTAB_DELC</span><span class="o">=</span><span class="s2">&quot;delc&quot;</span>
+<span class="n">KEYTAB_DLGCANCEL</span><span class="o">=</span><span class="s2">&quot;cancel&quot;</span>
+<span class="n">KEYTAB_DLGNOP</span><span class="o">=</span><span class="n">KEYTAB_NOKEY</span>
+<span class="n">KEYTAB_DLGOK</span><span class="o">=</span><span class="s2">&quot;ok&quot;</span>
+<span class="n">KEYTAB_DOWN</span><span class="o">=</span><span class="s2">&quot;down&quot;</span>
+<span class="n">KEYTAB_END</span><span class="o">=</span><span class="s2">&quot;end&quot;</span>
+<span class="n">KEYTAB_ESC</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span>
+<span class="n">KEYTAB_F00</span><span class="o">=</span><span class="s2">&quot;fk00&quot;</span>
+<span class="n">KEYTAB_F01</span><span class="o">=</span><span class="s2">&quot;fk01&quot;</span>
+<span class="n">KEYTAB_F02</span><span class="o">=</span><span class="s2">&quot;fk02&quot;</span>
+<span class="n">KEYTAB_F03</span><span class="o">=</span><span class="s2">&quot;fk03&quot;</span>
+<span class="n">KEYTAB_F04</span><span class="o">=</span><span class="s2">&quot;fk04&quot;</span>
+<span class="n">KEYTAB_F05</span><span class="o">=</span><span class="s2">&quot;fk05&quot;</span>
+<span class="n">KEYTAB_F06</span><span class="o">=</span><span class="s2">&quot;fk06&quot;</span>
+<span class="n">KEYTAB_F07</span><span class="o">=</span><span class="s2">&quot;fk07&quot;</span>
+<span class="n">KEYTAB_F08</span><span class="o">=</span><span class="s2">&quot;fk08&quot;</span>
+<span class="n">KEYTAB_F09</span><span class="o">=</span><span class="s2">&quot;fk09&quot;</span>
+<span class="n">KEYTAB_F10</span><span class="o">=</span><span class="s2">&quot;fk10&quot;</span>
+<span class="n">KEYTAB_F11</span><span class="o">=</span><span class="s2">&quot;fk11&quot;</span>
+<span class="n">KEYTAB_F12</span><span class="o">=</span><span class="s2">&quot;fk12&quot;</span>
+<span class="n">KEYTAB_F13</span><span class="o">=</span><span class="s2">&quot;fk13&quot;</span>
+<span class="n">KEYTAB_F14</span><span class="o">=</span><span class="s2">&quot;fk14&quot;</span>
+<span class="n">KEYTAB_F15</span><span class="o">=</span><span class="s2">&quot;fk15&quot;</span>
+<span class="n">KEYTAB_F16</span><span class="o">=</span><span class="s2">&quot;fk16&quot;</span>
+<span class="n">KEYTAB_F17</span><span class="o">=</span><span class="s2">&quot;fk17&quot;</span>
+<span class="n">KEYTAB_F18</span><span class="o">=</span><span class="s2">&quot;fk18&quot;</span>
+<span class="n">KEYTAB_F19</span><span class="o">=</span><span class="s2">&quot;fk19&quot;</span>
+<span class="n">KEYTAB_F20</span><span class="o">=</span><span class="s2">&quot;fk20&quot;</span>
+<span class="n">KEYTAB_F21</span><span class="o">=</span><span class="s2">&quot;fk21&quot;</span>
+<span class="n">KEYTAB_F22</span><span class="o">=</span><span class="s2">&quot;fk22&quot;</span>
+<span class="n">KEYTAB_F23</span><span class="o">=</span><span class="s2">&quot;fk23&quot;</span>
+<span class="n">KEYTAB_F24</span><span class="o">=</span><span class="s2">&quot;fk24&quot;</span>
+<span class="n">KEYTAB_F25</span><span class="o">=</span><span class="s2">&quot;fk25&quot;</span>
+<span class="n">KEYTAB_F26</span><span class="o">=</span><span class="s2">&quot;fk26&quot;</span>
+<span class="n">KEYTAB_F27</span><span class="o">=</span><span class="s2">&quot;fk27&quot;</span>
+<span class="n">KEYTAB_F28</span><span class="o">=</span><span class="s2">&quot;fk28&quot;</span>
+<span class="n">KEYTAB_F29</span><span class="o">=</span><span class="s2">&quot;fk29&quot;</span>
+<span class="n">KEYTAB_F30</span><span class="o">=</span><span class="s2">&quot;fk30&quot;</span>
+<span class="n">KEYTAB_F31</span><span class="o">=</span><span class="s2">&quot;fk31&quot;</span>
+<span class="n">KEYTAB_F32</span><span class="o">=</span><span class="s2">&quot;fk32&quot;</span>
+<span class="n">KEYTAB_F33</span><span class="o">=</span><span class="s2">&quot;fk33&quot;</span>
+<span class="n">KEYTAB_F34</span><span class="o">=</span><span class="s2">&quot;fk34&quot;</span>
+<span class="n">KEYTAB_F35</span><span class="o">=</span><span class="s2">&quot;fk35&quot;</span>
+<span class="n">KEYTAB_F36</span><span class="o">=</span><span class="s2">&quot;fk36&quot;</span>
+<span class="n">KEYTAB_F37</span><span class="o">=</span><span class="s2">&quot;fk37&quot;</span>
+<span class="n">KEYTAB_F38</span><span class="o">=</span><span class="s2">&quot;fk38&quot;</span>
+<span class="n">KEYTAB_F39</span><span class="o">=</span><span class="s2">&quot;fk39&quot;</span>
+<span class="n">KEYTAB_F40</span><span class="o">=</span><span class="s2">&quot;fk40&quot;</span>
+<span class="n">KEYTAB_F41</span><span class="o">=</span><span class="s2">&quot;fk41&quot;</span>
+<span class="n">KEYTAB_F42</span><span class="o">=</span><span class="s2">&quot;fk42&quot;</span>
+<span class="n">KEYTAB_F43</span><span class="o">=</span><span class="s2">&quot;fk43&quot;</span>
+<span class="n">KEYTAB_F44</span><span class="o">=</span><span class="s2">&quot;fk44&quot;</span>
+<span class="n">KEYTAB_F45</span><span class="o">=</span><span class="s2">&quot;fk45&quot;</span>
+<span class="n">KEYTAB_F46</span><span class="o">=</span><span class="s2">&quot;fk46&quot;</span>
+<span class="n">KEYTAB_F47</span><span class="o">=</span><span class="s2">&quot;fk47&quot;</span>
+<span class="n">KEYTAB_F48</span><span class="o">=</span><span class="s2">&quot;fk48&quot;</span>
+<span class="n">KEYTAB_F49</span><span class="o">=</span><span class="s2">&quot;fk49&quot;</span>
+<span class="n">KEYTAB_F50</span><span class="o">=</span><span class="s2">&quot;fk50&quot;</span>
+<span class="n">KEYTAB_F51</span><span class="o">=</span><span class="s2">&quot;fk51&quot;</span>
+<span class="n">KEYTAB_F52</span><span class="o">=</span><span class="s2">&quot;fk52&quot;</span>
+<span class="n">KEYTAB_F53</span><span class="o">=</span><span class="s2">&quot;fk53&quot;</span>
+<span class="n">KEYTAB_F54</span><span class="o">=</span><span class="s2">&quot;fk54&quot;</span>
+<span class="n">KEYTAB_F55</span><span class="o">=</span><span class="s2">&quot;fk55&quot;</span>
+<span class="n">KEYTAB_F56</span><span class="o">=</span><span class="s2">&quot;fk56&quot;</span>
+<span class="n">KEYTAB_F57</span><span class="o">=</span><span class="s2">&quot;fk57&quot;</span>
+<span class="n">KEYTAB_F58</span><span class="o">=</span><span class="s2">&quot;fk58&quot;</span>
+<span class="n">KEYTAB_F59</span><span class="o">=</span><span class="s2">&quot;fk59&quot;</span>
+<span class="n">KEYTAB_F60</span><span class="o">=</span><span class="s2">&quot;fk60&quot;</span>
+<span class="n">KEYTAB_F61</span><span class="o">=</span><span class="s2">&quot;fk61&quot;</span>
+<span class="n">KEYTAB_F62</span><span class="o">=</span><span class="s2">&quot;fk62&quot;</span>
+<span class="n">KEYTAB_F63</span><span class="o">=</span><span class="s2">&quot;fk63&quot;</span>
+<span class="n">KEYTAB_HOME</span><span class="o">=</span><span class="s2">&quot;home&quot;</span>
+<span class="n">KEYTAB_INSERT</span><span class="o">=</span><span class="s2">&quot;insert&quot;</span>
+<span class="n">KEYTAB_KEYPADPLUS</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;Ok&#39;</span>
+<span class="n">KEYTAB_KEYTPADMINUS</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;Om&#39;</span>
+<span class="n">KEYTAB_LEFT</span><span class="o">=</span><span class="s2">&quot;left&quot;</span>
+<span class="n">KEYTAB_PAGEDOWN</span><span class="o">=</span><span class="s2">&quot;pagedown&quot;</span>
+<span class="n">KEYTAB_PAGEUP</span><span class="o">=</span><span class="s2">&quot;pageup&quot;</span>
+<span class="n">KEYTAB_REFRESH</span><span class="o">=</span><span class="s2">&quot;refresh&quot;</span>
+<span class="n">KEYTAB_RESIZE</span><span class="o">=</span><span class="s2">&quot;resize&quot;</span>
+<span class="n">KEYTAB_RIGHT</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
+<span class="n">KEYTAB_SPACE</span><span class="o">=</span><span class="s1">&#39; &#39;</span>
+<span class="n">KEYTAB_TAB</span><span class="o">=</span><span class="nb">chr</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<span class="n">KEYTAB_UP</span><span class="o">=</span><span class="s2">&quot;up&quot;</span>
+<span class="n">KEYTAB_MOUSE</span><span class="o">=</span><span class="s2">&quot;mouse&quot;</span>
+
+
+<span class="n">name_to_key</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s2">&quot;KEYTAB_ALTA&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTA</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTB&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTB</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTC&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTC</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTD&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTD</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTE&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTE</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTF&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTF</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTG&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTG</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTH&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTH</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTI&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTI</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTJ&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTJ</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTK&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTK</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTL&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTL</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTM&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTM</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTN&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTN</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTo&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTo</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTO&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTO</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTP&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTP</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTQ&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTQ</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTR&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTR</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTS&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTS</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTT&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTT</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTU&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTU</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTV&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTV</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTW&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTW</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTX&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTX</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTY&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTY</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ALTZ&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ALTZ</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_BACKSPACE&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_BACKSPACE</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_BACKSPACE&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_BACKSPACE</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_BACKTAB&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_BACKTAB</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_BTAB&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_BTAB</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CR&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CR</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLA&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLA</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLB&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLB</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLC&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLC</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLD&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLD</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLE&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLE</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLF&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLF</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLG&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLG</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLH&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLH</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLI&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLI</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLJ&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLJ</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLK&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLK</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLL&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLL</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLM&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLM</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLN&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLN</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLO&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLO</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLP&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLP</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLQ&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLQ</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLR&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLR</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLS&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLS</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLT&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLT</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLU&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLU</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLV&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLV</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLW&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLW</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLX&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLX</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLY&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLY</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLZ&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLZ</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLLEFT&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLLEFT</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLRIGHT&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLRIGHT</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLHOME&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLHOME</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_CTRLEND&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_CTRLEND</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_DELC&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_DELC</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_DLGCANCEL&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_DLGCANCEL</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_DLGNOP&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_DLGNOP</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_DLGOK&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_DLGOK</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_DOWN&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_DOWN</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_END&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_END</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_ESC&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_ESC</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F00&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F00</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F01&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F01</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F02&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F02</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F03&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F03</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F04&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F04</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F05&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F05</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F06&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F06</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F07&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F07</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F08&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F08</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F09&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F09</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F10&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F10</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F11&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F11</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F12&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F12</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F13&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F13</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F14&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F14</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F15&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F15</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F16&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F16</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F17&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F17</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F18&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F18</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F19&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F19</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F20&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F20</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F21&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F21</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F22&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F22</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F23&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F23</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F24&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F24</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F25&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F25</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F26&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F26</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F27&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F27</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F28&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F28</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F29&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F29</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F30&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F30</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F31&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F31</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F32&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F32</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F33&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F33</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F34&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F34</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F35&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F35</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F36&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F36</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F37&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F37</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F38&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F38</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F39&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F39</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F40&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F40</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F41&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F41</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F42&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F42</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F43&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F43</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F44&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F44</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F45&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F45</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F46&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F46</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F47&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F47</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F48&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F48</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F49&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F49</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F50&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F50</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F51&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F51</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F52&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F52</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F53&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F53</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F54&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F54</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F55&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F55</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F56&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F56</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F57&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F57</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F58&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F58</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F59&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F59</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F60&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F60</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F61&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F61</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F62&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F62</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_F63&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_F63</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_HOME&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_HOME</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_INSERT&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_INSERT</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_KEYPADPLUS&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_KEYPADPLUS</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_KEYTPADMINUS&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_KEYTPADMINUS</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_LEFT&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_LEFT</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_NOKEY&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_NOKEY</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_PAGEDOWN&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_PAGEDOWN</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_PAGEUP&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_PAGEUP</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_REFRESH&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_REFRESH</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_RESIZE&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_RESIZE</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_RIGHT&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_RIGHT</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_SPACE&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_SPACE</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_TAB&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_TAB</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_UP&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_UP</span><span class="p">,</span>
+<span class="s2">&quot;KEYTAB_MOUSE&quot;</span> <span class="p">:</span> <span class="n">KEYTAB_MOUSE</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">key_to_name</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span><span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">name_to_key</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+    <span class="n">key_to_name</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+
+<span class="n">keydef</span> <span class="o">=</span> <span class="p">[</span>
+<span class="p">((</span><span class="mi">0</span><span class="p">,),</span><span class="n">KEYTAB_NOKEY</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,),</span><span class="n">KEYTAB_ESC</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTA</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTB</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTC</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTD</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTE</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTF</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTG</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTH</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTI</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;j&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTJ</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTK</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;l&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTL</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTM</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTN</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTo</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTP</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTQ</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTR</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTS</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTT</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTU</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTV</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTW</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTX</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTY</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTZ</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTA</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTB</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTC</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTD</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTE</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTF</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;G&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTG</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTH</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTI</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;J&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTJ</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTK</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTL</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTM</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTN</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;O&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTO</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;P&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTP</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;Q&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTQ</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTR</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTS</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTT</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;U&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTU</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTV</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;W&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTW</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTX</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTY</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_ALTZ</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_BACKSPACE</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_BACKSPACE</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">8</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_BACKSPACE</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">),</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_BACKTAB</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_BTAB</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_BTAB</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CR</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLA</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLB</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLC</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLD</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLE</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">6</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLF</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLG</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">8</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLH</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">9</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLI</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLJ</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">11</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLK</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">12</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLL</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">13</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLM</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">14</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLN</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">15</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLO</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">16</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLP</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">17</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLQ</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">18</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLR</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">19</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLS</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLT</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">21</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLU</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">22</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLV</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">23</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLW</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">24</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLX</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">25</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLY</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">26</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLZ</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">545</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLLEFT</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">560</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLRIGHT</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">530</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLHOME</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">525</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_CTRLEND</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_DC</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_DELC</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_DOWN</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_DOWN</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_END</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_END</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F00</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F01</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F02</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F3</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F03</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F4</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F04</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F05</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F6</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F06</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F7</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F07</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F8</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F08</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F9</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F09</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F10</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F10</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F11</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F11</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F12</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F12</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F13</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F13</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F14</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F14</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F15</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F15</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F16</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F16</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F17</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F17</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F18</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F18</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F19</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F19</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F20</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F20</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F21</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F21</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F22</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F22</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F23</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F23</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F24</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F24</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F25</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F25</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F26</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F26</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F27</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F27</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F28</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F28</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F29</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F29</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F30</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F30</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F31</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F31</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F32</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F32</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F33</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F33</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F34</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F34</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F35</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F35</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F36</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F36</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F37</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F37</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F38</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F38</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F39</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F39</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F40</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F40</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F41</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F41</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F42</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F42</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F43</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F43</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F44</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F44</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F45</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F45</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F46</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F46</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F47</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F47</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F48</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F48</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F49</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F49</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F50</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F50</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F51</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F51</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F52</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F52</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F53</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F53</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F54</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F54</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F55</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F55</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F56</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F56</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F57</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F57</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F58</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F58</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F59</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F59</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F60</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F60</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F61</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F61</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F62</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F62</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_F63</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_F63</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_HOME</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_HOME</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_IC</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_INSERT</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;O&#39;</span><span class="p">),</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_KEYPADPLUS</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">27</span><span class="p">,</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;O&#39;</span><span class="p">),</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_KEYTPADMINUS</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_LEFT</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_LEFT</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_NPAGE</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_PAGEDOWN</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_PPAGE</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_PAGEUP</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_RESIZE</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_RESIZE</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_RIGHT</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_RIGHT</span><span class="p">),</span>
+<span class="p">((</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_SPACE</span><span class="p">),</span>
+<span class="p">((</span><span class="mi">9</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_TAB</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_UP</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_UP</span><span class="p">),</span>
+<span class="p">((</span><span class="n">curses</span><span class="o">.</span><span class="n">KEY_MOUSE</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">KEYTAB_MOUSE</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+
+  </div>
+
+  </header>
+
+  <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTA" class="name">var <span class="ident">KEYTAB_ALTA</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTB" class="name">var <span class="ident">KEYTAB_ALTB</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTC" class="name">var <span class="ident">KEYTAB_ALTC</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTD" class="name">var <span class="ident">KEYTAB_ALTD</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTE" class="name">var <span class="ident">KEYTAB_ALTE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTF" class="name">var <span class="ident">KEYTAB_ALTF</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTG" class="name">var <span class="ident">KEYTAB_ALTG</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTH" class="name">var <span class="ident">KEYTAB_ALTH</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTI" class="name">var <span class="ident">KEYTAB_ALTI</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTJ" class="name">var <span class="ident">KEYTAB_ALTJ</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTK" class="name">var <span class="ident">KEYTAB_ALTK</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTL" class="name">var <span class="ident">KEYTAB_ALTL</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTM" class="name">var <span class="ident">KEYTAB_ALTM</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTN" class="name">var <span class="ident">KEYTAB_ALTN</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTO" class="name">var <span class="ident">KEYTAB_ALTO</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTP" class="name">var <span class="ident">KEYTAB_ALTP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTQ" class="name">var <span class="ident">KEYTAB_ALTQ</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTR" class="name">var <span class="ident">KEYTAB_ALTR</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTS" class="name">var <span class="ident">KEYTAB_ALTS</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTT" class="name">var <span class="ident">KEYTAB_ALTT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTU" class="name">var <span class="ident">KEYTAB_ALTU</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTV" class="name">var <span class="ident">KEYTAB_ALTV</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTW" class="name">var <span class="ident">KEYTAB_ALTW</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTX" class="name">var <span class="ident">KEYTAB_ALTX</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTY" class="name">var <span class="ident">KEYTAB_ALTY</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTZ" class="name">var <span class="ident">KEYTAB_ALTZ</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ALTo" class="name">var <span class="ident">KEYTAB_ALTo</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_BACKSPACE" class="name">var <span class="ident">KEYTAB_BACKSPACE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_BACKTAB" class="name">var <span class="ident">KEYTAB_BACKTAB</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_BTAB" class="name">var <span class="ident">KEYTAB_BTAB</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CR" class="name">var <span class="ident">KEYTAB_CR</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLA" class="name">var <span class="ident">KEYTAB_CTRLA</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLB" class="name">var <span class="ident">KEYTAB_CTRLB</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLC" class="name">var <span class="ident">KEYTAB_CTRLC</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLD" class="name">var <span class="ident">KEYTAB_CTRLD</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLE" class="name">var <span class="ident">KEYTAB_CTRLE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLEND" class="name">var <span class="ident">KEYTAB_CTRLEND</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLF" class="name">var <span class="ident">KEYTAB_CTRLF</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLG" class="name">var <span class="ident">KEYTAB_CTRLG</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLH" class="name">var <span class="ident">KEYTAB_CTRLH</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLHOME" class="name">var <span class="ident">KEYTAB_CTRLHOME</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLI" class="name">var <span class="ident">KEYTAB_CTRLI</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLJ" class="name">var <span class="ident">KEYTAB_CTRLJ</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLK" class="name">var <span class="ident">KEYTAB_CTRLK</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLL" class="name">var <span class="ident">KEYTAB_CTRLL</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLLEFT" class="name">var <span class="ident">KEYTAB_CTRLLEFT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLM" class="name">var <span class="ident">KEYTAB_CTRLM</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLN" class="name">var <span class="ident">KEYTAB_CTRLN</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLO" class="name">var <span class="ident">KEYTAB_CTRLO</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLP" class="name">var <span class="ident">KEYTAB_CTRLP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLQ" class="name">var <span class="ident">KEYTAB_CTRLQ</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLR" class="name">var <span class="ident">KEYTAB_CTRLR</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLRIGHT" class="name">var <span class="ident">KEYTAB_CTRLRIGHT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLS" class="name">var <span class="ident">KEYTAB_CTRLS</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLT" class="name">var <span class="ident">KEYTAB_CTRLT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLU" class="name">var <span class="ident">KEYTAB_CTRLU</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLV" class="name">var <span class="ident">KEYTAB_CTRLV</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLW" class="name">var <span class="ident">KEYTAB_CTRLW</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLX" class="name">var <span class="ident">KEYTAB_CTRLX</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLY" class="name">var <span class="ident">KEYTAB_CTRLY</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_CTRLZ" class="name">var <span class="ident">KEYTAB_CTRLZ</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_DELC" class="name">var <span class="ident">KEYTAB_DELC</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_DLGCANCEL" class="name">var <span class="ident">KEYTAB_DLGCANCEL</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_DLGNOP" class="name">var <span class="ident">KEYTAB_DLGNOP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_DLGOK" class="name">var <span class="ident">KEYTAB_DLGOK</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_DOWN" class="name">var <span class="ident">KEYTAB_DOWN</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_END" class="name">var <span class="ident">KEYTAB_END</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_ESC" class="name">var <span class="ident">KEYTAB_ESC</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F00" class="name">var <span class="ident">KEYTAB_F00</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F01" class="name">var <span class="ident">KEYTAB_F01</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F02" class="name">var <span class="ident">KEYTAB_F02</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F03" class="name">var <span class="ident">KEYTAB_F03</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F04" class="name">var <span class="ident">KEYTAB_F04</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F05" class="name">var <span class="ident">KEYTAB_F05</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F06" class="name">var <span class="ident">KEYTAB_F06</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F07" class="name">var <span class="ident">KEYTAB_F07</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F08" class="name">var <span class="ident">KEYTAB_F08</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F09" class="name">var <span class="ident">KEYTAB_F09</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F10" class="name">var <span class="ident">KEYTAB_F10</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F11" class="name">var <span class="ident">KEYTAB_F11</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F12" class="name">var <span class="ident">KEYTAB_F12</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F13" class="name">var <span class="ident">KEYTAB_F13</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F14" class="name">var <span class="ident">KEYTAB_F14</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F15" class="name">var <span class="ident">KEYTAB_F15</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F16" class="name">var <span class="ident">KEYTAB_F16</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F17" class="name">var <span class="ident">KEYTAB_F17</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F18" class="name">var <span class="ident">KEYTAB_F18</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F19" class="name">var <span class="ident">KEYTAB_F19</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F20" class="name">var <span class="ident">KEYTAB_F20</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F21" class="name">var <span class="ident">KEYTAB_F21</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F22" class="name">var <span class="ident">KEYTAB_F22</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F23" class="name">var <span class="ident">KEYTAB_F23</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F24" class="name">var <span class="ident">KEYTAB_F24</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F25" class="name">var <span class="ident">KEYTAB_F25</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F26" class="name">var <span class="ident">KEYTAB_F26</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F27" class="name">var <span class="ident">KEYTAB_F27</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F28" class="name">var <span class="ident">KEYTAB_F28</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F29" class="name">var <span class="ident">KEYTAB_F29</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F30" class="name">var <span class="ident">KEYTAB_F30</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F31" class="name">var <span class="ident">KEYTAB_F31</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F32" class="name">var <span class="ident">KEYTAB_F32</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F33" class="name">var <span class="ident">KEYTAB_F33</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F34" class="name">var <span class="ident">KEYTAB_F34</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F35" class="name">var <span class="ident">KEYTAB_F35</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F36" class="name">var <span class="ident">KEYTAB_F36</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F37" class="name">var <span class="ident">KEYTAB_F37</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F38" class="name">var <span class="ident">KEYTAB_F38</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F39" class="name">var <span class="ident">KEYTAB_F39</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F40" class="name">var <span class="ident">KEYTAB_F40</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F41" class="name">var <span class="ident">KEYTAB_F41</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F42" class="name">var <span class="ident">KEYTAB_F42</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F43" class="name">var <span class="ident">KEYTAB_F43</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F44" class="name">var <span class="ident">KEYTAB_F44</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F45" class="name">var <span class="ident">KEYTAB_F45</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F46" class="name">var <span class="ident">KEYTAB_F46</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F47" class="name">var <span class="ident">KEYTAB_F47</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F48" class="name">var <span class="ident">KEYTAB_F48</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F49" class="name">var <span class="ident">KEYTAB_F49</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F50" class="name">var <span class="ident">KEYTAB_F50</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F51" class="name">var <span class="ident">KEYTAB_F51</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F52" class="name">var <span class="ident">KEYTAB_F52</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F53" class="name">var <span class="ident">KEYTAB_F53</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F54" class="name">var <span class="ident">KEYTAB_F54</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F55" class="name">var <span class="ident">KEYTAB_F55</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F56" class="name">var <span class="ident">KEYTAB_F56</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F57" class="name">var <span class="ident">KEYTAB_F57</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F58" class="name">var <span class="ident">KEYTAB_F58</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F59" class="name">var <span class="ident">KEYTAB_F59</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F60" class="name">var <span class="ident">KEYTAB_F60</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F61" class="name">var <span class="ident">KEYTAB_F61</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F62" class="name">var <span class="ident">KEYTAB_F62</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_F63" class="name">var <span class="ident">KEYTAB_F63</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_HOME" class="name">var <span class="ident">KEYTAB_HOME</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_INSERT" class="name">var <span class="ident">KEYTAB_INSERT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_KEYPADPLUS" class="name">var <span class="ident">KEYTAB_KEYPADPLUS</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_KEYTPADMINUS" class="name">var <span class="ident">KEYTAB_KEYTPADMINUS</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_LEFT" class="name">var <span class="ident">KEYTAB_LEFT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_MOUSE" class="name">var <span class="ident">KEYTAB_MOUSE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_NOKEY" class="name">var <span class="ident">KEYTAB_NOKEY</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_PAGEDOWN" class="name">var <span class="ident">KEYTAB_PAGEDOWN</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_PAGEUP" class="name">var <span class="ident">KEYTAB_PAGEUP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_REFRESH" class="name">var <span class="ident">KEYTAB_REFRESH</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_RESIZE" class="name">var <span class="ident">KEYTAB_RESIZE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_RIGHT" class="name">var <span class="ident">KEYTAB_RIGHT</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_SPACE" class="name">var <span class="ident">KEYTAB_SPACE</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_TAB" class="name">var <span class="ident">KEYTAB_TAB</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.KEYTAB_UP" class="name">var <span class="ident">KEYTAB_UP</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.key" class="name">var <span class="ident">key</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.key_to_name" class="name">var <span class="ident">key_to_name</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.keydef" class="name">var <span class="ident">keydef</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.name" class="name">var <span class="ident">name</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_core.keytab.name_to_key" class="name">var <span class="ident">name_to_key</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+
+
+
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
+</div>
+</body>
+</html>
