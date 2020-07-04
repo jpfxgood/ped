@@ -1,4 +1,5 @@
 #!/bin/bash -x
+python3 -m pytest tests
 version=$1
 echo $version >VERSION
 echo "__version__ = '$version'" >ped_core/version.py

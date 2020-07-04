@@ -901,8 +901,10 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -913,9 +915,11 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
@@ -1067,7 +1071,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.python_mode', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.python_mode" class="source">
-    <div class="codehilite"><pre><span class="c1"># Copyright 2009 James P Goodwin ped tiny python editor</span>
+    <div class="codehilite"><pre><span></span><span class="c1"># Copyright 2009 James P Goodwin ped tiny python editor</span>
 <span class="sd">&quot;&quot;&quot; module to implement a python mode for the ped editor does colorizing of code &quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">ped_core</span> <span class="kn">import</span> <span class="n">editor_common</span>
 <span class="kn">from</span> <span class="nn">ped_dialog.message_dialog</span> <span class="kn">import</span> <span class="n">message</span>
@@ -1084,14 +1088,14 @@ table {
 <span class="k">def</span> <span class="nf">detect_mode</span><span class="p">(</span><span class="n">editor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; hook called to detect if this mode should be used for a file, returns True if it should be used, False otherwise &quot;&quot;&quot;</span>
     <span class="n">workfile</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">getWorkfile</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">r&quot;(\.py$)|(\.py\:\(r.*\)$)&quot;</span><span class="p">,</span><span class="n">workfile</span><span class="o">.</span><span class="n">getFilename</span><span class="p">()):</span>
-        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\.py$)|(\.py\:\(r.*\)$)&quot;</span><span class="p">,</span><span class="n">workfile</span><span class="o">.</span><span class="n">getFilename</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="kc">True</span>
     <span class="k">elif</span> <span class="n">workfile</span><span class="o">.</span><span class="n">getLine</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#!/usr/bin/python&quot;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="kc">True</span>
     <span class="k">elif</span> <span class="n">workfile</span><span class="o">.</span><span class="n">getLine</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#!/usr/bin/env python&quot;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
 <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span><span class="n">ch</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; hook called for each keystroke, can be used for auto-indent or auto-complete &quot;&quot;&quot;</span>
@@ -1102,12 +1106,12 @@ table {
         <span class="n">wf</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">getWorkfile</span><span class="p">()</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">line</span> <span class="o">+</span> <span class="n">editor</span><span class="o">.</span><span class="n">vpos</span>
         <span class="n">above</span> <span class="o">=</span> <span class="n">wf</span><span class="o">.</span><span class="n">getLine</span><span class="p">(</span><span class="n">line</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">r&quot;^\s*(if|for|while|else|elif|try|except|def|class|finally|with)\W&quot;</span><span class="p">,</span><span class="n">above</span><span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*(if|for|while|else|elif|try|except|def|class|finally|with)\W&quot;</span><span class="p">,</span><span class="n">above</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
             <span class="n">stop</span> <span class="o">=</span> <span class="n">wf</span><span class="o">.</span><span class="n">get_tab_stop</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
             <span class="n">editor</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">stop</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">r&quot;^\s*(\S+)&quot;</span><span class="p">,</span><span class="n">above</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*(\S+)&quot;</span><span class="p">,</span><span class="n">above</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
                 <span class="n">editor</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">editor</span><span class="o">.</span><span class="n">left</span> <span class="o">!=</span> <span class="n">old_left</span> <span class="ow">or</span> <span class="n">editor</span><span class="o">.</span><span class="n">line</span> <span class="o">!=</span> <span class="n">old_line</span><span class="p">:</span>
@@ -1123,7 +1127,7 @@ table {
     <span class="k">if</span> <span class="n">wf</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">wf</span><span class="p">,</span><span class="s2">&quot;python_mode_tokens&quot;</span><span class="p">):</span>
             <span class="k">del</span> <span class="n">wf</span><span class="o">.</span><span class="n">python_mode_tokens</span>
-            <span class="n">wf</span><span class="o">.</span><span class="n">python_mode_tokens</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">wf</span><span class="o">.</span><span class="n">python_mode_tokens</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="nb">delattr</span><span class="p">(</span><span class="n">wf</span><span class="p">,</span><span class="s2">&quot;python_mode_tokens&quot;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">redraw</span><span class="p">(</span><span class="n">editor</span><span class="p">):</span>
@@ -1137,18 +1141,18 @@ table {
         <span class="nb">setattr</span><span class="p">(</span><span class="n">workfile</span><span class="p">,</span><span class="s2">&quot;python_mode_tokens&quot;</span><span class="p">,</span><span class="n">tokens</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">tokens</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">tokens</span><span class="o">.</span><span class="n">getTokens</span><span class="p">()</span> <span class="ow">or</span> <span class="n">tokens</span><span class="o">.</span><span class="n">getModref</span><span class="p">()</span> <span class="o">!=</span> <span class="n">workfile</span><span class="o">.</span><span class="n">getModref</span><span class="p">():</span>
         <span class="n">tokens</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span><span class="n">PythonLexer</span><span class="p">())</span>
-        <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">render</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="n">tokens</span><span class="p">,</span>
     <span class="p">[</span><span class="n">Token</span><span class="o">.</span><span class="n">Operator</span><span class="o">.</span><span class="n">Word</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">Builtin</span><span class="o">.</span><span class="n">Pseudo</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Keyword</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Keyword</span><span class="o">.</span><span class="n">Namespace</span><span class="p">],</span>
     <span class="p">[</span><span class="n">Token</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">String</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Literal</span><span class="o">.</span><span class="n">String</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Literal</span><span class="o">.</span><span class="n">String</span><span class="o">.</span><span class="n">Single</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Literal</span><span class="o">.</span><span class="n">String</span><span class="o">.</span><span class="n">Double</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Literal</span><span class="o">.</span><span class="n">String</span><span class="o">.</span><span class="n">Doc</span><span class="p">],</span>
     <span class="p">[</span><span class="n">Token</span><span class="o">.</span><span class="n">Comment</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Comment</span><span class="o">.</span><span class="n">Hashbang</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Comment</span><span class="o">.</span><span class="n">Multiline</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Comment</span><span class="o">.</span><span class="n">Single</span><span class="p">])</span>
 
-    <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="kc">True</span>
 
 <span class="k">def</span> <span class="nf">name</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; hook to return this mode&#39;s human readable name &quot;&quot;&quot;</span>
@@ -1175,17 +1179,17 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.python_mode.detect_mode', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.python_mode.detect_mode" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">detect_mode</span><span class="p">(</span><span class="n">editor</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">detect_mode</span><span class="p">(</span><span class="n">editor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; hook called to detect if this mode should be used for a file, returns True if it should be used, False otherwise &quot;&quot;&quot;</span>
     <span class="n">workfile</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">getWorkfile</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">r&quot;(\.py$)|(\.py\:\(r.*\)$)&quot;</span><span class="p">,</span><span class="n">workfile</span><span class="o">.</span><span class="n">getFilename</span><span class="p">()):</span>
-        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\.py$)|(\.py\:\(r.*\)$)&quot;</span><span class="p">,</span><span class="n">workfile</span><span class="o">.</span><span class="n">getFilename</span><span class="p">()):</span>
+        <span class="k">return</span> <span class="kc">True</span>
     <span class="k">elif</span> <span class="n">workfile</span><span class="o">.</span><span class="n">getLine</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#!/usr/bin/python&quot;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="kc">True</span>
     <span class="k">elif</span> <span class="n">workfile</span><span class="o">.</span><span class="n">getLine</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#!/usr/bin/env python&quot;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="kc">False</span>
 </pre></div>
 
   </div>
@@ -1206,13 +1210,13 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.python_mode.finish', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.python_mode.finish" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="n">editor</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="n">editor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; this editor is going away do anything required to clean up &quot;&quot;&quot;</span>
     <span class="n">wf</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">getWorkfile</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">wf</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">wf</span><span class="p">,</span><span class="s2">&quot;python_mode_tokens&quot;</span><span class="p">):</span>
             <span class="k">del</span> <span class="n">wf</span><span class="o">.</span><span class="n">python_mode_tokens</span>
-            <span class="n">wf</span><span class="o">.</span><span class="n">python_mode_tokens</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">wf</span><span class="o">.</span><span class="n">python_mode_tokens</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="nb">delattr</span><span class="p">(</span><span class="n">wf</span><span class="p">,</span><span class="s2">&quot;python_mode_tokens&quot;</span><span class="p">)</span>
 </pre></div>
 
@@ -1234,7 +1238,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.python_mode.get_tabs', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.python_mode.get_tabs" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_tabs</span><span class="p">(</span><span class="n">editor</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_tabs</span><span class="p">(</span><span class="n">editor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; return the tab stops for this type of file &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
 </pre></div>
@@ -1257,7 +1261,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.python_mode.handle', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.python_mode.handle" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span><span class="n">ch</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span><span class="n">ch</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; hook called for each keystroke, can be used for auto-indent or auto-complete &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">ch</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
         <span class="n">old_left</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">left</span>
@@ -1266,12 +1270,12 @@ table {
         <span class="n">wf</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">getWorkfile</span><span class="p">()</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">line</span> <span class="o">+</span> <span class="n">editor</span><span class="o">.</span><span class="n">vpos</span>
         <span class="n">above</span> <span class="o">=</span> <span class="n">wf</span><span class="o">.</span><span class="n">getLine</span><span class="p">(</span><span class="n">line</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">r&quot;^\s*(if|for|while|else|elif|try|except|def|class|finally|with)\W&quot;</span><span class="p">,</span><span class="n">above</span><span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*(if|for|while|else|elif|try|except|def|class|finally|with)\W&quot;</span><span class="p">,</span><span class="n">above</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
             <span class="n">stop</span> <span class="o">=</span> <span class="n">wf</span><span class="o">.</span><span class="n">get_tab_stop</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
             <span class="n">editor</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">stop</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">r&quot;^\s*(\S+)&quot;</span><span class="p">,</span><span class="n">above</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*(\S+)&quot;</span><span class="p">,</span><span class="n">above</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
                 <span class="n">editor</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">editor</span><span class="o">.</span><span class="n">left</span> <span class="o">!=</span> <span class="n">old_left</span> <span class="ow">or</span> <span class="n">editor</span><span class="o">.</span><span class="n">line</span> <span class="o">!=</span> <span class="n">old_line</span><span class="p">:</span>
@@ -1299,7 +1303,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.python_mode.name', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.python_mode.name" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">name</span><span class="p">():</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">name</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; hook to return this mode&#39;s human readable name &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s2">&quot;python_mode&quot;</span>
 </pre></div>
@@ -1322,7 +1326,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.python_mode.redraw', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.python_mode.redraw" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">redraw</span><span class="p">(</span><span class="n">editor</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">redraw</span><span class="p">(</span><span class="n">editor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; redraw the colorization based on the current token set, regenerate it if needed &quot;&quot;&quot;</span>
     <span class="n">workfile</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">getWorkfile</span><span class="p">()</span>
 
@@ -1333,18 +1337,18 @@ table {
         <span class="nb">setattr</span><span class="p">(</span><span class="n">workfile</span><span class="p">,</span><span class="s2">&quot;python_mode_tokens&quot;</span><span class="p">,</span><span class="n">tokens</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">tokens</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">tokens</span><span class="o">.</span><span class="n">getTokens</span><span class="p">()</span> <span class="ow">or</span> <span class="n">tokens</span><span class="o">.</span><span class="n">getModref</span><span class="p">()</span> <span class="o">!=</span> <span class="n">workfile</span><span class="o">.</span><span class="n">getModref</span><span class="p">():</span>
         <span class="n">tokens</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span><span class="n">PythonLexer</span><span class="p">())</span>
-        <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">render</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="n">tokens</span><span class="p">,</span>
     <span class="p">[</span><span class="n">Token</span><span class="o">.</span><span class="n">Operator</span><span class="o">.</span><span class="n">Word</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">Builtin</span><span class="o">.</span><span class="n">Pseudo</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Keyword</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Keyword</span><span class="o">.</span><span class="n">Namespace</span><span class="p">],</span>
     <span class="p">[</span><span class="n">Token</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">String</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Literal</span><span class="o">.</span><span class="n">String</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Literal</span><span class="o">.</span><span class="n">String</span><span class="o">.</span><span class="n">Single</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Literal</span><span class="o">.</span><span class="n">String</span><span class="o">.</span><span class="n">Double</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Literal</span><span class="o">.</span><span class="n">String</span><span class="o">.</span><span class="n">Doc</span><span class="p">],</span>
     <span class="p">[</span><span class="n">Token</span><span class="o">.</span><span class="n">Comment</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Comment</span><span class="o">.</span><span class="n">Hashbang</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Comment</span><span class="o">.</span><span class="n">Multiline</span><span class="p">,</span><span class="n">Token</span><span class="o">.</span><span class="n">Comment</span><span class="o">.</span><span class="n">Single</span><span class="p">])</span>
 
-    <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 
   </div>

@@ -901,8 +901,10 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -913,9 +915,11 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
@@ -1095,23 +1099,23 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo" class="source">
-    <div class="codehilite"><pre><span class="c1"># Copyright 2009 James P Goodwin ped tiny python editor</span>
+    <div class="codehilite"><pre><span></span><span class="c1"># Copyright 2009 James P Goodwin ped tiny python editor</span>
 <span class="sd">&quot;&quot;&quot; undo module for the ped python editor, implements a simple undo mechanism &quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="k">class</span> <span class="nc">UndoAction</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; represents one undoable action &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">tpl</span> <span class="p">):</span>       
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">tpl</span> <span class="p">):</span>       
         <span class="sd">&quot;&quot;&quot; constructed with an undo func which is a function to call on undo</span>
 <span class="sd">        and tpl which is a tuple of arguments to pass to the function</span>
 <span class="sd">        a shallow copy of the tuple is made preserving the state &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tpl</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tpl</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tpl</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpl</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; undo this action by invoking the function and passing the tuple </span>
@@ -1121,15 +1125,15 @@ table {
 <span class="k">class</span> <span class="nc">UndoTransaction</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; represents a collection of undo actions that should be undone together </span>
 <span class="sd">    as one transaction &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; constructed with a reference to the UndoManager that this</span>
 <span class="sd">        transaction belongs to &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">manager</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">isEmpty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; tests to see if this transaction has no actions in it &quot;&quot;&quot;</span>
@@ -1149,13 +1153,13 @@ table {
 
 <span class="k">class</span> <span class="nc">UndoManager</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; manager for a list of undo transactions for a given context &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; construct an UndoManager, no arguments &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">inUndo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns true if currently executing an undo, used to prevent recursion during undo &quot;&quot;&quot;</span>
@@ -1177,10 +1181,10 @@ table {
     <span class="k">def</span> <span class="nf">undo_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; undo the current transaction &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span>
 
     <span class="k">def</span> <span class="nf">flush_undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1205,18 +1209,18 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoAction', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoAction" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">UndoAction</span><span class="p">:</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">UndoAction</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; represents one undoable action &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">tpl</span> <span class="p">):</span>       
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">tpl</span> <span class="p">):</span>       
         <span class="sd">&quot;&quot;&quot; constructed with an undo func which is a function to call on undo</span>
 <span class="sd">        and tpl which is a tuple of arguments to pass to the function</span>
 <span class="sd">        a shallow copy of the tuple is made preserving the state &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tpl</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tpl</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tpl</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpl</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; undo this action by invoking the function and passing the tuple </span>
@@ -1250,7 +1254,7 @@ a shallow copy of the tuple is made preserving the state</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoAction.__init__', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoAction.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">tpl</span> <span class="p">):</span>       
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">tpl</span> <span class="p">):</span>       
     <span class="sd">&quot;&quot;&quot; constructed with an undo func which is a function to call on undo</span>
 <span class="sd">    and tpl which is a tuple of arguments to pass to the function</span>
 <span class="sd">    a shallow copy of the tuple is made preserving the state &quot;&quot;&quot;</span>
@@ -1277,7 +1281,7 @@ to it</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoAction.undo', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoAction.undo" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; undo this action by invoking the function and passing the tuple </span>
 <span class="sd">    to it &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">tpl</span><span class="p">)</span>
@@ -1320,15 +1324,15 @@ to it</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoManager', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoManager" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">UndoManager</span><span class="p">:</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">UndoManager</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; manager for a list of undo transactions for a given context &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; construct an UndoManager, no arguments &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">inUndo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns true if currently executing an undo, used to prevent recursion during undo &quot;&quot;&quot;</span>
@@ -1350,10 +1354,10 @@ to it</p></div>
     <span class="k">def</span> <span class="nf">undo_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; undo the current transaction &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span>
 
     <span class="k">def</span> <span class="nf">flush_undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1385,10 +1389,10 @@ to it</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoManager.__init__', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoManager.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; construct an UndoManager, no arguments &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
 
   </div>
@@ -1409,7 +1413,7 @@ to it</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoManager.flush_undo', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoManager.flush_undo" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">flush_undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">flush_undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; free the transactions and forget all the undo information &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span> <span class="o">=</span> <span class="p">[]</span>
 </pre></div>
@@ -1432,7 +1436,7 @@ to it</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoManager.get_transaction', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoManager.get_transaction" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; return the current transaction if any &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -1458,7 +1462,7 @@ to it</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoManager.inUndo', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoManager.inUndo" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">inUndo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">inUndo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; returns true if currently executing an undo, used to prevent recursion during undo &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span>
 </pre></div>
@@ -1481,7 +1485,7 @@ to it</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoManager.new_transaction', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoManager.new_transaction" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">new_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">new_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; start a new transaction or return the current empty transaction &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">UndoTransaction</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
@@ -1506,13 +1510,13 @@ to it</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoManager.undo_transaction', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoManager.undo_transaction" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">undo_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">undo_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; undo the current transaction &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inundo</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">transactions</span>
 </pre></div>
 
@@ -1554,18 +1558,18 @@ as one transaction</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoTransaction', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoTransaction" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">UndoTransaction</span><span class="p">:</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">UndoTransaction</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; represents a collection of undo actions that should be undone together </span>
 <span class="sd">    as one transaction &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; constructed with a reference to the UndoManager that this</span>
 <span class="sd">        transaction belongs to &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">manager</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">isEmpty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; tests to see if this transaction has no actions in it &quot;&quot;&quot;</span>
@@ -1609,7 +1613,7 @@ transaction belongs to</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoTransaction.__init__', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoTransaction.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; constructed with a reference to the UndoManager that this</span>
 <span class="sd">    transaction belongs to &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">manager</span>
@@ -1634,7 +1638,7 @@ transaction belongs to</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoTransaction.isEmpty', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoTransaction.isEmpty" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">isEmpty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">isEmpty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; tests to see if this transaction has no actions in it &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span>
 </pre></div>
@@ -1657,7 +1661,7 @@ transaction belongs to</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoTransaction.push', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoTransaction.push" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">tpl</span> <span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">tpl</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; pushes a new undo action onto this transaction &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">inUndo</span><span class="p">():</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">UndoAction</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">tpl</span><span class="p">))</span>
@@ -1681,7 +1685,7 @@ transaction belongs to</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.undo.UndoTransaction.undo', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.undo.UndoTransaction.undo" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; undoes all of the actions in this transaction &quot;&quot;&quot;</span>
     <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>

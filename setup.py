@@ -25,7 +25,7 @@ setup(
         'ide',
     ],
     install_requires=[
-        'Pygments==2.1',
+        'Pygments>=2.1',
         'paramiko>=2.0.9',
     ],
     scripts=[
