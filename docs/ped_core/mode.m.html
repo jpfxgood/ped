@@ -901,10 +901,8 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
-.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
-.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -915,11 +913,9 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
-.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
@@ -1089,7 +1085,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode" class="source">
-    <div class="codehilite"><pre><span></span><span class="c1"># Copyright 2009-2010 James P Goodwin ped tiny python editor</span>
+    <div class="codehilite"><pre><span class="c1"># Copyright 2009-2010 James P Goodwin ped tiny python editor</span>
 <span class="sd">&quot;&quot;&quot; module to implement common functions for modes for the ped editor does colorizing of code &quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">copy</span>
@@ -1098,18 +1094,18 @@ table {
 
 <span class="k">class</span> <span class="nc">Tokens</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; object to act as holder for token list, and to coordinate with token generation thread &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; no args to constructor &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modref</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get rid of any lingering references &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">getTokens</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get the token list if there is one &quot;&quot;&quot;</span>
@@ -1200,17 +1196,17 @@ table {
             <span class="k">del</span> <span class="n">tokens</span><span class="p">[</span><span class="n">l</span><span class="p">]</span>
     <span class="n">tokenobj</span><span class="o">.</span><span class="n">setTokens</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
     <span class="n">tokenobj</span><span class="o">.</span><span class="n">setModref</span><span class="p">(</span><span class="n">workfile</span><span class="o">.</span><span class="n">getModref</span><span class="p">())</span>
-    <span class="n">tokenobj</span><span class="o">.</span><span class="n">setThread</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">tokenobj</span><span class="o">.</span><span class="n">setThread</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
     <span class="n">workfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="k">del</span> <span class="n">workfile</span>
-    <span class="n">workfile</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">workfile</span> <span class="o">=</span> <span class="bp">None</span>
 
 <span class="k">def</span> <span class="nf">is_token_in</span><span class="p">(</span> <span class="n">token</span><span class="p">,</span> <span class="n">list_token_classes</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; return true if token is in the list or is a subclass of anything in the list &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">c_token</span> <span class="ow">in</span> <span class="n">list_token_classes</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">c_token</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">False</span>
 
 <span class="k">def</span> <span class="nf">render</span><span class="p">(</span> <span class="n">editor</span><span class="p">,</span> <span class="n">tokens</span><span class="p">,</span> <span class="n">keywords</span><span class="p">,</span> <span class="n">strings</span><span class="p">,</span> <span class="n">comments</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; using token map (keywords, strings, comments) hilight the tokens in the editor &quot;&quot;&quot;</span>
@@ -1263,12 +1259,12 @@ table {
                 <span class="k">if</span> <span class="n">sc_line</span> <span class="o">&gt;</span> <span class="n">max_sc_line</span><span class="p">:</span>
                     <span class="n">max_sc_line</span> <span class="o">=</span> <span class="n">sc_line</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">lidx</span> <span class="o">&gt;=</span> <span class="n">editor</span><span class="o">.</span><span class="n">numLines</span><span class="p">(</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">lidx</span> <span class="o">&gt;=</span> <span class="n">editor</span><span class="o">.</span><span class="n">numLines</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
                     <span class="n">max_sc_line</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="n">editor</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="n">max_sc_line</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="o">*</span><span class="n">editor</span><span class="o">.</span><span class="n">max_x</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">sc_line</span><span class="p">,</span><span class="n">sc_pos</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">window_pos</span><span class="p">(</span><span class="n">f_line</span><span class="p">,</span><span class="n">f_pos</span><span class="p">)</span>
-                    <span class="n">l</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">getContent</span><span class="p">(</span><span class="n">lidx</span><span class="p">,</span><span class="n">editor</span><span class="o">.</span><span class="n">left</span><span class="o">+</span><span class="n">editor</span><span class="o">.</span><span class="n">max_x</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">getContent</span><span class="p">(</span><span class="n">lidx</span><span class="p">,</span><span class="n">editor</span><span class="o">.</span><span class="n">left</span><span class="o">+</span><span class="n">editor</span><span class="o">.</span><span class="n">max_x</span><span class="p">,</span><span class="bp">True</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">line_changed</span><span class="p">:</span>
                         <span class="n">editor</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="n">sc_line</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">l</span><span class="p">[</span><span class="n">editor</span><span class="o">.</span><span class="n">left</span><span class="p">:</span><span class="n">editor</span><span class="o">.</span><span class="n">left</span><span class="o">+</span><span class="n">editor</span><span class="o">.</span><span class="n">max_x</span><span class="p">])</span>
                     <span class="k">elif</span> <span class="n">is_cursor_line</span><span class="p">:</span>
@@ -1277,7 +1273,7 @@ table {
                     <span class="k">if</span> <span class="n">sc_line</span> <span class="o">&gt;</span> <span class="n">max_sc_line</span><span class="p">:</span>
                         <span class="n">max_sc_line</span> <span class="o">=</span> <span class="n">sc_line</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">lidx</span> <span class="o">&gt;=</span> <span class="n">editor</span><span class="o">.</span><span class="n">numLines</span><span class="p">(</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">lidx</span> <span class="o">&gt;=</span> <span class="n">editor</span><span class="o">.</span><span class="n">numLines</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
                 <span class="n">max_sc_line</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">sc_line</span><span class="p">,</span><span class="n">sc_pos</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">window_pos</span><span class="p">(</span><span class="n">f_line</span><span class="p">,</span><span class="n">f_pos</span><span class="p">)</span>
@@ -1286,7 +1282,7 @@ table {
 
         <span class="n">lidx</span> <span class="o">=</span> <span class="n">lidx</span> <span class="o">+</span> <span class="mi">1</span>
 
-    <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="bp">True</span>
 </pre></div>
 
   </div>
@@ -1310,7 +1306,7 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.gen_tokens', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.gen_tokens" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">gen_tokens</span><span class="p">(</span> <span class="n">tokenobj</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">lexer</span> <span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">gen_tokens</span><span class="p">(</span> <span class="n">tokenobj</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">lexer</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; thread worker function, reads and tokenizes the EditFile passed to it stores the list in the Token</span>
 <span class="sd">    object provided, updates the modref, closes the EditFile &quot;&quot;&quot;</span>
     <span class="n">tokens</span> <span class="o">=</span> <span class="n">tokenobj</span><span class="o">.</span><span class="n">copyTokens</span><span class="p">()</span>
@@ -1332,10 +1328,10 @@ object provided, updates the modref, closes the EditFile</p></div>
             <span class="k">del</span> <span class="n">tokens</span><span class="p">[</span><span class="n">l</span><span class="p">]</span>
     <span class="n">tokenobj</span><span class="o">.</span><span class="n">setTokens</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
     <span class="n">tokenobj</span><span class="o">.</span><span class="n">setModref</span><span class="p">(</span><span class="n">workfile</span><span class="o">.</span><span class="n">getModref</span><span class="p">())</span>
-    <span class="n">tokenobj</span><span class="o">.</span><span class="n">setThread</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">tokenobj</span><span class="o">.</span><span class="n">setThread</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
     <span class="n">workfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="k">del</span> <span class="n">workfile</span>
-    <span class="n">workfile</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">workfile</span> <span class="o">=</span> <span class="bp">None</span>
 </pre></div>
 
   </div>
@@ -1356,12 +1352,12 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.is_token_in', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.is_token_in" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">is_token_in</span><span class="p">(</span> <span class="n">token</span><span class="p">,</span> <span class="n">list_token_classes</span> <span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">is_token_in</span><span class="p">(</span> <span class="n">token</span><span class="p">,</span> <span class="n">list_token_classes</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; return true if token is in the list or is a subclass of anything in the list &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">c_token</span> <span class="ow">in</span> <span class="n">list_token_classes</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">c_token</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">False</span>
 </pre></div>
 
   </div>
@@ -1382,7 +1378,7 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.render', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.render" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">render</span><span class="p">(</span> <span class="n">editor</span><span class="p">,</span> <span class="n">tokens</span><span class="p">,</span> <span class="n">keywords</span><span class="p">,</span> <span class="n">strings</span><span class="p">,</span> <span class="n">comments</span> <span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">render</span><span class="p">(</span> <span class="n">editor</span><span class="p">,</span> <span class="n">tokens</span><span class="p">,</span> <span class="n">keywords</span><span class="p">,</span> <span class="n">strings</span><span class="p">,</span> <span class="n">comments</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; using token map (keywords, strings, comments) hilight the tokens in the editor &quot;&quot;&quot;</span>
     <span class="n">curses</span><span class="o">.</span><span class="n">init_pair</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">curses</span><span class="o">.</span><span class="n">COLOR_GREEN</span><span class="p">,</span><span class="n">curses</span><span class="o">.</span><span class="n">COLOR_BLACK</span><span class="p">)</span>
     <span class="n">curses</span><span class="o">.</span><span class="n">init_pair</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">curses</span><span class="o">.</span><span class="n">COLOR_RED</span><span class="p">,</span><span class="n">curses</span><span class="o">.</span><span class="n">COLOR_BLACK</span><span class="p">)</span>
@@ -1433,12 +1429,12 @@ object provided, updates the modref, closes the EditFile</p></div>
                 <span class="k">if</span> <span class="n">sc_line</span> <span class="o">&gt;</span> <span class="n">max_sc_line</span><span class="p">:</span>
                     <span class="n">max_sc_line</span> <span class="o">=</span> <span class="n">sc_line</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">lidx</span> <span class="o">&gt;=</span> <span class="n">editor</span><span class="o">.</span><span class="n">numLines</span><span class="p">(</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">lidx</span> <span class="o">&gt;=</span> <span class="n">editor</span><span class="o">.</span><span class="n">numLines</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
                     <span class="n">max_sc_line</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="n">editor</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="n">max_sc_line</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="o">*</span><span class="n">editor</span><span class="o">.</span><span class="n">max_x</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">sc_line</span><span class="p">,</span><span class="n">sc_pos</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">window_pos</span><span class="p">(</span><span class="n">f_line</span><span class="p">,</span><span class="n">f_pos</span><span class="p">)</span>
-                    <span class="n">l</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">getContent</span><span class="p">(</span><span class="n">lidx</span><span class="p">,</span><span class="n">editor</span><span class="o">.</span><span class="n">left</span><span class="o">+</span><span class="n">editor</span><span class="o">.</span><span class="n">max_x</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">getContent</span><span class="p">(</span><span class="n">lidx</span><span class="p">,</span><span class="n">editor</span><span class="o">.</span><span class="n">left</span><span class="o">+</span><span class="n">editor</span><span class="o">.</span><span class="n">max_x</span><span class="p">,</span><span class="bp">True</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">line_changed</span><span class="p">:</span>
                         <span class="n">editor</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="n">sc_line</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">l</span><span class="p">[</span><span class="n">editor</span><span class="o">.</span><span class="n">left</span><span class="p">:</span><span class="n">editor</span><span class="o">.</span><span class="n">left</span><span class="o">+</span><span class="n">editor</span><span class="o">.</span><span class="n">max_x</span><span class="p">])</span>
                     <span class="k">elif</span> <span class="n">is_cursor_line</span><span class="p">:</span>
@@ -1447,7 +1443,7 @@ object provided, updates the modref, closes the EditFile</p></div>
                     <span class="k">if</span> <span class="n">sc_line</span> <span class="o">&gt;</span> <span class="n">max_sc_line</span><span class="p">:</span>
                         <span class="n">max_sc_line</span> <span class="o">=</span> <span class="n">sc_line</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">lidx</span> <span class="o">&gt;=</span> <span class="n">editor</span><span class="o">.</span><span class="n">numLines</span><span class="p">(</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">lidx</span> <span class="o">&gt;=</span> <span class="n">editor</span><span class="o">.</span><span class="n">numLines</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
                 <span class="n">max_sc_line</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">sc_line</span><span class="p">,</span><span class="n">sc_pos</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">window_pos</span><span class="p">(</span><span class="n">f_line</span><span class="p">,</span><span class="n">f_pos</span><span class="p">)</span>
@@ -1456,7 +1452,7 @@ object provided, updates the modref, closes the EditFile</p></div>
 
         <span class="n">lidx</span> <span class="o">=</span> <span class="n">lidx</span> <span class="o">+</span> <span class="mi">1</span>
 
-    <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="bp">True</span>
 </pre></div>
 
   </div>
@@ -1475,20 +1471,20 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.Tokens', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.Tokens" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Tokens</span><span class="p">:</span>
+    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Tokens</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; object to act as holder for token list, and to coordinate with token generation thread &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; no args to constructor &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modref</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get rid of any lingering references &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">getTokens</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; get the token list if there is one &quot;&quot;&quot;</span>
@@ -1582,11 +1578,11 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.Tokens.__init__', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.Tokens.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; no args to constructor &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">modref</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
 </pre></div>
 
@@ -1608,7 +1604,7 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.Tokens.copyTokens', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.Tokens.copyTokens" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">copyTokens</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">copyTokens</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get the token list if there is one &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1635,7 +1631,7 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.Tokens.getModref', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.Tokens.getModref" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getModref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">getModref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get the modification reference number that these tokens were generated from &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1662,7 +1658,7 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.Tokens.getThread', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.Tokens.getThread" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getThread</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">getThread</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get the reference to the generation thread &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1689,7 +1685,7 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.Tokens.getTokens', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.Tokens.getTokens" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getTokens</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">getTokens</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get the token list if there is one &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1716,7 +1712,7 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.Tokens.refresh', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.Tokens.refresh" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">editor</span><span class="p">,</span><span class="n">lexer</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">editor</span><span class="p">,</span><span class="n">lexer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; refresh the token list based on a new EditFile, does nothing if a thread is already running &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1746,7 +1742,7 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.Tokens.setModref', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.Tokens.setModref" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setModref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">modref</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setModref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">modref</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; set the modref for this set of tokens &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1773,7 +1769,7 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.Tokens.setThread', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.Tokens.setThread" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setThread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thread</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setThread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">thread</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; set the reference to the generation thread &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1800,7 +1796,7 @@ object provided, updates the modref, closes the EditFile</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.mode.Tokens.setTokens', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.mode.Tokens.setTokens" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setTokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tokens</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setTokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tokens</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; set the token list &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>

@@ -901,10 +901,8 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
-.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
-.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -915,11 +913,9 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
-.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
@@ -1131,7 +1127,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog" class="source">
-    <div class="codehilite"><pre><span></span><span class="c1"># Copyright 2009 James P Goodwin ped tiny python editor</span>
+    <div class="codehilite"><pre><span class="c1"># Copyright 2009 James P Goodwin ped tiny python editor</span>
 <span class="sd">&quot;&quot;&quot; module that implements file open/new dialog for the ped editor &quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">curses</span>
 <span class="kn">import</span> <span class="nn">curses.ascii</span>
@@ -1140,7 +1136,7 @@ table {
 <span class="kn">from</span> <span class="nn">ped_dialog</span> <span class="kn">import</span> <span class="n">dialog</span>
 <span class="kn">from</span> <span class="nn">ped_core</span> <span class="kn">import</span> <span class="n">keytab</span>
 
-<span class="k">def</span> <span class="nf">get_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">showhidden</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">showhidden</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get a directory listing of path, directories are prefixed with &lt;DIR&gt;</span>
 <span class="sd">        if showhidden == False hidden files are not include, otherwise they are</span>
 <span class="sd">        returns the directory path, the list of directories and list of files as a tuple&quot;&quot;&quot;</span>
@@ -1160,13 +1156,13 @@ table {
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dialog</span><span class="o">.</span><span class="n">ListBox</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;&lt;DIR&gt; &quot;</span><span class="o">+</span><span class="n">searchfor</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">dialog</span><span class="o">.</span><span class="n">ListBox</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">searchfor</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="bp">True</span>
 
 <span class="k">class</span> <span class="nc">FileDialog</span><span class="p">(</span><span class="n">dialog</span><span class="o">.</span><span class="n">Dialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; dialog subclass that implements a file open dialog allowing</span>
 <span class="sd">        browsing files and directories and selecting a file</span>
 <span class="sd">        or typing in a file name &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;File Dialog&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;File Dialog&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; takes a curses window scr, title for the border, and a starting path &quot;&quot;&quot;</span>
         <span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_dir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">max_y</span><span class="p">,</span> <span class="n">max_x</span> <span class="o">=</span> <span class="n">scr</span><span class="o">.</span><span class="n">getmaxyx</span><span class="p">()</span>
@@ -1175,7 +1171,7 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">file_list</span> <span class="o">=</span> <span class="n">FileListBox</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">dw</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="s2">&quot;Directory Listing&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">dirnames</span><span class="o">+</span><span class="n">filenames</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_dir</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Prompt</span><span class="p">(</span><span class="s2">&quot;dir&quot;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;Path: &quot;</span><span class="p">,</span><span class="n">dw</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Prompt</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="s2">&quot;File: &quot;</span><span class="p">,</span><span class="n">dw</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
-        <span class="n">dialog</span><span class="o">.</span><span class="n">Dialog</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="s2">&quot;FileDialog&quot;</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="n">dw</span><span class="p">,</span> <span class="p">[</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">title</span><span class="p">),</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">Dialog</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="s2">&quot;FileDialog&quot;</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="n">dw</span><span class="p">,</span> <span class="p">[</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">title</span><span class="p">),</span>
                                                               <span class="bp">self</span><span class="o">.</span><span class="n">file_list</span><span class="p">,</span>
                                                               <span class="bp">self</span><span class="o">.</span><span class="n">current_dir</span><span class="p">,</span>
                                                               <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
@@ -1213,7 +1209,7 @@ table {
     <span class="n">d</span> <span class="o">=</span> <span class="n">FileDialog</span><span class="p">(</span><span class="n">stdscr</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">curses</span><span class="o">.</span><span class="n">wrapper</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
 </pre></div>
 
@@ -1239,7 +1235,7 @@ returns the directory path, the list of directories and list of files as a tuple
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.get_dir', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.get_dir" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">showhidden</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_dir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">showhidden</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get a directory listing of path, directories are prefixed with &lt;DIR&gt;</span>
 <span class="sd">        if showhidden == False hidden files are not include, otherwise they are</span>
 <span class="sd">        returns the directory path, the list of directories and list of files as a tuple&quot;&quot;&quot;</span>
@@ -1271,7 +1267,7 @@ returns the directory path, the list of directories and list of files as a tuple
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.main', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.main" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">stdscr</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">stdscr</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; test main for the file dialog &quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">FileDialog</span><span class="p">(</span><span class="n">stdscr</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
@@ -1295,11 +1291,11 @@ or typing in a file name</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FileDialog</span><span class="p">(</span><span class="n">dialog</span><span class="o">.</span><span class="n">Dialog</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">FileDialog</span><span class="p">(</span><span class="n">dialog</span><span class="o">.</span><span class="n">Dialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; dialog subclass that implements a file open dialog allowing</span>
 <span class="sd">        browsing files and directories and selecting a file</span>
 <span class="sd">        or typing in a file name &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;File Dialog&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;File Dialog&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; takes a curses window scr, title for the border, and a starting path &quot;&quot;&quot;</span>
         <span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_dir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">max_y</span><span class="p">,</span> <span class="n">max_x</span> <span class="o">=</span> <span class="n">scr</span><span class="o">.</span><span class="n">getmaxyx</span><span class="p">()</span>
@@ -1308,7 +1304,7 @@ or typing in a file name</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_list</span> <span class="o">=</span> <span class="n">FileListBox</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">dw</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="s2">&quot;Directory Listing&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">dirnames</span><span class="o">+</span><span class="n">filenames</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_dir</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Prompt</span><span class="p">(</span><span class="s2">&quot;dir&quot;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;Path: &quot;</span><span class="p">,</span><span class="n">dw</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Prompt</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="s2">&quot;File: &quot;</span><span class="p">,</span><span class="n">dw</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
-        <span class="n">dialog</span><span class="o">.</span><span class="n">Dialog</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="s2">&quot;FileDialog&quot;</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="n">dw</span><span class="p">,</span> <span class="p">[</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">title</span><span class="p">),</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">Dialog</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="s2">&quot;FileDialog&quot;</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="n">dw</span><span class="p">,</span> <span class="p">[</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">title</span><span class="p">),</span>
                                                               <span class="bp">self</span><span class="o">.</span><span class="n">file_list</span><span class="p">,</span>
                                                               <span class="bp">self</span><span class="o">.</span><span class="n">current_dir</span><span class="p">,</span>
                                                               <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
@@ -1408,7 +1404,7 @@ or typing in a file name</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.__init__', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;File Dialog&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;File Dialog&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; takes a curses window scr, title for the border, and a starting path &quot;&quot;&quot;</span>
     <span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_dir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">max_y</span><span class="p">,</span> <span class="n">max_x</span> <span class="o">=</span> <span class="n">scr</span><span class="o">.</span><span class="n">getmaxyx</span><span class="p">()</span>
@@ -1416,7 +1412,7 @@ or typing in a file name</p></div>
     <span class="bp">self</span><span class="o">.</span><span class="n">file_list</span> <span class="o">=</span> <span class="n">FileListBox</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">dw</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="s2">&quot;Directory Listing&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">dirnames</span><span class="o">+</span><span class="n">filenames</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">current_dir</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Prompt</span><span class="p">(</span><span class="s2">&quot;dir&quot;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;Path: &quot;</span><span class="p">,</span><span class="n">dw</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Prompt</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="s2">&quot;File: &quot;</span><span class="p">,</span><span class="n">dw</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
-    <span class="n">dialog</span><span class="o">.</span><span class="n">Dialog</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="s2">&quot;FileDialog&quot;</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="n">dw</span><span class="p">,</span> <span class="p">[</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">title</span><span class="p">),</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">Dialog</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scr</span><span class="p">,</span><span class="s2">&quot;FileDialog&quot;</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="n">dw</span><span class="p">,</span> <span class="p">[</span> <span class="n">dialog</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">title</span><span class="p">),</span>
                                                           <span class="bp">self</span><span class="o">.</span><span class="n">file_list</span><span class="p">,</span>
                                                           <span class="bp">self</span><span class="o">.</span><span class="n">current_dir</span><span class="p">,</span>
                                                           <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
@@ -1441,7 +1437,7 @@ or typing in a file name</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.btab', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.btab" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">btab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">btab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_list</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">push_history</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">focus_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">-=</span> <span class="mi">1</span>
@@ -1467,7 +1463,7 @@ or typing in a file name</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.focus', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.focus" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">focus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">focus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">focus_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pop_history</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
@@ -1498,7 +1494,7 @@ or typing in a file name</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.getname', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.getname" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">getname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get the name of this component &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 </pre></div>
@@ -1521,7 +1517,7 @@ or typing in a file name</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.getorder', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.getorder" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getorder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">getorder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get this component&#39;s tab order number &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span>
 </pre></div>
@@ -1544,7 +1540,7 @@ or typing in a file name</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.getparent', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.getparent" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getparent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">getparent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get this component&#39;s curses target window &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
 </pre></div>
@@ -1567,7 +1563,7 @@ or typing in a file name</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.getvalue', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.getvalue" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">getvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">value</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">():</span>
@@ -1593,13 +1589,13 @@ or typing in a file name</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.goto', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.goto" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">goto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">goto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; move focus to this component &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">focus_list</span><span class="p">)):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">component</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="n">i</span>
-            <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">False</span>
 </pre></div>
 
   </div>
@@ -1621,7 +1617,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.handle', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.handle" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ch</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ch</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; key handler for selection from the file and directory list,</span>
 <span class="sd">        browsing another directory selecting a file or entering one &quot;&quot;&quot;</span>
     <span class="n">focus_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span>
@@ -1664,11 +1660,11 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.handle_mouse', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.handle_mouse" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">handle_mouse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">handle_mouse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_list</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">mid</span><span class="p">,</span> <span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">,</span> <span class="n">mtype</span> <span class="o">=</span> <span class="n">curses</span><span class="o">.</span><span class="n">getmouse</span><span class="p">()</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">mz</span><span class="p">,</span><span class="n">mtype</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;dlgmouse.log&quot;</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">mz</span><span class="p">,</span><span class="n">mtype</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;dlgmouse.log&quot;</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">))</span>
             <span class="n">by</span><span class="p">,</span><span class="n">bx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">getbegyx</span><span class="p">()</span>
             <span class="n">oy</span> <span class="o">=</span> <span class="n">my</span> <span class="o">-</span> <span class="n">by</span>
             <span class="n">ox</span> <span class="o">=</span> <span class="n">mx</span> <span class="o">-</span> <span class="n">bx</span>
@@ -1702,9 +1698,9 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.isempty', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.isempty" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">isempty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">isempty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; test if the component entry is empty &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="bp">False</span>
 </pre></div>
 
   </div>
@@ -1724,7 +1720,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.main', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.main" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">blocking</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span><span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ch_in</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">blocking</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span><span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">ch_in</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
     <span class="n">curses</span><span class="o">.</span><span class="n">mousemask</span><span class="p">(</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_PRESSED</span><span class="o">|</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_RELEASED</span><span class="o">|</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_CLICKED</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">nodelay</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">notimeout</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -1771,7 +1767,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.mouse_event', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.mouse_event" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">mouse_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">,</span> <span class="n">mtype</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">mouse_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">,</span> <span class="n">mtype</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; handle mouse events return key value or -1 for not handled &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 </pre></div>
@@ -1793,10 +1789,10 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.pop_history', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.pop_history" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pop_history</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">child</span> <span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">pop_history</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">child</span> <span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_history</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">getname</span><span class="p">()</span> <span class="ow">and</span> <span class="n">child</span><span class="o">.</span><span class="n">getname</span><span class="p">()</span> <span class="ow">and</span> <span class="n">child</span><span class="o">.</span><span class="n">getorder</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getname</span><span class="p">(),</span> <span class="n">child</span><span class="o">.</span><span class="n">getname</span><span class="p">())</span>
@@ -1825,10 +1821,10 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.push_history', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.push_history" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">push_history</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">child</span> <span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">push_history</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">child</span> <span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_history</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">getname</span><span class="p">()</span> <span class="ow">and</span> <span class="n">child</span><span class="o">.</span><span class="n">getname</span><span class="p">()</span> <span class="ow">and</span> <span class="n">child</span><span class="o">.</span><span class="n">getorder</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">child</span><span class="o">.</span><span class="n">isempty</span><span class="p">():</span>
         <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getname</span><span class="p">(),</span> <span class="n">child</span><span class="o">.</span><span class="n">getname</span><span class="p">())</span>
@@ -1857,7 +1853,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.render', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.render" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">leaveok</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_list</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">c</span><span class="p">:</span>
@@ -1886,7 +1882,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.resize', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.resize" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">pass</span>
 </pre></div>
 
@@ -1907,7 +1903,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.set_history', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.set_history" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set_history</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">state</span> <span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">set_history</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">state</span> <span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">enable_history</span> <span class="o">=</span> <span class="n">state</span>
 </pre></div>
 
@@ -1929,7 +1925,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.setparent', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.setparent" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setparent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">parent</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setparent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">parent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; set the parent curses target window &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
 </pre></div>
@@ -1952,7 +1948,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.setpos', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.setpos" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setpos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setpos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; set the position of this component &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
@@ -1976,7 +1972,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.setsize', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.setsize" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setsize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setsize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; set the width of this component &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
@@ -2000,7 +1996,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.setvalue', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.setvalue" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
             <span class="n">c</span><span class="o">.</span><span class="n">setvalue</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()])</span>
@@ -2023,7 +2019,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileDialog.tab', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileDialog.tab" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_list</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">push_history</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">focus_list</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -2078,14 +2074,14 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FileListBox</span><span class="p">(</span><span class="n">dialog</span><span class="o">.</span><span class="n">ListBox</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">FileListBox</span><span class="p">(</span><span class="n">dialog</span><span class="o">.</span><span class="n">ListBox</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; list box subclass for file lists, handles searching past the &lt;DIR&gt; prefix for incremental searches&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">searchfor</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; subclass the find method to find the string either with the dir prefix or without it &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dialog</span><span class="o">.</span><span class="n">ListBox</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;&lt;DIR&gt; &quot;</span><span class="o">+</span><span class="n">searchfor</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">dialog</span><span class="o">.</span><span class="n">ListBox</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">searchfor</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="bp">True</span>
 </pre></div>
 
   </div>
@@ -2145,8 +2141,8 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.__init__', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">selection</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">lst</span> <span class="o">=</span> <span class="p">[]):</span>
-    <span class="n">Component</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">order</span><span class="p">)</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">selection</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">lst</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="n">Component</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">order</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
@@ -2158,7 +2154,7 @@ browsing another directory selecting a file or entering one</p></div>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="n">lst</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span> <span class="o">=</span> <span class="bp">False</span>
 </pre></div>
 
   </div>
@@ -2178,7 +2174,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.cdown', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.cdown" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cdown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">cdown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">):</span>
@@ -2206,7 +2202,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.cpgdn', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.cpgdn" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cpgdn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">cpgdn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">+=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">):</span>
@@ -2234,7 +2230,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.cpgup', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.cpgup" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cpgup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">cpgup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">-=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -2262,7 +2258,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.cup', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.cup" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">cup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">cup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -2290,7 +2286,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.end', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.end" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection</span><span class="o">-</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
@@ -2316,12 +2312,12 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.find', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.find" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">searchfor</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">searchfor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; subclass the find method to find the string either with the dir prefix or without it &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">dialog</span><span class="o">.</span><span class="n">ListBox</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;&lt;DIR&gt; &quot;</span><span class="o">+</span><span class="n">searchfor</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">dialog</span><span class="o">.</span><span class="n">ListBox</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">searchfor</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">True</span>
 </pre></div>
 
   </div>
@@ -2342,8 +2338,8 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.focus', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.focus" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">focus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span> <span class="o">=</span> <span class="kc">True</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">focus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span> <span class="o">=</span> <span class="bp">True</span>
 </pre></div>
 
   </div>
@@ -2364,7 +2360,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.getname', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.getname" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">getname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get the name of this component &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 </pre></div>
@@ -2387,7 +2383,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.getorder', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.getorder" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getorder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">getorder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get this component&#39;s tab order number &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span>
 </pre></div>
@@ -2410,7 +2406,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.getparent', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.getparent" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getparent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">getparent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; get this component&#39;s curses target window &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
 </pre></div>
@@ -2433,7 +2429,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.getvalue', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.getvalue" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">getvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">)</span>
 </pre></div>
 
@@ -2455,7 +2451,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.handle', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.handle" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ch</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ch</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">curses</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">isprint</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">ch</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">search</span> <span class="o">+=</span> <span class="n">ch</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">)</span>
@@ -2505,7 +2501,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.home', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.home" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">=</span> <span class="mi">0</span>
@@ -2529,9 +2525,9 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.isempty', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.isempty" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">isempty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">isempty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; test if the component entry is empty &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="bp">False</span>
 </pre></div>
 
   </div>
@@ -2552,7 +2548,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.mouse_event', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.mouse_event" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">mouse_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">,</span> <span class="n">mtype</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">mouse_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">,</span> <span class="n">mtype</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">ox</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="ow">and</span> <span class="n">ox</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="ow">and</span> <span class="n">oy</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="ow">and</span> <span class="n">oy</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
         <span class="n">oy</span> <span class="o">=</span> <span class="p">(</span><span class="n">oy</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">oy</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -2581,7 +2577,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.render', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.render" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getparent</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">win</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span><span class="p">:</span>
@@ -2614,7 +2610,7 @@ browsing another directory selecting a file or entering one</p></div>
             <span class="n">off</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span> <span class="ow">and</span> <span class="n">cy</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">win</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">cy</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span> <span class="o">=</span> <span class="bp">False</span>
 </pre></div>
 
   </div>
@@ -2635,7 +2631,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.setparent', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.setparent" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setparent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">parent</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setparent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">parent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; set the parent curses target window &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
 </pre></div>
@@ -2658,7 +2654,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.setpos', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.setpos" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setpos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setpos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; set the position of this component &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
@@ -2682,7 +2678,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.setsize', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.setsize" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setsize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setsize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; set the width of this component &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
@@ -2706,7 +2702,7 @@ browsing another directory selecting a file or entering one</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_dialog.file_dialog.FileListBox.setvalue', this);">Show source &equiv;</a></p>
   <div id="source-ped_dialog.file_dialog.FileListBox.setvalue" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="p">:</span>

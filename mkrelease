@@ -1,6 +1,7 @@
 #!/bin/bash -x
 version=$1
 echo $version >VERSION
+echo "__version__ = '$version'" >ped_core/version.py
 file_version=${version//[\.]/_}
 if [ -f ped_$file_version.zip ];
     then rm ped_$file_version.zip;

@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>ped_core.ped_help API documentation</title>
-    <meta name="description" content="module to hold the help text for the ped editor" />
+    <title>ped_core.version API documentation</title>
+    <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1036,21 +1036,7 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#ped_core.ped_help.help_string">help_string</a></li>
-  </ul>
 
-    </li>
-
-    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#ped_core.ped_help.get_help">get_help</a></li>
-  </ul>
-
-    </li>
 
 
     </ul>
@@ -1064,101 +1050,12 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">ped_core.ped_help</span> module</h1>
-  <p>module to hold the help text for the ped editor</p>
+  <h1 class="title"><span class="name">ped_core.version</span> module</h1>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.ped_help', this);">Show source &equiv;</a></p>
-  <div id="source-ped_core.ped_help" class="source">
-    <div class="codehilite"><pre><span class="c1"># Copyright 2009 James P Goodwin ped tiny python editor</span>
-<span class="sd">&quot;&quot;&quot; module to hold the help text for the ped editor &quot;&quot;&quot;</span>
-<span class="n">help_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">--------------------------------------------------------------------------------------------------</span>
-<span class="s2">Help for ped James&#39; simple python editor</span>
-
-<span class="s2">keystroke               action</span>
-<span class="s2">---------------------   --------------------------------------------------------------------------</span>
-<span class="s2">alt-m or ctrl-k:        begin marking a span of characters</span>
-<span class="s2">alt-c or ctrl-r:        begin marking a rectangle of characters</span>
-<span class="s2">alt-l or ctrl-l:        begin marking lines</span>
-<span class="s2">keypad minus or ctrl-x: cut marked characters</span>
-<span class="s2">keypad plus or ctrl-c:  copy marked characters (also copies entire dialog prompt field)</span>
-<span class="s2">insert or ctrl-v:       paste marked characters (also works in dialog prompt fields)</span>
-<span class="s2">alt-g or ctrl-g:        goto a line by number               </span>
-<span class="s2">alt-w or ctrl-s:        save current file                   </span>
-<span class="s2">alt-o or ctrl-w:        save current file to a different file</span>
-<span class="s2">ctrl-f:                 show full name of current buffer</span>
-<span class="s2">alt-f:                  find files or search within files</span>
-<span class="s2">alt-b:                  buffer list, switch buffers directly</span>
-<span class="s2">all-d:                  kill the current buffer</span>
-<span class="s2">alt-u:                  undo</span>
-<span class="s2">alt-k:                  kill current window</span>
-<span class="s2">alt-z:                  zoom current window</span>
-<span class="s2">alt-x:                  exit and save all</span>
-<span class="s2">esc:                    exit without saving</span>
-<span class="s2">alt-p:                  previous buffer</span>
-<span class="s2">alt-n:                  next buffer</span>
-<span class="s2">alt-e:                  edit a new file</span>
-<span class="s2">alt-h:                  split the current window horizontally</span>
-<span class="s2">alt-v:                  split the current window vertically</span>
-<span class="s2">tab:                    indent from the current position to the next tab stop</span>
-<span class="s2">                        if lines are selected then indent the set of lines</span>
-<span class="s2">shift-tab:              unindent from the current posiion or the nearest blank space to the left</span>
-<span class="s2">                        if lines are selected then unindent the set of lines</span>
-<span class="s2">up arrow, down arrow,</span>
-<span class="s2">left arrow, right arrow,</span>
-<span class="s2">page up, page down:     move cursor in file</span>
-<span class="s2">up arrow:               in prompt fields in dialogs goes back through previous entries with wrap around</span>
-<span class="s2">down arrow:             in prompt fields clears the input</span>
-<span class="s2">ctrl-right arrow:       move to the end of the next (or current) word</span>
-<span class="s2">ctrl-left arrow:        move to the start of the previous (or current) word</span>
-<span class="s2">home:                   once beginning of line, twice top of window, three times top of file</span>
-<span class="s2">end:                    once end of line, twice end of window, three times end of file</span>
-<span class="s2">F10:                    run shell command capture output in a buffer</span>
-<span class="s2">Shift F10:              open files from sftp</span>
-<span class="s2">F2:                     refresh the screen</span>
-<span class="s2">F5:                     search forward</span>
-<span class="s2">Shift F5:               search backward</span>
-<span class="s2">F6:                     search and replace</span>
-<span class="s2">F3:                     search again</span>
-<span class="s2">F4:                     next window</span>
-<span class="s2">F7:                     transfer clipboard to x clipboard (if xclip is installed)</span>
-<span class="s2">F8:                     transfer clipboard from x clipboard (if xclip is installed)</span>
-<span class="s2">F9:                     toggle recording of keyboard macro</span>
-<span class="s2">alt-a,F11:                    play back keyboard macro</span>
-<span class="s2">alt-i,F1:               this help page is inserted in a buffer</span>
-
-<span class="s2">Usage: {cmd |} ped [options] {files to edit}</span>
-
-<span class="s2">A tiny text editor in python by James P Goodwin.</span>
-
-<span class="s2">Options:</span>
-<span class="s2">  -h, --help            show this help message and exit</span>
-<span class="s2">  -f, --file_find       start in file find mode, optional args file find</span>
-<span class="s2">                        pattern and text find pattern and recurse yes/no</span>
-<span class="s2">  -s, --svn_browse      start in SVN browse mode, optional args path, file,</span>
-<span class="s2">                        revision</span>
-<span class="s2">  -c, --contrast        start display in higher contrast</span>
-<span class="s2">  -r, --readonly        open file in read only mode</span>
-<span class="s2">  -n, --newsbrowse      launch in news browse mode</span>
-<span class="s2">  -b BACKUPROOT, --backuproot=BACKUPROOT</span>
-<span class="s2">                        directory root for backup dir, if exists will be used,</span>
-<span class="s2">                        otherwise homedir will be used</span>
-<span class="s2">  -u USERNAME, --username=USERNAME</span>
-<span class="s2">                        svn username</span>
-<span class="s2">  -p PASSWORD, --password=PASSWORD</span>
-<span class="s2">                        svn password</span>
-<span class="s2">  -d, --dumpkeymap      dump the default keymap to ~/.pedkeymap and default</span>
-<span class="s2">                        kedefs to ~/.pedkeydef and exit </span>
-<span class="s2">                        </span>
-<span class="s2">--------------------------------------------------------------------------------------------------</span>
-<span class="s2">Copyright 2009-2014 James P Goodwin</span>
-<span class="s2">--------------------------------------------------------------------------------------------------</span>
-<span class="s2">&quot;&quot;&quot;</span>
-
-
-<span class="k">def</span> <span class="nf">get_help</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; wrapper so we can make the help generation a little more dynamic &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">help_string</span>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.version', this);">Show source &equiv;</a></p>
+  <div id="source-ped_core.version" class="source">
+    <div class="codehilite"><pre><span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;1.1.0&#39;</span>
 </pre></div>
 
   </div>
@@ -1166,40 +1063,7 @@ table {
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="ped_core.ped_help.help_string" class="name">var <span class="ident">help_string</span></p>
-      
-  
-  <div class="source_cont">
-</div>
 
-      </div>
-
-    <h2 class="section-title" id="header-functions">Functions</h2>
-      
-  <div class="item">
-    <div class="name def" id="ped_core.ped_help.get_help">
-    <p>def <span class="ident">get_help</span>(</p><p>)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>wrapper so we can make the help generation a little more dynamic</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.ped_help.get_help', this);">Show source &equiv;</a></p>
-  <div id="source-ped_core.ped_help.get_help" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_help</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; wrapper so we can make the help generation a little more dynamic &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">help_string</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
 
 
   </section>

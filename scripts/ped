@@ -12,6 +12,7 @@ import time
 from optparse import OptionParser
 from ped_core import editor_common
 from ped_core import keymap
+from ped_core import version
 
 locale.setlocale(locale.LC_ALL,"")
 
@@ -109,9 +110,14 @@ if __name__ == '__main__':
     parser.add_option("-r","--readonly", dest="readonly", action="store_true", default=False, help="open file in read only mode")
     parser.add_option("-b","--backuproot", dest="backuproot", default="~", help="directory root for backup dir, if exists will be used, otherwise homedir will be used")
     parser.add_option("-d","--dumpkeymap", dest="dumpkeymap", action="store_true", default=False, help="dump the default keymap to ~/.pedkeymap and default kedefs to ~/.pedkeydef and exit")
+    parser.add_option("-v","--version", dest="version", action="store_true", default=False, help="print the current version and exit")
     (options,args) = parser.parse_args(argv[1:])
 
     os.environ.setdefault('ESCDELAY','25')
+
+    if options.version:
+        print("ped version %s"%version.__version__)
+        sys.exit(0)
 
     retval = curses.wrapper(main,piped_stdin,options,args)
     if retval:
