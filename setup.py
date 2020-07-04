@@ -1,53 +1,46 @@
 from setuptools import setup
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+with open("VERSION", "r") as fh:
+    version = fh.read().strip()
+
 setup(
     name='ped-editor',
-    version='1.0.1',
+    version=version,
     url='http://github.com/jpfxgood/ped',
+    author="James Goodwin",
+    author_email="ped-editor@jlgoodwin.com",
+    classifiers=[
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+    ],
     description='A code editor written in python',
-    keywords='editor ide',
+    long_description=long_description,
+    license = 'MIT',
+    keywords= [
+        'editor',
+        'ide',
+    ],
     install_requires=[
         'Pygments==2.1',
         'paramiko>=2.0.9',
     ],
     scripts=[
-        'hex',
-        'collect',
-        'pyfind',
-        'ped',
-        'pless',
-        'train_keydef',
+        'scripts/hex',
+        'scripts/collect',
+        'scripts/pyfind',
+        'scripts/ped',
+        'scripts/pless',
+        'scripts/train_keydef',
     ],
-    py_modules=[
-        'file_mod',
-        'buffer_dialog',
-        'changes',
-        'guess_mode',
-        'stream_select',
-        'clipboard',
-        'mode',
-        'java_mode',
-        'confirm_dialog',
-        'file_browse',
-        'dialog',
-        'replace_dialog',
-        'cmd_names',
-        'comment_extension',
-        'ped_help',
-        'editor_manager',
-        'editor_common',
-        'keymap',
-        'cpp_mode',
-        'python_mode',
-        'file_find',
-        'extension_manager',
-        'keytab',
-        'ssh_mod',
-        'undo',
-        'dummy_extension',
-        'file_dialog',
-        'message_dialog',
-        'prompt_dialog',
-        'ssh_dialog',
+    packages=[
+        'ped_core',
+        'ped_dialog',
+        'ped_ssh_dialog',
+        'ped_extensions',
     ],
+    python_requires='>=3.6',
 )

@@ -17,6 +17,12 @@ If you find bugs let me know or send me a fix I may apply it or fix the bug or n
 Installation
 ============
 
+Install from pypy:
+
+    pip install ped-editor
+
+OR
+
 Check out the source code to a path OR download the release .zip file and unzip there.
 
 Put the path on your operating system's execution path.
