@@ -4,6 +4,9 @@ export PYTHONPATH=$PYTHONPATH:"."
 gen_doc () {
     local module_name="`basename $1 .py`"
     local module_path="`dirname $1`"
+    if [ $module_name = "__init__" ];
+        then return;
+    fi
     pdoc --html --template-dir templates --html-dir docs $module_path.$module_name
     echo "<li><a href=\"./$module_path/$module_name.m.html\">$module_path.$module_name</a></li>" >>docs/index.html
     }
