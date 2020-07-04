@@ -19,7 +19,7 @@ Installation
 
 Install from pypy:
 
-    pip install ped-editor
+    python3 -m pip install ped-editor
 
 OR
 
