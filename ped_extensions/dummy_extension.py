@@ -1,7 +1,7 @@
 # Copyright 2014 James P Goodwin ped tiny python editor
 """ extension to test the extension_manager  """
-from editor_common import Editor
-from message_dialog import message
+from ped_core.editor_common import Editor
+from ped_dialog.message_dialog import message
 import time
 
 

@@ -1,16 +1,16 @@
 # Copyright 2009 James P Goodwin ped tiny python editor
 """ module that implements file open/new dialog for the ped editor """
 import curses
-import ssh_mod
+from ped_ssh_dialog import ssh_mod
 import curses.ascii
 import sys
 import re
 import os
-import dialog
-import keytab
+from ped_dialog import dialog
+from ped_core import keytab
 from io import StringIO
-from confirm_dialog import confirm
-from message_dialog import message
+from ped_dialog.confirm_dialog import confirm
+from ped_dialog.message_dialog import message
 import traceback
 
 def get_dir_ssh( path, ssh_username, ssh_password, showhidden=False ):

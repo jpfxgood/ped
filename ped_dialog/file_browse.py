@@ -1,20 +1,15 @@
 # Copyright 2009 James P Goodwin ped tiny python editor
-""" module to implement a select from a stream in a temp file in the ped editor """
+""" module to implement a file browse dialog component for the  ped editor """
 import curses
 import curses.ascii
-import sys
-import tempfile
-import dialog
-import editor_common
-import keytab
+from ped_dialog import dialog
+from ped_core import editor_common
+from ped_core import keytab
 
-
-class StreamSelectComponent(dialog.Component):
-    """ Component subclass that embeds a StreamEditor in a dialog used for selecting
-    from very long lists stored in temp files """
-    def __init__(self, name, order, x, y, width, height, label, stream, line_re = None ):
-        """ takes name, order is tab order, x, y are offset inside dialog, width,height are in characters,
-        label is a title for the frame,and stream is a stream to select lines from """
+class FileBrowseComponent(dialog.Component):
+    """ component subclass for embedding a read-only editor in a dialog to do preview of files """
+    def __init__(self, name, order, x, y, width, height, label, filename, showname = True ):
+        """ name, order== tab order, x,y offset in dialog, width,height size in chars, label title for border, filename file to show in editor """
         dialog.Component.__init__(self, name, order )
         self.x = x
         self.y = y
@@ -22,20 +17,18 @@ class StreamSelectComponent(dialog.Component):
         self.height = height
         self.ewin = None
         self.editor = None
-        self.stream = stream
+        self.filename = filename
+        self.start_line = 0
         self.label = label
         self.isfocus = None
-        self.line_re = line_re
+        self.showname = showname
 
     def __del__(self):
-        """ clean up the curses window when we get deleted  and any streams when we get deleted """
-        if self.stream:
-            self.stream.close()
-            self.stream = None
+        """ clean up window, editor and workfile if we get deleted """
         self.reset()
 
     def reset(self):
-        """ reset things """
+        """ reset stuff """
         if self.ewin:
             del self.ewin
             self.ewin = None
@@ -65,13 +58,15 @@ class StreamSelectComponent(dialog.Component):
         return -1
 
     def render(self):
-        """ draw the frame and embedded editor if needed """
+        """ draw the frame for the component and the editor as needed """
         win = self.getparent()
         if win:
             if not self.ewin:
                 self.ewin = win.subwin(self.height-2,self.width-2,self.y+1,self.x+1)
-            if not self.editor:
-                self.editor = editor_common.StreamEditor(win,self.ewin,self.name,self.stream,select=True,line_re = self.line_re)
+            if not self.editor and self.filename:
+                self.editor = editor_common.ReadonlyEditor(win,self.ewin,self.filename, self.showname)
+                self.editor.goto(self.start_line,0)
+                self.editor.mark_lines()
                 self.editor.invalidate_all()
                 self.editor.main(False)
 
@@ -79,35 +74,50 @@ class StreamSelectComponent(dialog.Component):
                 attr = curses.A_BOLD
             else:
                 attr = curses.A_NORMAL
-            self.editor.setfocus(self.isfocus)
+
             dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr,False)
-            self.editor.redraw()
+            if self.editor:
+                self.editor.setfocus(self.isfocus)
+                self.editor.redraw()
+                win.refresh()
+
         self.isfocus = False
 
     def focus(self):
-        """ called when we have the focus """
+        """ indicates that we have the focus """
         self.isfocus = True
 
     def setvalue(self,value):
-        """ setvalue for this component is a no op, maybe a goto in the future """
+        """ this component doesn't really do setvalue """
         pass
 
     def getvalue(self):
-        """ our value is always the current line in the embedded editor """
-        return self.editor.getCurrentLine()
+        """ returns the current line in the editor """
+        if self.editor:
+            return self.editor.getCurrentLine()
+        else:
+            return ""
 
-    def setstream(self,stream):
-        """ special for this component, allow the stream to be set """
-        if self.stream:
-            self.stream.close()
-        self.stream = stream
+    def setfilename(self,filename,number):
+        """ set a new file to view and a line number to scroll to, clean up the old one """
+        self.filename = filename
+        self.start_line = number
         if self.editor:
             self.editor.getWorkfile().close()
+        del self.editor
         self.editor = None
 
     def handle(self,ch):
-        """ handle characters, delegate to the embedded editor, translate for dialog """
-        ret_ch = self.editor.main(False,ch)
+        """ translate the editor keys for component use """
+        if self.editor:
+            o_line = self.editor.getLine()
+            ret_ch = self.editor.main(False,ch)
+            if self.editor.getLine() != o_line or not self.editor.isMark():
+                if self.editor.isMark():
+                    self.editor.mark_lines()
+                self.editor.mark_lines()
+        else:
+            ret_ch = ch
         if ret_ch in [keytab.KEYTAB_SPACE,keytab.KEYTAB_CR,keytab.KEYTAB_TAB,keytab.KEYTAB_ESC,keytab.KEYTAB_BTAB]:
             return ret_ch
         else:

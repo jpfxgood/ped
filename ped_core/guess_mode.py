@@ -1,11 +1,11 @@
 # Copyright 2009 James P Goodwin ped tiny python editor
 """ module to implement a python mode for the ped editor does colorizing  by guessing the lexer of code """
-import editor_common
-from message_dialog import message
+from ped_core import editor_common
+from ped_dialog.message_dialog import message
 import re
 from pygments.lexers import get_lexer_for_filename
 from pygments.token import Token
-from mode import Tokens, render
+from ped_core.mode import Tokens, render
 
 lexer = None
 

@@ -1,26 +1,26 @@
 # Copyright 2009 James P Goodwin ped tiny python editor
 import sys
-import file_dialog
+from ped_dialog import file_dialog
 import time
-from confirm_dialog import confirm
-from prompt_dialog import prompt
-from dialog import rect
-from message_dialog import message
-import editor_common
+from ped_dialog.confirm_dialog import confirm
+from ped_dialog.prompt_dialog import prompt
+from ped_dialog.dialog import rect
+from ped_dialog.message_dialog import message
+from ped_core import editor_common
 import curses
 import os
 import subprocess
 import copy
 import io
-import ped_help
-import file_find
+from ped_core import ped_help
+from ped_dialog import file_find
 import traceback
-import buffer_dialog
-from ssh_dialog import sftpDialog
-import keytab
-import cmd_names
-import keymap
-import extension_manager
+from ped_dialog import buffer_dialog
+from ped_ssh_dialog.ssh_dialog import sftpDialog
+from ped_core import keytab
+from ped_core import cmd_names
+from ped_core import keymap
+from ped_core import extension_manager
 import math
 
 #def debug_print(*argv):

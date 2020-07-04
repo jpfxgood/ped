@@ -4,11 +4,11 @@ import curses
 import curses.ascii
 import sys
 import os
-import clipboard
-import cmd_names
-import keytab
-import keymap
-import extension_manager
+from ped_core import clipboard
+from ped_core import cmd_names
+from ped_core import keytab
+from ped_core import keymap
+from ped_core import extension_manager
 
 # utility functions
 def distribute( buttons, xstart, width ):

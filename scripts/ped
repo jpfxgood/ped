@@ -10,8 +10,8 @@ import gc
 import os
 import time
 from optparse import OptionParser
-import editor_common
-import keymap
+from ped_core import editor_common
+from ped_core import keymap
 
 locale.setlocale(locale.LC_ALL,"")
 
@@ -19,26 +19,26 @@ def main(stdscr, piped_stdin, options, args):
     """ The main driver for the command line invocation of the editor, currently the only arguments are file names or none
     no arguments will launch the file dialog """
     if options.contrast:
-        stdscr.bkgdset(' ',curses.A_BOLD)  
-        
+        stdscr.bkgdset(' ',curses.A_BOLD)
+
     if options.dumpkeymap:
         keymap.dumpkeydef()
         keymap.dumpkeymap()
         return ""
-    
+
     keymap.loadkeydef()
     keymap.loadkeymap()
-    
-    from editor_manager import EditorManager
-    from editor_common import isdebug, EditFile
-    from file_find import filefind
-    import extension_manager
+
+    from ped_core.editor_manager import EditorManager
+    from ped_core.editor_common import isdebug, EditFile
+    from ped_dialog.file_find import filefind
+    from ped_core import extension_manager
 
     extension_manager.register_extensions()
-    
+
     EditFile.default_readonly = options.readonly
     EditFile.default_backuproot = options.backuproot
-    
+
     if isdebug():
         sys.stderr = open(os.path.expanduser("~/ped.log"),"w")
     gc.enable()
@@ -47,7 +47,7 @@ def main(stdscr, piped_stdin, options, args):
     try:
         e = EditorManager(stdscr)
 
-        
+
         if options.filefind:
             fpat = ".*"
             cpat = ""
@@ -78,7 +78,7 @@ def main(stdscr, piped_stdin, options, args):
         log = open(os.path.expanduser("~/ped.log"),"a")
         print(str(e), file=log)
         print(traceback.format_exc(), file=log)
-        log.close()      
+        log.close()
         return str(e)
     return ""
 
@@ -94,15 +94,15 @@ if __name__ == '__main__':
             os.dup2(new_stdin.fileno(),0)
             new_stdin.close()
         # remap stdin object to be fd 0
-        sys.stdin = os.fdopen(0)                
-        
+        sys.stdin = os.fdopen(0)
+
     argv = sys.argv
     default_options_file = os.path.expanduser("~/.pedopts")
     if os.path.exists(default_options_file):
         default_options = open(default_options_file,"r").readline()
         default_options.strip()
         argv.extend(default_options.split())
-        
+
     parser = OptionParser(usage="usage: {cmd |} %prog [options] {files to edit}", description="A tiny text editor in python by James P Goodwin.")
     parser.add_option("-f","--file_find", dest="filefind", action="store_true", default=False, help="start in file find mode, optional args file find pattern and text find pattern and recurse yes/no")
     parser.add_option("-c","--contrast", dest="contrast", action="store_true", default=False, help="start display in higher contrast")

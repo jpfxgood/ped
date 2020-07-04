@@ -3,7 +3,7 @@ import curses
 import curses.ascii
 import sys
 import os
-import dialog
+from ped_dialog import dialog
 
 class ConfirmDialog(dialog.Dialog):
     def __init__(self,scr, prompt = "Are you sure ?"):

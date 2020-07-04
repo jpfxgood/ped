@@ -4,8 +4,8 @@ import curses
 import curses.ascii
 import sys
 import os
-import cmd_names
-import keytab
+from ped_core import cmd_names
+from ped_core import keytab
 import pprint
 import time
 

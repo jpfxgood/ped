@@ -4,13 +4,13 @@ import curses
 import curses.ascii
 import sys
 import os
-import dialog
-import keytab
+from ped_dialog import dialog
+from ped_core import keytab
 
-class PromptDialog(dialog.Dialog):                                      
+class PromptDialog(dialog.Dialog):
     """ Dialog subclass that pops up a simple prompt over the provided screen """
     def __init__(self,scr, title = "Prompt", prompt = "Enter something : ", width= -1, name = "value"):
-        """ takes window to pop up over, title of dialog, prompt string, and width of input field, 
+        """ takes window to pop up over, title of dialog, prompt string, and width of input field,
             if width is -1 it'll auto fit remaining space in the prompt window, otherwise
             the width of the input will be set to that number of characters
             the dialog will fit the parent window """

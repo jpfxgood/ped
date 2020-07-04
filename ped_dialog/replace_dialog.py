@@ -4,8 +4,8 @@ import curses
 import curses.ascii
 import sys
 import os
-import dialog
-import confirm_dialog
+from ped_dialog import dialog
+from ped_dialog import confirm_dialog
 
 class ReplaceDialog(dialog.Dialog):
     """ Dialog subclass that prompts for pattern, replacement string, sizes itself to the containing window """
@@ -21,7 +21,7 @@ class ReplaceDialog(dialog.Dialog):
 
 class ConfirmReplaceDialog(dialog.Dialog):
     """ Dialog subclass to confirm replacement, prompts for yes, no or all """
-    def __init__(self,scr):                                                   
+    def __init__(self,scr):
         """ takes parent curses window or screen to pop up over """
         dialog.Dialog.__init__(self, scr, "ConfirmReplaceDialog", 5, 40, [ dialog.Frame("Do replace?"),
                                           dialog.Button("yes",1,2,3,"YES",dialog.Component.CMP_KEY_OK),
@@ -57,7 +57,7 @@ def confirm_replace( scr ):
             return 4
     else:
         return 4
-    
+
 
 
 

@@ -6,7 +6,7 @@ import socket
 import traceback
 import stat
 import time
-from file_mod import safe_path
+from ped_ssh_dialog.file_mod import safe_path
 import threading
 from io import StringIO
 import paramiko

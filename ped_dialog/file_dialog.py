@@ -4,19 +4,19 @@ import curses
 import curses.ascii
 import sys
 import os
-import dialog
-import keytab
+from ped_dialog import dialog
+from ped_core import keytab
 
-def get_dir(path,showhidden=False):    
-    """ get a directory listing of path, directories are prefixed with <DIR> 
-        if showhidden == False hidden files are not include, otherwise they are 
+def get_dir(path,showhidden=False):
+    """ get a directory listing of path, directories are prefixed with <DIR>
+        if showhidden == False hidden files are not include, otherwise they are
         returns the directory path, the list of directories and list of files as a tuple"""
     (dirpath, dirnames, filenames) = next(os.walk(path))
     if not showhidden:
         dirnames = [d for d in dirnames if d[0] != "."]
         filenames = [f for f in filenames if f[0] != "." and f[-1] != "~" and not f.endswith(".bak")]
     dirnames.sort()
-    filenames.sort()             
+    filenames.sort()
     dirnames = ["<DIR> .."] + ["<DIR> "+d for d in dirnames]
     return (dirpath, dirnames, filenames)
 
@@ -30,7 +30,7 @@ class FileListBox(dialog.ListBox):
             return True
 
 class FileDialog(dialog.Dialog):
-    """ dialog subclass that implements a file open dialog allowing 
+    """ dialog subclass that implements a file open dialog allowing
         browsing files and directories and selecting a file
         or typing in a file name """
     def __init__(self,scr,title = "File Dialog", path="."):
@@ -38,7 +38,7 @@ class FileDialog(dialog.Dialog):
         (dirpath, dirnames, filenames) = get_dir(path)
         max_y, max_x = scr.getmaxyx()
         dw = max_x - 4
-        
+
         self.file_list = FileListBox("files",1,2,3,10,dw-4,"Directory Listing",0,dirnames+filenames)
         self.current_dir = dialog.Prompt("dir",5,2,2,"Path: ",dw-10,os.path.abspath(dirpath))
         self.file_name = dialog.Prompt("file",2,2,14,"File: ",dw-10)
@@ -50,7 +50,7 @@ class FileDialog(dialog.Dialog):
                                           dialog.Button("Cancel",4,9,16,"CANCEL",dialog.Component.CMP_KEY_CANCEL)])
 
     def handle(self,ch):
-        """ key handler for selection from the file and directory list, 
+        """ key handler for selection from the file and directory list,
             browsing another directory selecting a file or entering one """
         focus_index = self.current
         focus_field = self.focus_list[self.current][1]

@@ -4,7 +4,7 @@ import curses
 import curses.ascii
 import sys
 import os
-import dialog
+from ped_dialog import dialog
 import traceback
 
 class MessageDialog(dialog.Dialog):
@@ -24,12 +24,12 @@ class MessageDialog(dialog.Dialog):
         else:
             dialog.Dialog.__init__(self,scr,"MessageDialog",dh,dw, [ dialog.Frame(title),
                                               dialog.StaticText("message",max(1,(dw//2)-(len(message)//2)),(dh//2-2)+2,message,0)],min_y,min_x)
-            
+
 
 def message( scr, title = "Message", message = "A message!", blocking=True ):
     """ wrapper function to launch a message dialog, takes curses window to pop up over, title, message, and blocking == True
     to show button and wait, or False to just display and leave """
-    
+
     try:
         d = MessageDialog(scr,title,message,blocking)
         if blocking:
@@ -41,7 +41,7 @@ def message( scr, title = "Message", message = "A message!", blocking=True ):
         print(d.height,d.width,d.max_y,d.max_x, file=open("message_dialog.log","a"))
         print(traceback.format_exc(), file=open("message_dialog.log","a"))
         raise
-    
+
 
 def main(stdscr):
     """ test driver for message dialog """

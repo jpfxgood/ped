@@ -8,24 +8,24 @@ import shutil
 import tempfile
 import re
 import gc
-from prompt_dialog import prompt
-from message_dialog import message
-from replace_dialog import replace,confirm_replace
-from confirm_dialog import confirm
-import file_dialog
-import undo
-import python_mode
-import java_mode
-import cpp_mode
-import guess_mode
+from ped_dialog.prompt_dialog import prompt
+from ped_dialog.message_dialog import message
+from ped_dialog.replace_dialog import replace,confirm_replace
+from ped_dialog.confirm_dialog import confirm
+from ped_dialog import file_dialog
+from ped_core import undo
+from ped_core import python_mode
+from ped_core import java_mode
+from ped_core import cpp_mode
+from ped_core import guess_mode
 import copy
-import clipboard
+from ped_core import clipboard
 import subprocess
-import cmd_names
-import keytab
-import keymap
-import extension_manager
-import changes
+from ped_core import cmd_names
+from ped_core import keytab
+from ped_core import keymap
+from ped_core import extension_manager
+from ped_core import changes
 import traceback
 import locale
 import codecs
@@ -804,7 +804,7 @@ class Editor:
         old_cursor_state = self.show_cursor
         self.show_cursor = state
         return old_cursor_state
-        
+
     def setfocus(self,state):
         """ set this editor to have focus or not """
         old_focus_state = self.focus
@@ -978,7 +978,7 @@ class Editor:
             status = "%d : %d : %d : %s : %s : %s"%(self.numLines(),self.getLine(),self.getPos(),changed,filename, "REC" if keymap.is_recording() else "PBK" if keymap.is_playback() else "   " )
             if len(status) < self.max_x:
                 status += (self.max_x-len(status))*' '
-            
+
             if self.focus:
                 self.addstr(0,0,status[0:self.max_x],curses.A_REVERSE|curses.A_BOLD)
             else:

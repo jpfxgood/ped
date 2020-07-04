@@ -5,15 +5,15 @@ import curses.ascii
 import sys
 import os
 import tempfile
-import dialog
-import editor_common
+from ped_dialog import dialog
+from ped_core import editor_common
 import re
 import traceback
 from array import array
-from message_dialog import message
-from stream_select import StreamSelectComponent
-from file_browse import FileBrowseComponent
-import keytab
+from ped_dialog.message_dialog import message
+from ped_dialog.stream_select import StreamSelectComponent
+from ped_dialog.file_browse import FileBrowseComponent
+from ped_core import keytab
 
 def sanitize( text ):
     """ if a string has binary chunks replace them with hex return fixed up string """

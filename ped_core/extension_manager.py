@@ -2,9 +2,9 @@
 """ extension manager to load extensions and bind them to commands """
 import sys
 import os
-import cmd_names
-import keymap
-import keytab
+from ped_core import cmd_names
+from ped_core import keymap
+from ped_core import keytab
 
 extensions = {}
 
@@ -18,13 +18,13 @@ extensions = {}
 
 def register_extensions():
     """ search the directory ~/.pedextension for python modules that implement ped_ext_info, ped_ext_invoke methods """
-    
+
     ped_extension_path = "~/.pedextension"
     if "PED_EXTENSION_PATH" in os.environ:
         ped_extension_path = os.environ["PED_EXTENSION_PATH"]
-    
+
     ext_dir = os.path.expanduser( ped_extension_path )
-    
+
     if os.path.exists(ext_dir) and os.path.isdir(ext_dir):
         pwd = os.getcwd()
         os.chdir(ext_dir)

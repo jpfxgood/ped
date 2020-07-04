@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import ssh_mod
+from ped_ssh_dialog import ssh_mod
 import os
 import sys
 import re
@@ -12,10 +12,10 @@ def main(options, args):
     """ the main driver for collect """
     def get_config():
         return { "ssh_username":options.username, "ssh_password":options.password }
-        
+
     paths = []
     paths.append(options.source)
-    
+
     while ( paths ):
         path = paths.pop()
         print(path)
@@ -41,11 +41,11 @@ def main(options, args):
                         break
                     ssh_mod.ssh_get( path, out_path, get_config )
                     break
-                
-        
-    
 
-if __name__ == '__main__':                                             
+
+
+
+if __name__ == '__main__':
     parser = OptionParser(usage="usage: %prog [options]", description="A script to collect files matching a given pattern into one target directory")
     parser.add_option("-u","--username", dest="username", help="ssh username for source")
     parser.add_option("-v","--verbose", dest="verbose", action="store_true", default=False, help="Log all activity to console")
@@ -53,14 +53,14 @@ if __name__ == '__main__':
     parser.add_option("-s","--source", dest="source",default=None, help="source path in the form ssh://server/path")
     parser.add_option("-x","--exclude", dest="exclude", default=None, help="pattern to exclude paths")
     parser.add_option("-d","--destination", dest="destination",default=None,help="destinaion path to store files")
-    
+
     (options,args) = parser.parse_args()
-                           
+
     try:
         ret = main(options,args)
     except:
         tb = traceback.format_exc()
         print(tb, file=sys.stderr)
         exit(1)
-        
+
     exit(ret)
