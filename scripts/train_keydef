@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+# Copyright 2014 James P Goodwin ped tiny python editor
+import sys
+import curses
+import traceback
+import os
+from optparse import OptionParser
+from ped_core import keymap
+from ped_core import keytab
+
+def capture_seq( stdscr ):
+    """ capture a key sequence """
+    capture = False
+    new_seq = []
+    while True:
+        ch = stdscr.getch()
+        if not capture:
+            if ch < 0:
+                continue
+            else:
+                capture = True
+                new_seq.append(ch)
+        else:
+            new_seq.append(ch)
+            if ch < 0:
+                break
+
+    return tuple(new_seq)
+
+def main(stdscr,options,args):
+    """ the main driver for a training program to generate a keydef file for a new platform """
+    curses.raw()
+    stdscr.nodelay(1)
+    stdscr.notimeout(0)
+    stdscr.timeout(0)
+
+    new_keydefs = []
+
+    for seq,key in keytab.keydef:
+        if seq == (0,):
+            continue
+        not_matched = True
+        while( not_matched ):
+            stdscr.addstr(0,0,"Press the key to map to %20.20s currently %20.20s"%(keytab.key_to_name[key],repr(seq)))
+            first_seq = capture_seq(stdscr)
+            if first_seq[0] == 32:
+                break
+            stdscr.addstr(0,0,"Confirm the key to map to %20.20s currently %20.20s"%(keytab.key_to_name[key],repr(seq)))
+            second_seq = capture_seq(stdscr)
+            if second_seq[0] == 32:
+                break
+            not_matched = (first_seq != second_seq)
+
+        if first_seq[0] == 32 or second_seq[0] == 32:
+            continue
+
+        new_keydefs.append((key,second_seq))
+
+    for key,seq in new_keydefs:
+        keymap.insert_keydef( keymap.keydef_map, seq, key )
+
+    keymap.dumpkeydef()
+
+if __name__ == '__main__':
+    parser = OptionParser(usage="usage:  %prog [options]", description="A training program for generating a keydef file on a new platform.")
+    (options,args) = parser.parse_args()
+
+    retval = curses.wrapper(main,options,args)
+    if retval:
+        sys.exit(retval)

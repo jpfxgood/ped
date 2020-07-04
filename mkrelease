@@ -1,6 +1,9 @@
 #!/bin/bash -x
-if [ -f ped_$1.zip ];
-    then rm ped_$1.zip;
+version=$1
+echo $version >VERSION
+file_version=${version//[\.]/_}
+if [ -f ped_$file_version.zip ];
+    then rm ped_$file_version.zip;
 fi
 ./mkdocs
 zip_python () {
@@ -12,11 +15,17 @@ zip_python () {
         then zip -q ped_$2.zip $1;
     fi
 }
-for f in *;
-do zip_python $f $1;
+for f in {ped_core,ped_dialog,ped_ssh_dialog,ped_extensions,scripts}/*;
+do zip_python $f $file_version;
 done
-zip -q ped_$1.zip docs/*
-zip -q ped_$1.zip requirements.txt
-zip -q ped_$1.zip LICENSE
-zip -q ped_$1.zip README.md
-unzip -l ped_$1.zip
+zip -q ped_$file_version.zip docs/*
+zip -q ped_$file_version.zip requirements.txt
+zip -q ped_$file_version.zip LICENSE
+zip -q ped_$file_version.zip README.md
+unzip -l ped_$file_version.zip
+if [ -d dist ];
+    then rm -rf dist
+fi
+python3 -m pip install --upgrade setuptools wheel
+python3 setup.py sdist bdist_wheel
+
