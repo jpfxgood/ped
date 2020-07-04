@@ -1,17 +1,17 @@
-import keymap
-import clipboard
+from ped_core import keymap
+from ped_core import clipboard
 import curses
 import pprint
 import gc
-import editor_common
+from ped_core import editor_common
 import re
-import keymap
-import keytab
+from ped_core import keymap
+from ped_core import keytab
 import subprocess
-from dialog import Frame,ListBox,Toggle,Button,StaticText,Prompt,PasswordPrompt,Dialog,pad
-from file_browse import FileBrowseComponent
-from stream_select import StreamSelectComponent
-from editor_common import Editor
+from ped_dialog.dialog import Frame,ListBox,Toggle,Button,StaticText,Prompt,PasswordPrompt,Dialog,pad
+from ped_dialog.file_browse import FileBrowseComponent
+from ped_dialog.stream_select import StreamSelectComponent
+from ped_core.editor_common import Editor
 
 def screen_size( rows, columns ):
     cmd = "resize -s %d %d >/dev/null 2>/dev/null"%(rows,columns)

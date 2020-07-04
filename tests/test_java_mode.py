@@ -1,8 +1,8 @@
-import editor_manager
-import editor_common
+from ped_core import editor_manager
+from ped_core import editor_common
 import curses
 import curses.ascii
-import keytab
+from ped_core import keytab
 from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size,match_attr,wait_for_screen
 
 def test_java_mode(testdir,capsys):

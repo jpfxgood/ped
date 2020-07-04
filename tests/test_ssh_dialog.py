@@ -1,10 +1,10 @@
 import curses
 import curses.ascii
-import keytab
+from ped_core import keytab
 from ped_test_util import read_str,validate_dialog,editor_test_suite,play_macro,screen_size,match_attr
-from ssh_dialog import SSHFileDialog
-from ssh_mod import ssh_put, ssh_del, ssh_stat
-import dialog
+from ped_ssh_dialog.ssh_dialog import SSHFileDialog
+from ped_ssh_dialog.ssh_mod import ssh_put, ssh_del, ssh_stat
+from ped_dialog import dialog
 import pytest
 import os
 import time

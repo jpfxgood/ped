@@ -1,4 +1,4 @@
-import editor_common
+from ped_core import editor_common
 import io
 import pprint
 import os
@@ -6,10 +6,10 @@ import curses
 import curses.ascii
 import time
 import re
-import keymap
-import keytab
-import clipboard
-import extension_manager
+from ped_core import keymap
+from ped_core import keytab
+from ped_core import clipboard
+from ped_core import extension_manager
 from ped_test_util import read_str, match_attr, undo_all, window_pos, play_macro, validate_mark, validate_screen, editor_test_suite, screen_size, wait_for_screen
 
 
@@ -18,8 +18,8 @@ def test_extension_manager(testdir,capsys):
         lines_to_test = [
             '# Copyright 2014 James P Goodwin ped tiny python editor',
             '""" extension to test the extension_manager  """',
-            'from editor_common import Editor',
-            'from message_dialog import message',
+            'from ped_core.editor_common import Editor',
+            'from ped_dialog.message_dialog import message',
             '',
             '# register shift-F1 to comment the highlighted block',
             'def ped_ext_info():',

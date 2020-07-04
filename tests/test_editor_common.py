@@ -1,4 +1,4 @@
-import editor_common
+from ped_core import editor_common
 import io
 import pprint
 import os
@@ -6,9 +6,9 @@ import curses
 import curses.ascii
 import time
 import re
-import keymap
-import keytab
-import clipboard
+from ped_core import keymap
+from ped_core import keytab
+from ped_core import clipboard
 from ped_test_util import read_str, match_attr, undo_all, window_pos, play_macro, validate_mark, validate_screen, editor_test_suite
 
 def test_memline():

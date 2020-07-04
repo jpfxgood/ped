@@ -1,10 +1,10 @@
 import curses
 import curses.ascii
-import keytab
+from ped_core import keytab
 from ped_test_util import read_str,validate_dialog,editor_test_suite,play_macro,screen_size,match_attr
-from dialog import Frame,ListBox,Toggle,Button,StaticText,Prompt,Dialog,Component
-from file_browse import FileBrowseComponent
-from stream_select import StreamSelectComponent
+from ped_dialog.dialog import Frame,ListBox,Toggle,Button,StaticText,Prompt,Dialog,Component
+from ped_dialog.file_browse import FileBrowseComponent
+from ped_dialog.stream_select import StreamSelectComponent
 import io
 
 def test_dialog(testdir,capsys):
