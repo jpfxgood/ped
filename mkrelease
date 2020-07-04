@@ -19,6 +19,9 @@ for f in {ped_core,ped_dialog,ped_ssh_dialog,ped_extensions,scripts}/*;
 do zip_python $f $file_version;
 done
 zip -q ped_$file_version.zip docs/*
+for f in docs/{ped_core,ped_dialog,ped_ssh_dialog,ped_extensions,scripts}/*;
+do zip -q ped_$file_version.zip $f;
+done
 zip -q ped_$file_version.zip requirements.txt
 zip -q ped_$file_version.zip LICENSE
 zip -q ped_$file_version.zip README.md
@@ -28,4 +31,3 @@ if [ -d dist ];
 fi
 python3 -m pip install --upgrade setuptools wheel
 python3 setup.py sdist bdist_wheel
-
