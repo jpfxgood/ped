@@ -21,6 +21,8 @@ Install from pypy:
 
     python3 -m pip install ped-editor
 
+Make sure that ~/.local/bin is on your PATH
+
 OR
 
 Check out the source code to a path OR download the release .zip file and unzip there.

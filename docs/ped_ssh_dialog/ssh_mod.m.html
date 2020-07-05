@@ -1046,6 +1046,7 @@ table {
     <li class="mono"><a href="#ped_ssh_dialog.ssh_mod.host_keys">host_keys</a></li>
     <li class="mono"><a href="#ped_ssh_dialog.ssh_mod.safe_path_cache">safe_path_cache</a></li>
     <li class="mono"><a href="#ped_ssh_dialog.ssh_mod.safe_path_lock">safe_path_lock</a></li>
+    <li class="mono"><a href="#ped_ssh_dialog.ssh_mod.ssh_log_name">ssh_log_name</a></li>
     <li class="mono"><a href="#ped_ssh_dialog.ssh_mod.thread_local">thread_local</a></li>
     <li class="mono"><a href="#ped_ssh_dialog.ssh_mod.transport_lock">transport_lock</a></li>
   </ul>
@@ -1098,6 +1099,7 @@ table {
 <span class="kn">import</span> <span class="nn">stat</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">ped_ssh_dialog.file_mod</span> <span class="kn">import</span> <span class="n">safe_path</span>
+<span class="kn">from</span> <span class="nn">ped_core.editor_common</span> <span class="kn">import</span> <span class="n">EditFile</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
 <span class="kn">import</span> <span class="nn">paramiko</span>
@@ -1111,7 +1113,8 @@ table {
 <span class="n">safe_path_cache</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">host_keys</span> <span class="o">=</span> <span class="p">{}</span>
 
-<span class="n">paramiko</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">log_to_file</span><span class="p">(</span><span class="s2">&quot;ssh_mod.log&quot;</span><span class="p">)</span>
+<span class="n">ssh_log_name</span> <span class="o">=</span> <span class="n">EditFile</span><span class="o">.</span><span class="n">get_backup_dir</span><span class="p">(</span><span class="n">EditFile</span><span class="o">.</span><span class="n">default_backuproot</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;/ssh_mod.log&quot;</span>
+<span class="n">paramiko</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">log_to_file</span><span class="p">(</span><span class="n">ssh_log_name</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">strip_protocol</span><span class="p">(</span> <span class="n">path</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; strip off the ssh:// from start of path &quot;&quot;&quot;</span>
@@ -1409,6 +1412,14 @@ table {
       </div>
       <div class="item">
       <p id="ped_ssh_dialog.ssh_mod.safe_path_lock" class="name">var <span class="ident">safe_path_lock</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="ped_ssh_dialog.ssh_mod.ssh_log_name" class="name">var <span class="ident">ssh_log_name</span></p>
       
   
   <div class="source_cont">

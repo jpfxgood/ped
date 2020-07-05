@@ -1142,8 +1142,6 @@ table {
             <span class="n">d</span><span class="o">.</span><span class="n">focus</span><span class="p">()</span>
             <span class="n">d</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">height</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">width</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">max_y</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">max_x</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;message_dialog.log&quot;</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;message_dialog.log&quot;</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">))</span>
         <span class="k">raise</span>
 
 
@@ -1211,8 +1209,6 @@ to show button and wait, or False to just display and leave</p></div>
             <span class="n">d</span><span class="o">.</span><span class="n">focus</span><span class="p">()</span>
             <span class="n">d</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">height</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">width</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">max_y</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">max_x</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;message_dialog.log&quot;</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;message_dialog.log&quot;</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">))</span>
         <span class="k">raise</span>
 </pre></div>
 
@@ -1576,7 +1572,6 @@ button and wait, or blocking == False to just display and leave</p></div>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus_list</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">mid</span><span class="p">,</span> <span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">,</span> <span class="n">mtype</span> <span class="o">=</span> <span class="n">curses</span><span class="o">.</span><span class="n">getmouse</span><span class="p">()</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span><span class="n">mx</span><span class="p">,</span><span class="n">my</span><span class="p">,</span><span class="n">mz</span><span class="p">,</span><span class="n">mtype</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;dlgmouse.log&quot;</span><span class="p">,</span><span class="s2">&quot;a&quot;</span><span class="p">))</span>
             <span class="n">by</span><span class="p">,</span><span class="n">bx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">getbegyx</span><span class="p">()</span>
             <span class="n">oy</span> <span class="o">=</span> <span class="n">my</span> <span class="o">-</span> <span class="n">by</span>
             <span class="n">ox</span> <span class="o">=</span> <span class="n">mx</span> <span class="o">-</span> <span class="n">bx</span>
