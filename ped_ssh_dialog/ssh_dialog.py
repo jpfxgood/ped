@@ -2,6 +2,7 @@
 """ module that implements file open/new dialog for the ped editor """
 import curses
 from ped_ssh_dialog import ssh_mod
+from ped_ssh_dialog.ssh_mod import ssh_log_name
 import curses.ascii
 import sys
 import re
@@ -129,7 +130,7 @@ class SSHFileDialog(dialog.Dialog):
                     self.prior_ssh = new_ssh
                     set_values["ssh_files"] = (0, ssh_dirnames+ssh_filenames)
                 except:
-                    print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
+                    print(traceback.format_exc(), file=open(ssh_log_name,"a"))
                     confirm(self.win, "SSH Error! Try Again ?")
         local_path = ""
         local_dirnames = []
@@ -142,7 +143,7 @@ class SSHFileDialog(dialog.Dialog):
                     self.prior_local = values["local_dir"]
                     set_values["local_files"] = (0, local_dirnames+local_filenames)
                 except:
-                    print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
+                    print(traceback.format_exc(), file=open(ssh_log_name,"a"))
                     confirm(self.win, "File Error! Try Again ?")
         self.setvalue(set_values)
 
@@ -199,7 +200,7 @@ class SSHFileDialog(dialog.Dialog):
                         lambda : { 'ssh_username': self.ssh_username.getvalue(), "ssh_password":self.ssh_password.getvalue() }, False)
                         self.refresh(True)
                 except:
-                    print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
+                    print(traceback.format_exc(), file=open(ssh_log_name,"a"))
                     confirm(self.win, "SSH Error! Try Again ?")
             elif focus_field == self.get_button:
                 try:
@@ -212,7 +213,7 @@ class SSHFileDialog(dialog.Dialog):
                         lambda : { 'ssh_username': self.ssh_username.getvalue(), "ssh_password":self.ssh_password.getvalue() })
                         self.refresh(True)
                 except:
-                    print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
+                    print(traceback.format_exc(), file=open(ssh_log_name,"a"))
                     confirm(self.win, "SSH Error! Try Again ?")
             elif focus_field == self.open_button:
                 try:
@@ -225,7 +226,7 @@ class SSHFileDialog(dialog.Dialog):
                         lambda : { 'ssh_username': self.ssh_username.getvalue(), "ssh_password":self.ssh_password.getvalue() })
                         self.refresh(True)
                 except:
-                    print(traceback.format_exc(), file=open("ssh_dialog.log","a"))
+                    print(traceback.format_exc(), file=open(ssh_log_name,"a"))
                     confirm(self.win, "SSH Error! Try Again ?")
 
 

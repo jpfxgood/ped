@@ -38,8 +38,6 @@ def message( scr, title = "Message", message = "A message!", blocking=True ):
             d.focus()
             d.render()
     except Exception as e:
-        print(d.height,d.width,d.max_y,d.max_x, file=open("message_dialog.log","a"))
-        print(traceback.format_exc(), file=open("message_dialog.log","a"))
         raise
 
 

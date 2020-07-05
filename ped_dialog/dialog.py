@@ -785,7 +785,6 @@ class Dialog(Component):
         if self.focus_list and self.win:
             try:
                 mid, mx, my, mz, mtype = curses.getmouse()
-                print(mid,mx,my,mz,mtype, file=open("dlgmouse.log","a"))
                 by,bx = self.win.getbegyx()
                 oy = my - by
                 ox = mx - bx

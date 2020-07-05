@@ -94,7 +94,10 @@ class StreamSelectComponent(dialog.Component):
 
     def getvalue(self):
         """ our value is always the current line in the embedded editor """
-        return self.editor.getCurrentLine()
+        if self.editor:
+            return self.editor.getCurrentLine()
+        else:
+            return ""
 
     def setstream(self,stream):
         """ special for this component, allow the stream to be set """
@@ -107,7 +110,10 @@ class StreamSelectComponent(dialog.Component):
 
     def handle(self,ch):
         """ handle characters, delegate to the embedded editor, translate for dialog """
-        ret_ch = self.editor.main(False,ch)
+        if self.editor:
+            ret_ch = self.editor.main(False,ch)
+        else:
+            ret_ch = ch
         if ret_ch in [keytab.KEYTAB_SPACE,keytab.KEYTAB_CR,keytab.KEYTAB_TAB,keytab.KEYTAB_ESC,keytab.KEYTAB_BTAB]:
             return ret_ch
         else:

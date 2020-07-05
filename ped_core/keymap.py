@@ -121,7 +121,6 @@ def insert_keydef( km, oseq, kt ):
                 km[oseq[0]] = {}
             insert_keydef( km[oseq[0]], oseq[1:], kt )
     except:
-        print(pprint.pformat(km),oseq,kt, file=open(os.path.expanduser("~/ped.log"),"a"))
         raise
 
 def compile_keydef():

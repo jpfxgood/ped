@@ -7,6 +7,7 @@ import traceback
 import stat
 import time
 from ped_ssh_dialog.file_mod import safe_path
+from ped_core.editor_common import EditFile
 import threading
 from io import StringIO
 import paramiko
@@ -20,7 +21,8 @@ transport_lock = threading.Lock()
 safe_path_cache = {}
 host_keys = {}
 
-paramiko.util.log_to_file("ssh_mod.log")
+ssh_log_name = EditFile.get_backup_dir(EditFile.default_backuproot)+"/ssh_mod.log"
+paramiko.util.log_to_file(ssh_log_name)
 
 def strip_protocol( path ):
     """ strip off the ssh:// from start of path """

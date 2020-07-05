@@ -5,6 +5,7 @@ import curses.ascii
 from ped_core import keytab
 import os
 from ped_test_util import read_str,validate_screen,editor_test_suite,play_macro,screen_size,wait_for_screen
+import time
 
 
 def test_BaseFrame(testdir,capsys):
@@ -116,6 +117,7 @@ def test_EditorManager(testdir,capsys):
                 test_files.append(testfile)
 
             screen_size( 30, 100 )
+            time.sleep(1)
             em = editor_manager.EditorManager(stdscr)
             em.addEditor(editor_common.Editor(stdscr,None,str(test_files[0])))
             em.main(False)
@@ -155,11 +157,13 @@ def test_EditorManager(testdir,capsys):
             if max_x == 100 and max_y == 30:
                 assert(len(em.frames) == 3 and em.frames[0].getrect() == (0,0,100,15) and em.frames[1].getrect() == (0,15,50,15) and em.frames[2].getrect() == (50,15,50,15))
                 screen_size(24,80)
+                time.sleep(1)
                 em.resize()
                 em.main(False)
                 em.main(False)
                 assert(len(em.frames) == 3 and em.frames[0].getrect() == (0,0,80,12) and em.frames[1].getrect() == (0,12,40,12) and em.frames[2].getrect() == (40,12,40,12))
                 screen_size(30, 100)
+                time.sleep(1)
                 em.resize()
                 em.main(False)
                 em.main(False)

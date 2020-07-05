@@ -3,12 +3,6 @@
 
 import sys
 
-#change_log = open("change.log","a")
-#change_debg = True
-
-#def logChange( change, message ):
-#    if change_debg:
-#        print >>change_log, change, message
 
 class Change:
     """ Represents one span of lines that have been changed """

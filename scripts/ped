@@ -2,6 +2,7 @@
 # code=UTF-8
 # Copyright 2009 James P Goodwin ped tiny python editor
 # This is a tiny editor created by James
+import logging
 import sys
 import curses
 import locale
@@ -31,7 +32,7 @@ def main(stdscr, piped_stdin, options, args):
     keymap.loadkeymap()
 
     from ped_core.editor_manager import EditorManager
-    from ped_core.editor_common import isdebug, EditFile
+    from ped_core.editor_common import EditFile
     from ped_dialog.file_find import filefind
     from ped_core import extension_manager
 
@@ -40,11 +41,9 @@ def main(stdscr, piped_stdin, options, args):
     EditFile.default_readonly = options.readonly
     EditFile.default_backuproot = options.backuproot
 
-    if isdebug():
-        sys.stderr = open(os.path.expanduser("~/ped.log"),"w")
+    logging.basicConfig(filename=EditFile.get_backup_dir(EditFile.default_backuproot)+"/ped.log")
+
     gc.enable()
-    if isdebug():
-        gc.set_debug(gc.DEBUG_LEAK)
     try:
         e = EditorManager(stdscr)
 
@@ -76,10 +75,8 @@ def main(stdscr, piped_stdin, options, args):
         e.main()
         e = None
     except Exception as e:
-        log = open(os.path.expanduser("~/ped.log"),"a")
-        print(str(e), file=log)
-        print(traceback.format_exc(), file=log)
-        log.close()
+        logging.error(str(e))
+        logging.error(traceback.format_exc())
         return str(e)
     return ""
 

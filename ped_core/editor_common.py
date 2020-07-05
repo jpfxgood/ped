@@ -34,10 +34,6 @@ import tempfile
 locale.setlocale(locale.LC_ALL,'')
 def_encoding = locale.getpreferredencoding()
 
-def isdebug():
-    """ returns true if peddebug is set in the environment, used to turn on debugging features """
-    return "peddebug" in os.environ
-
 class EditLine:
     """ Interface for each editable line in a file, a fly-weight object """
     def __init__(self):
@@ -226,12 +222,12 @@ class EditFile:
         abs_name = os.path.abspath(self.filename)
         abs_path = os.path.dirname(abs_name)
         if os.path.exists(abs_name):
-            self.working = tempfile.NamedTemporaryFile(mode="w+",buffering=1,encoding="utf-8",prefix="ped_",dir=self.get_backup_dir(self.backuproot))
+            self.working = tempfile.NamedTemporaryFile(mode="w+",buffering=1,encoding="utf-8",prefix="ped_",dir=EditFile.get_backup_dir(self.backuproot))
             shutil.copyfile(abs_name,self.working.name)
             if not self.readonly:
                 self.setReadOnly(not os.access(abs_name,os.W_OK))
         elif not self.readonly:
-            self.working = tempfile.NamedTemporaryFile(mode="w+",buffering=1,encoding="utf-8",prefix="ped_",dir=self.get_backup_dir(self.backuproot))
+            self.working = tempfile.NamedTemporaryFile(mode="w+",buffering=1,encoding="utf-8",prefix="ped_",dir=EditFile.get_backup_dir(self.backuproot))
         else:
             raise Exception("File %s does not exist!"%(self.filename))
         self.filename = abs_name
@@ -402,7 +398,8 @@ class EditFile:
 
         self._replaceLine(line, MemLine(content))
 
-    def get_backup_dir( self, base = "~" ):
+    @staticmethod
+    def get_backup_dir( base = "~" ):
         """ get the backup directory, create it if it doesn't exist """
         base = os.path.expanduser(base)
         if not os.path.exists(base):
@@ -412,9 +409,10 @@ class EditFile:
             os.mkdir(pedbackup)
         return pedbackup
 
-    def make_backup_dir( self, filename, base = "~" ):
+    @staticmethod
+    def make_backup_dir( filename, base = "~" ):
         """ make a backup directory under ~/.pedbackup for filename and return it's name """
-        pedbackup = self.get_backup_dir( base )
+        pedbackup = EditFile.get_backup_dir( base )
 
         (filepath,rest) = os.path.split(os.path.abspath(filename))
         for part in filepath.split("/"):
@@ -452,7 +450,7 @@ class EditFile:
             self.working.close()
             if os.path.exists(self.filename):
                 fstat = os.stat(self.filename)
-                backup_path = self.make_backup_dir(self.filename,self.backuproot)
+                backup_path = EditFile.make_backup_dir(self.filename,self.backuproot)
                 retval = shutil.move(self.filename,backup_path)
                 os.rename(self.filename+".sav",self.filename)
                 os.chmod(self.filename,fstat.st_mode)
@@ -740,12 +738,8 @@ class Editor:
                     orig = orig.rstrip()
                 if pad > len(orig):
                     orig = orig + ' '*(pad-len(orig))
-                if isdebug():
-                    print("getContent (wrap,display) =", line,pad,trim,display,self.wrap,"return =",orig,file=open("/home/james/ped.log","a"))
                 return orig
         orig = self.workfile.getLine(line,pad,trim)
-        if isdebug():
-            print("getContent (not wrap) =", line,pad,trim,display,self.wrap,"return =",orig,file=open("/home/james/ped.log","a"))
         return orig
 
     def getLength(self, line, display=False ):
@@ -787,12 +781,8 @@ class Editor:
     def addstr(self,row,col,str,attr = curses.A_NORMAL):
         """ write properly encoded string to screen location """
         try:
-            if isdebug():
-                print("addstr =",row,col,str,attr, file=open("/home/james/ped.log","a"))
             return self.scr.addstr(row,col,codecs.encode(str,"utf-8"),attr)
         except:
-            if isdebug():
-                print("addstr exception =",row,col,str,attr, file=open("/home/james/ped.log","a"))
             return 0
 
     def window_pos(self,line,pos):
@@ -1002,8 +992,6 @@ class Editor:
                             else:
                                 self.addstr(y,cursor_pos,l[self.left+cursor_pos])
                     except Exception as e:
-#                        if isdebug():
-#                            print >>open("ped.log","a"),traceback.format_exc()
                         pass
                     y = y + 1
                     lidx = lidx + 1
@@ -1013,10 +1001,6 @@ class Editor:
             if mode_redraw:
                 self.flushChanges()
         except:
-            log = open(os.path.expanduser("~/ped.log"),"a")
-            print("Editor:redraw error state", file=log)
-            for key,value in list(self.__dict__.items()):
-                print(key,"=",value,"len(",len(value) if hasattr(value,'__len__') else 0,")", file=log)
             raise
 
     def insert(self, c ):
