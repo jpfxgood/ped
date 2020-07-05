@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 rm -rf docs/*
 export PYTHONPATH=$PYTHONPATH:"."
 gen_doc () {
@@ -8,16 +8,23 @@ gen_doc () {
         then return;
     fi
     pdoc --html --template-dir templates --html-dir docs $module_path.$module_name
-    echo "<li><a href=\"./$module_path/$module_name.m.html\">$module_path.$module_name</a></li>" >>docs/index.html
+    echo "<li><a href=\"./$module_path/$module_name.m.html\">$module_name</a></li>" >>docs/index.html
     }
 cat templates/header.html >docs/index.html
 markdown LICENSE >>docs/index.html
 markdown README.md >>docs/index.html
 echo "<h1>API Documentation</h1>" >>docs/index.html
-echo "<h3>Modules</h3>" >>docs/index.html
+echo "<h3>Packages/Modules</h3>" >>docs/index.html
 echo "<ul>" >>docs/index.html
-for source_file in {ped_core,ped_dialog,ped_ssh_dialog,ped_extensions}/*.py;
-do gen_doc $source_file;
+package_list=("ped_core" "ped_dialog" "ped_ssh_dialog" "ped_extensions")
+for package in ${package_list[*]}; do
+    echo "<li>$package" >>docs/index.html
+    echo "<ul>" >>docs/index.html
+    for source_file in $package/*.py;
+        do gen_doc $source_file;
+    done
+    echo "</li>" >>docs/index.html
+    echo "</ul>" >>docs/index.html
 done
 echo "</ul>" >>docs/index.html
 cat templates/footer.html >>docs/index.html
