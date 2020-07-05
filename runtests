@@ -1,0 +1,5 @@
+#!/bin/bash
+OLDPYTHONPATH=$PYTHONPATH
+export PYTHONPATH=.
+python3 -m pytest tests "$@"
+export PYTHONPATH=$OLDPYTHONPATH
