@@ -1730,7 +1730,8 @@ table {
 <span class="sd">        from the current frame, only the key events that are released &quot;&quot;&quot;</span>
         <span class="n">force</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">blocking</span>
 
-        <span class="n">curses</span><span class="o">.</span><span class="n">mousemask</span><span class="p">(</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_PRESSED</span><span class="o">|</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_RELEASED</span><span class="o">|</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_CLICKED</span><span class="p">)</span>
+        <span class="n">curses</span><span class="o">.</span><span class="n">mousemask</span><span class="p">(</span> <span class="n">curses</span><span class="o">.</span><span class="n">ALL_MOUSE_EVENTS</span> <span class="o">|</span> <span class="n">curses</span><span class="o">.</span><span class="n">REPORT_MOUSE_POSITION</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scr</span><span class="o">.</span><span class="n">keypad</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">redraw</span><span class="p">(</span><span class="n">force</span><span class="p">)</span>
@@ -3045,7 +3046,8 @@ table {
 <span class="sd">        from the current frame, only the key events that are released &quot;&quot;&quot;</span>
         <span class="n">force</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">blocking</span>
 
-        <span class="n">curses</span><span class="o">.</span><span class="n">mousemask</span><span class="p">(</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_PRESSED</span><span class="o">|</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_RELEASED</span><span class="o">|</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_CLICKED</span><span class="p">)</span>
+        <span class="n">curses</span><span class="o">.</span><span class="n">mousemask</span><span class="p">(</span> <span class="n">curses</span><span class="o">.</span><span class="n">ALL_MOUSE_EVENTS</span> <span class="o">|</span> <span class="n">curses</span><span class="o">.</span><span class="n">REPORT_MOUSE_POSITION</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scr</span><span class="o">.</span><span class="n">keypad</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">redraw</span><span class="p">(</span><span class="n">force</span><span class="p">)</span>
@@ -3474,7 +3476,8 @@ from the current frame, only the key events that are released</p></div>
     <span class="sd">&quot;&quot;&quot; this is the main driver for the editor manager it displays the frames and gets it&#39;s keystrokes</span>
 <span class="sd">    from the current frame, only the key events that are released &quot;&quot;&quot;</span>
     <span class="n">force</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">blocking</span>
-    <span class="n">curses</span><span class="o">.</span><span class="n">mousemask</span><span class="p">(</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_PRESSED</span><span class="o">|</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_RELEASED</span><span class="o">|</span> <span class="n">curses</span><span class="o">.</span><span class="n">BUTTON1_CLICKED</span><span class="p">)</span>
+    <span class="n">curses</span><span class="o">.</span><span class="n">mousemask</span><span class="p">(</span> <span class="n">curses</span><span class="o">.</span><span class="n">ALL_MOUSE_EVENTS</span> <span class="o">|</span> <span class="n">curses</span><span class="o">.</span><span class="n">REPORT_MOUSE_POSITION</span> <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">scr</span><span class="o">.</span><span class="n">keypad</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">redraw</span><span class="p">(</span><span class="n">force</span><span class="p">)</span>
          <span class="k">if</span> <span class="n">force</span><span class="p">:</span>

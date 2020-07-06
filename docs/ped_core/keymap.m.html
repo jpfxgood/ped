@@ -1297,7 +1297,8 @@ table {
 <span class="k">def</span> <span class="nf">keypending</span><span class="p">(</span> <span class="n">scr</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; return true if getch is going to return a real key &quot;&quot;&quot;</span>
     <span class="n">ch</span> <span class="o">=</span> <span class="n">scr</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
-    <span class="n">curses</span><span class="o">.</span><span class="n">ungetch</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ch</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">curses</span><span class="o">.</span><span class="n">ungetch</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">ch</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">getch</span><span class="p">(</span> <span class="n">scr</span> <span class="p">):</span>
@@ -1803,7 +1804,8 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">keypending</span><span class="p">(</span> <span class="n">scr</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; return true if getch is going to return a real key &quot;&quot;&quot;</span>
     <span class="n">ch</span> <span class="o">=</span> <span class="n">scr</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
-    <span class="n">curses</span><span class="o">.</span><span class="n">ungetch</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ch</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">curses</span><span class="o">.</span><span class="n">ungetch</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">ch</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
