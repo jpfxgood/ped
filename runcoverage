@@ -1,0 +1,5 @@
+#!/bin/bash
+OLDPYTHONPATH=$PYTHONPATH
+export PYTHONPATH=.
+coverage run --source=. --omit=comment_extension.py,dummy_extension.py,lib/*,tests/*  -m pytest tests "$@"
+export PYTHONPATH=$OLDPYTHONPATH

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # Copyright 2009 James P Goodwin ped tiny python editor
 # This is a tiny editor created by James
-import sys                        
-import os     
+import sys
+import os
 import re
 from optparse import OptionParser
 
@@ -23,12 +23,16 @@ def run_find( name, file_input, options ):
 
 def main(piped_stdin, options, args):
     """ The main driver for the pyfind utility """
-    
+
     if piped_stdin:
         run_find("stdin",piped_stdin, options)
-        
+
     for arg in args:
-        run_find(arg,open(arg,"r"), options)
+        if not os.path.isdir(arg):
+            try:
+                run_find(arg,open(arg,"r"), options)
+            except Exception as e:
+                print(str(e))
 
 
 if __name__ == '__main__':

@@ -30,7 +30,6 @@ setup(
     ],
     scripts=[
         'scripts/hex',
-        'scripts/collect',
         'scripts/pyfind',
         'scripts/ped',
         'scripts/pless',

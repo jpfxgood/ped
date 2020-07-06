@@ -3,27 +3,26 @@
 import sys
 import os
 from optparse import OptionParser
-import time     
+import time
 import string
-                    
 
-def bytes_from_file( filename, chunksize=8192 ):
-    with open(filename, "rb") as f:
-        while True:
-            chunk = f.read(chunksize)
-            if chunk:
-                for b in chunk:
-                    yield b
-            else:
-                break
-            
+
+def bytes_from_file( f, chunksize=8192 ):
+    while True:
+        chunk = os.read(f.fileno(),chunksize)
+        if chunk:
+            for b in chunk:
+                yield b
+        else:
+            break
+
 
 def main( options, args ):
     """ main processing loop for the xref command """
     byte_count = 1
     chunk_mod = options.numchunks * 8
     display = ""
-    for b in bytes_from_file(args[0]):
+    for b in bytes_from_file((open(args[0],"rb") if args else sys.stdin)):
         sys.stdout.write("%02x "%b)
         if chr(b) in string.digits or chr(b) in string.ascii_letters or chr(b) in string.punctuation:
             display += chr(b)
@@ -36,7 +35,7 @@ def main( options, args ):
             display = ""
             sys.stdout.write("\n")
         byte_count += 1
-    
+
     byte_count -= 1
     while byte_count % chunk_mod:
         sys.stdout.write("   ")
@@ -47,13 +46,13 @@ def main( options, args ):
     sys.stdout.write(display)
     sys.stdout.write("\n")
     return(0)
-    
-                    
+
+
 
 if __name__ == '__main__':
-    parser = OptionParser(usage="usage: %prog [options] {files to dump as hex}", description="A hex dump utility for ped")
+    parser = OptionParser(usage="usage: { cmd | } %prog [options] {file to dump as hex, none for stdin}", description="A hex dump utility for ped")
     parser.add_option("-n","--numchunks", dest="numchunks", type="int", default=4, help="Number of 8 byte chunks to display")
-    
+
     (options,args) = parser.parse_args(sys.argv[1:])
 
     exit(main(options,args))
