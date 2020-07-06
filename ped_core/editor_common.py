@@ -693,21 +693,26 @@ class Editor:
         """ get the character position in the current line that we're at """
         if self.wrap:
             if not display:
-                return self.wrap_lines[self.line+self.vpos][1] + (self.left+self.pos)
+                r_line,r_pos = self.filePos(self.line+self.vpos,self.left+self.pos)
+                return r_pos
         return self.left+self.pos
 
     def getLine(self,display=False):
         """ get the line that we're on in the current file """
         if self.wrap:
             if not display:
-                return self.wrap_lines[self.line+self.vpos][0]
+                r_line,r_pos = self.filePos(self.line+self.vpos,0)
+                return r_line
 
         return self.line+self.vpos
 
     def filePos(self, line, pos ):
         """ translate display line, pos to file line, pos """
-        if self.wrap and line < len(self.wrap_lines):
-            return (self.wrap_lines[line][0],self.wrap_lines[line][1]+pos)
+        if self.wrap:
+            if line < len(self.wrap_lines):
+                return (self.wrap_lines[line][0],self.wrap_lines[line][1]+pos)
+            else:
+                return (self.numLines()+(line-len(self.wrap_lines)),pos)
         else:
             return (line,pos)
 
@@ -716,7 +721,8 @@ class Editor:
         if self.wrap:
             nlines = len(self.unwrap_lines)
             if line >= nlines:
-                return (self.unwrap_lines[nlines-1],pos)
+                r_line,r_pos = self.scrPos(self.numLines()-1,self.getLength(self.numLines()-1)-1)
+                return (r_line+(line-self.numLines())+1,pos)
             sline = self.unwrap_lines[line]
             while sline < len(self.wrap_lines) and self.wrap_lines[sline][0] == line:
                 if pos >= self.wrap_lines[sline][1] and pos < self.wrap_lines[sline][2]:
@@ -1016,8 +1022,10 @@ class Editor:
         if offset > len(orig):
             pad = " "*(offset - len(orig))
         orig = orig[0:offset] + pad + c + orig[offset:]
-        self.workfile.replaceLine(self.getLine(),orig)
-        self.goto(self.getLine(),offset+len(c))
+        insert_line = self.getLine()
+        self.workfile.replaceLine(insert_line,orig)
+        self.rewrap()
+        self.goto(insert_line,offset+len(c))
 
     def delc(self):
         """ deletes one character at the cursor position """
@@ -1042,6 +1050,8 @@ class Editor:
         else:
             orig = orig[0:offset]+orig[offset+1:]
             self.workfile.replaceLine(self.getLine(),orig)
+        self.rewrap()
+
 
     def backspace(self):
         """ delete a character at the cursor and move back one character """

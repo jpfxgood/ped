@@ -104,6 +104,12 @@ def wait_for_screen(ed):
         ed.main(False)
     ed.showcursor(True)
 
+def pad(value,size):
+    """ pad a string with spaces to the size provided """
+    if len(value) < size:
+        value += ' '*(size-len(value))
+    return value
+
 def validate_screen( ed, lines_to_test = None, start_line=-1, end_line=-1, start_pos=-1, end_pos=-1, do_validation=True ):
 
     wait_for_screen(ed)
@@ -127,7 +133,9 @@ def validate_screen( ed, lines_to_test = None, start_line=-1, end_line=-1, start
         if lines_to_test:
             test_line = lines_to_test[f_line]
         else:
-            test_line = ed.getContent(f_line)
+            test_line = ed.getContent(f_line,0,False,True)
+
+        test_line = pad(test_line,ed.left+ed.max_x)
 
         e_pos = len(test_line)
         if f_line == start_line:
@@ -137,14 +145,15 @@ def validate_screen( ed, lines_to_test = None, start_line=-1, end_line=-1, start
         e_pos = min(e_pos,len(test_line))
 
         for f_pos in range(s_pos,e_pos):
-            sc_line,sc_pos = window_pos(ed,f_line,f_pos)
+            ff_line,ff_pos = ed.filePos(f_line,f_pos)
+            sc_line,sc_pos = window_pos(ed,ff_line,ff_pos)
             if sc_line >= 1 and sc_line < ed.max_y and sc_pos >= 0 and sc_pos < ed.max_x:
                 c_to_test = test_line[f_pos]
                 c_from_scr = read_str(ed.scr,sc_line,sc_pos,1)
                 matched_line += c_from_scr
                 error_line += ' '
                 marked_error = False
-                if ed.isMark() and (f_line >= min(ed.getLine(),ed.mark_line_start) and f_line <= max(ed.getLine(),ed.mark_line_start)) and (f_pos >= min(ed.getPos(),ed.mark_pos_start) and f_pos <= max(ed.getPos(),ed.mark_pos_start)):
+                if ed.isMark() and (ff_line >= min(ed.getLine(),ed.mark_line_start) and ff_line <= max(ed.getLine(),ed.mark_line_start)) and (ff_pos >= min(ed.getPos(),ed.mark_pos_start) and ff_pos <= max(ed.getPos(),ed.mark_pos_start)):
                     if not match_attr(ed.scr,sc_line,sc_pos,1,1,curses.A_REVERSE):
                         error_line = error_line[:-1] + '#'
                         marked_error = True

@@ -594,7 +594,8 @@ class EditorManager:
         from the current frame, only the key events that are released """
         force = not blocking
 
-        curses.mousemask( curses.BUTTON1_PRESSED| curses.BUTTON1_RELEASED| curses.BUTTON1_CLICKED)
+        curses.mousemask( curses.ALL_MOUSE_EVENTS | curses.REPORT_MOUSE_POSITION )
+        self.scr.keypad(1)
 
         while len(self.editors):
             self.redraw(force)
