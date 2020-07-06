@@ -364,6 +364,7 @@ keydef = [
 ((27,ord('Z'),-1),KEYTAB_ALTZ),
 ((curses.KEY_BACKSPACE,-1),KEYTAB_BACKSPACE),
 ((8,-1),KEYTAB_BACKSPACE),
+((127,-1),KEYTAB_BACKSPACE),
 ((27,ord('['),ord('Z'),-1),KEYTAB_BACKTAB),
 ((curses.KEY_BTAB,-1),KEYTAB_BTAB),
 ((10,-1),KEYTAB_CR),
