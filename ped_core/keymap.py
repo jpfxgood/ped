@@ -195,7 +195,8 @@ def is_playback():
 def keypending( scr ):
     """ return true if getch is going to return a real key """
     ch = scr.getch()
-    curses.ungetch(ch)
+    if ch >= 0:
+        curses.ungetch(ch)
     return (ch >= 0)
 
 def getch( scr ):
