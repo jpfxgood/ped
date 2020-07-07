@@ -149,7 +149,7 @@ def render( editor, tokens, keywords, strings, comments ):
         if line_changed or is_cursor_line:
             if f_line in tokens:
                 sc_line,sc_pos = editor.window_pos(f_line,f_pos)
-                if line_changed:
+                if line_changed and sc_line > 0:
                     editor.addstr(sc_line,0,' '*editor.max_x)
                 if is_cursor_line:
                     editor.addstr(sc_cursor_line,sc_cursor_pos,' ')
@@ -165,7 +165,7 @@ def render( editor, tokens, keywords, strings, comments ):
                         attr = white
                     for ch in t_text:
                         sc_line,sc_pos = editor.window_pos(t_srow,t_scol)
-                        if sc_line >= 0 and sc_line < editor.max_y and sc_pos >= 0 and sc_pos < editor.max_x:
+                        if sc_line > 0 and sc_line < editor.max_y and sc_pos >= 0 and sc_pos < editor.max_x:
                             if line_changed or (is_cursor_line and sc_line == sc_cursor_line and sc_pos == sc_cursor_pos):
                                 editor.addstr(sc_line,sc_pos,ch,attr)
                         t_scol += 1
@@ -178,9 +178,9 @@ def render( editor, tokens, keywords, strings, comments ):
                 else:
                     sc_line,sc_pos = editor.window_pos(f_line,f_pos)
                     l = editor.getContent(lidx,editor.left+editor.max_x,True,True)
-                    if line_changed:
+                    if line_changed and sc_line > 0:
                         editor.addstr(sc_line,0,l[editor.left:editor.left+editor.max_x])
-                    elif is_cursor_line:
+                    if is_cursor_line:
                         editor.addstr(sc_cursor_line,sc_cursor_pos,l[sc_cursor_pos])
 
                     if sc_line > max_sc_line:
