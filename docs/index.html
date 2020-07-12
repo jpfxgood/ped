@@ -1077,9 +1077,9 @@ SOFTWARE.</p>
 
 <p>Check out the source code to a path OR download the release .zip file and unzip there.</p>
 
-<p>Put the path on your operating system's execution path.</p>
+<p>Put the path on your operating system's execution path and the modules on your PYTHONPATH.</p>
 
-<p>Requires python 3.8 or better.</p>
+<p>Requires python 3.6.9 or better.</p>
 
 <p>Requires a terminal that works with the python curses module.</p>
 
@@ -1087,27 +1087,81 @@ SOFTWARE.</p>
 
 <h1>Notes</h1>
 
-<p>I've recently added a suite of pytest tests that cover about 78% of the code.</p>
-
-<p>You can run them by doing the following in the source directory:</p>
-
-<pre><code>export SSH_DIALOG_BASEPATH= { an ssh path of the form ssh://host/dir:port that points to a test sftp server where files can be get/put and directories created }
-
-export SSH_DIALOG_USERNAME= { ssh username to run the test as, needs permissions for the above }
-
-export SSH_DIALOG_PASSWORD= { ssh password for that user, you are responsible for the security of it }
-
-python -m pytest tests
-</code></pre>
-
-<p>OR with coverage:</p>
-
-<pre><code>coverage run --source=. --omit=comment_extension.py,dummy_extension.py,lib/*,tests/* -m pytest tests
-</code></pre>
-
 <h1>Documentation</h1>
 
 <p>Have a look at the wiki page for usage and configuration documentation.</p>
+
+<h1>Contributing</h1>
+
+<p>If you're interested in contributing these are the instructions. Please understand that while you retain the copyright for any of your work, once it is contributed it is licensed under the same MIT license as the rest of the project.</p>
+
+<p>To get set up you should do the following:</p>
+
+<ul>
+<li>Create your own fork of the repository on github <a href="https://guides.github.com/activities/forking/">https://guides.github.com/activities/forking/</a></li>
+<li>Clone this repo to your local machine ( see same directions )</li>
+<li>Make changes and test them, the regression tests run with the runtests script need to pass</li>
+<li>Sometimes you may need to add new tests if your functionality isn't covered in the existing tests</li>
+<li>Please update this README or send us a request to udpate the wiki with documentation</li>
+<li>Create and send a pull request upstream and we'll review the change and decide if it should go in, we may have changes or additions before we accept it. Not every change will be accepted, but you are free to use your change from your own fork.</li>
+</ul>
+
+<p>Some of the finer details of the dev environment:</p>
+
+<ul>
+<li>You need Python 3.6.9 ( or better I've tested up to 3.8)  available on your machine</li>
+<li>I'd recommend creating a local python environment using venv something like:
+<ul>
+<li>python3 -m pip install venv</li>
+<li>in your checkout directory: python3 -m venv .
+<ul>
+<li>when you start working in the directory: source bin/activate
+<ul>
+<li>first time do: python3 -m pip install -r requirements.txt</li>
+<li>and: python3 -m pip install -r dev_requirements.txt</li>
+</ul></li>
+</ul></li>
+<li>./runtests will run the tests you can select individual tests using -k see the pytest documentation for other useful options</li>
+</ul></li>
+<li>make sure that when you're running your changes that PYTHONPATH is set to your checkout directory</li>
+<li>there are some environment variables required by the tests:
+<ul>
+<li>SSH_DIALOG_USERNAME = username for a test ssh/sftp server</li>
+<li>SSH_DIALOG_PASSWORD = password for a test ssh/sftp server</li>
+<li>SSH_DIALOG_BASEPATH = target folder expressed as ssh://host:port/directory/subdirectory, you should be comfortable with anything below this path being deleted</li>
+</ul></li>
+</ul>
+
+<p>If you happen to use Microsoft Visual Studio Code here is a template for launching and debugging both tests and the code, put this in launch.json for your working folder:</p>
+
+<pre><code>{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "/home/yourhome/ped-git/scripts/ped",
+            "args": ["ped_core/editor_common.py"],
+            "env": { "PYTHONPATH":"." },
+            "console": "externalTerminal"
+        },
+        {
+            "name": "Python: Pytest",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [ "tests", "-k", "test_Editor_wrapped" ],
+            "env" : { "PYTHONPATH":".", "SSH_DIALOG_BASEPATH":"ssh://your-ssh-server:22/home/yourhome/ssh_tmp", "SSH_DIALOG_USERNAME":"your_user_name",
+"SSH_DIALOG_PASSWORD":"*******" },
+            "console": "externalTerminal"
+        }
+    ]
+}
+</code></pre>
 <h1>API Documentation</h1>
 <h3>Packages/Modules</h3>
 <ul>
