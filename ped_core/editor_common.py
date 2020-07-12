@@ -783,6 +783,7 @@ class Editor:
                     while start < line_len:
                         self.wrap_lines.append((l,start,min(line_len,start+self.wrap_width)))
                         start += self.wrap_width
+            self.invalidate_after_cursor()
 
     def addstr(self,row,col,str,attr = curses.A_NORMAL):
         """ write properly encoded string to screen location """
@@ -1402,9 +1403,14 @@ class Editor:
         self.workfile.touchLine(0,self.workfile.numLines())
 
     def invalidate_screen(self):
-        """ touch all the lines in the file so everything will redraw """
+        """ touch all the lines on the screen so everything will redraw """
         line,pos = self.filePos(self.line,self.left)
         self.workfile.touchLine(line,line+self.max_y)
+
+    def invalidate_after_cursor(self):
+        """ touch all the lines from the current position to the end of the screen """
+        line,pos = self.filePos(self.line,self.left)
+        self.workfile.touchLine(self.getLine(),line+self.max_y)
 
     def has_changes(self):
         """ return true if there are any pending changes """
