@@ -155,6 +155,12 @@ def test_StreamEditor(testdir,capsys):
             for i in range(0,100):
                 se.main(False)
                 assert(se.getContent(i) == 'Line %d of test file'%i)
+
+            current_line = se.getLine()
+            se.follow = True
+            for i in range(0,200):
+                se.main(False)
+            assert(se.getLine() > current_line)
             se.close()
 
         curses.wrapper(main,testdir)
