@@ -1975,6 +1975,7 @@ a tuple of (pattern, replace) or (None,None) if canceled</p></div>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
             <span class="n">c</span><span class="o">.</span><span class="n">setvalue</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">push_history</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2685,6 +2686,7 @@ a tuple of (pattern, replace) or (None,None) if canceled</p></div>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
             <span class="n">c</span><span class="o">.</span><span class="n">setvalue</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">push_history</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 </pre></div>
 
   </div>

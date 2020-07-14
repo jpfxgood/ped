@@ -1835,12 +1835,12 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span> <span class="o">=</span> <span class="kc">False</span>
-                            
+
     <span class="k">def</span> <span class="nf">setvalue</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">Component</span><span class="o">.</span><span class="n">setvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
-        
+
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getparent</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span><span class="p">:</span>
@@ -1895,7 +1895,8 @@ table {
 
     <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">delc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
@@ -2070,6 +2071,7 @@ table {
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                 <span class="n">c</span><span class="o">.</span><span class="n">setvalue</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">push_history</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">getvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="p">{}</span>
@@ -3461,6 +3463,7 @@ the top border, if fill is true, fill the rectangle with spaces</p></div>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                 <span class="n">c</span><span class="o">.</span><span class="n">setvalue</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">push_history</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">getvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">value</span> <span class="o">=</span> <span class="p">{}</span>
@@ -4237,6 +4240,7 @@ the top border, if fill is true, fill the rectangle with spaces</p></div>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
             <span class="n">c</span><span class="o">.</span><span class="n">setvalue</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">getname</span><span class="p">()])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">push_history</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -5965,7 +5969,8 @@ the top border, if fill is true, fill the rectangle with spaces</p></div>
   <div id="source-ped_dialog.dialog.PasswordPrompt.end" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -6386,12 +6391,12 @@ the top border, if fill is true, fill the rectangle with spaces</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span> <span class="o">=</span> <span class="kc">False</span>
-                            
+
     <span class="k">def</span> <span class="nf">setvalue</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">Component</span><span class="o">.</span><span class="n">setvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
-        
+
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">win</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getparent</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isfocus</span><span class="p">:</span>
@@ -6446,7 +6451,8 @@ the top border, if fill is true, fill the rectangle with spaces</p></div>
 
     <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">delc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
@@ -6684,7 +6690,8 @@ the top border, if fill is true, fill the rectangle with spaces</p></div>
   <div id="source-ped_dialog.dialog.Prompt.end" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
   </div>

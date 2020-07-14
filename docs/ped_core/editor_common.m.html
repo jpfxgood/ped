@@ -3612,17 +3612,40 @@ table {
             <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
             <span class="k">return</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">EditFile</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+            <span class="n">EditFile</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; override of close method, make sure the stream gets closed &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_thread</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stream_thread</span><span class="o">.</span><span class="n">stop_stream</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream_thread</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">EditFile</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; save the file, if filename is passed it&#39;ll be saved to that filename and reopened &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">isReadOnly</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">ReadOnlyError</span><span class="p">()</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lines_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+                <span class="n">o</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">,</span><span class="n">buffering</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
+                    <span class="n">txt</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">getContent</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+                <span class="n">o</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lines_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isReadOnly</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">ReadOnlyError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">set_tabs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabs</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -3719,10 +3742,6 @@ table {
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfile</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sfile</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">getFilename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; override getFilename so we can return None to indicate no file stuff should be done &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ch</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; override normal keystroke handling if in select mode</span>
@@ -13691,10 +13710,6 @@ from the stream</p></div>
             <span class="bp">self</span><span class="o">.</span><span class="n">sfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sfile</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">getFilename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; override getFilename so we can return None to indicate no file stuff should be done &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
     <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ch</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; override normal keystroke handling if in select mode</span>
 <span class="sd">        and move about doing selection and return on enter &quot;&quot;&quot;</span>
@@ -14686,13 +14701,13 @@ line selection is requested</p></div>
 
     
   
-    <div class="desc"><p>override getFilename so we can return None to indicate no file stuff should be done</p></div>
+    <div class="desc"><p>return the filename for this editor</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-ped_core.editor_common.StreamEditor.getFilename', this);">Show source &equiv;</a></p>
   <div id="source-ped_core.editor_common.StreamEditor.getFilename" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">getFilename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; override getFilename so we can return None to indicate no file stuff should be done &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot; return the filename for this editor &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workfile</span><span class="o">.</span><span class="n">getFilename</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -16802,17 +16817,40 @@ shell commands to a read-only editor</p></div>
             <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
             <span class="k">return</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">EditFile</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+            <span class="n">EditFile</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; override of close method, make sure the stream gets closed &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_thread</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stream_thread</span><span class="o">.</span><span class="n">stop_stream</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream_thread</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">EditFile</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; save the file, if filename is passed it&#39;ll be saved to that filename and reopened &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">isReadOnly</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">ReadOnlyError</span><span class="p">()</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lines_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+                <span class="n">o</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">,</span><span class="n">buffering</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
+                    <span class="n">txt</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">getContent</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+                <span class="n">o</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lines_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isReadOnly</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">ReadOnlyError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">set_tabs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabs</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -16949,6 +16987,7 @@ shell commands to a read-only editor</p></div>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_thread</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stream_thread</span><span class="o">.</span><span class="n">stop_stream</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream_thread</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="kc">None</span>
@@ -17473,7 +17512,7 @@ shell commands to a read-only editor</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
         <span class="k">return</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">EditFile</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="n">EditFile</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -17619,34 +17658,21 @@ shell commands to a read-only editor</p></div>
     <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">isReadOnly</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">ReadOnlyError</span><span class="p">()</span>
-        <span class="n">o</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">,</span><span class="n">buffering</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
-            <span class="n">txt</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">getContent</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-            <span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
-        <span class="n">o</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lines_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+            <span class="n">o</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">,</span><span class="n">buffering</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">getContent</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+            <span class="n">o</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lines_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isReadOnly</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">ReadOnlyError</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">changed</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="n">o</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">+</span><span class="s2">&quot;.sav&quot;</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">,</span><span class="n">buffering</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
-            <span class="n">txt</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">getContent</span><span class="p">()</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-            <span class="n">o</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
-        <span class="n">o</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">working</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">):</span>
-            <span class="n">fstat</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-            <span class="n">backup_path</span> <span class="o">=</span> <span class="n">EditFile</span><span class="o">.</span><span class="n">make_backup_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">backuproot</span><span class="p">)</span>
-            <span class="n">retval</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="n">backup_path</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">+</span><span class="s2">&quot;.sav&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="n">fstat</span><span class="o">.</span><span class="n">st_mode</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">+</span><span class="s2">&quot;.sav&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
 
   </div>
