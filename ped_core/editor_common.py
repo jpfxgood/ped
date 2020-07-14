@@ -2074,6 +2074,7 @@ class StreamThread:
         self.ef.modref = 0
         if self.stream:
             self.stream.close()
+            self.stream = None
         self.thread = None
         self.read_worker_stop = False
 
@@ -2125,6 +2126,7 @@ class StreamFile(EditFile):
             self.stream_thread.start_stream()
             if self.wait:
                 self.stream_thread.wait()
+                self.stream_thread = None
             return
         else:
             EditFile.open(self)
@@ -2198,7 +2200,7 @@ class StreamEditor(Editor):
         if workfile:
             self.sfile = workfile
         else:
-            self.sfile = StreamFile(name,stream,wait)
+            self.sfile = StreamFile(name,stream,self.wait)
 
         Editor.__init__(self, par, scr, self.sfile.getFilename(), self.sfile)
 

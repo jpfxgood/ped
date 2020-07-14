@@ -2,6 +2,6 @@
 OLDPYTHONPATH=$PYTHONPATH
 export PYTHONPATH="."
 python3 -m pytest tests "$@"
-set status=${PIPESTATUS[0]}
+set status=$?
 export PYTHONPATH=$OLDPYTHONPATH
 exit $status

@@ -649,7 +649,7 @@ class EditorManager:
             elif cmd_id == cmd_names.CMD_HELP:
                 self.addEditor(editor_common.StreamEditor(self.scr,None,
                                                             "Help",
-                                                            io.StringIO(ped_help.get_help())))
+                                                            io.StringIO(ped_help.get_help()),wait=True))
             elif cmd_id == cmd_names.CMD_SHELLCMD:
                 cmd = prompt(self.scr,"Shell command","> ",-1,name="shell")
                 if cmd:
