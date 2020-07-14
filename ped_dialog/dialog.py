@@ -528,12 +528,12 @@ class Prompt(Component):
         self.pos = 0
         self.left = 0
         self.isfocus = False
-                            
+
     def setvalue( self, value ):
         self.pos = 0
         self.left = 0
         Component.setvalue(self,value)
-        
+
     def render(self):
         win = self.getparent()
         if self.isfocus:
@@ -588,7 +588,8 @@ class Prompt(Component):
 
     def end(self):
         self.pos = len(self.value)
-        self.left = self.pos - (self.width-1)
+        if self.pos > self.width-1:
+            self.left = self.pos - (self.width-1)
 
     def delc(self):
         if self.pos < len(self.value):
@@ -763,6 +764,7 @@ class Dialog(Component):
         for c in self.children:
             if c.getname() in value:
                 c.setvalue(value[c.getname()])
+                self.push_history(c)
 
     def getvalue(self):
         value = {}

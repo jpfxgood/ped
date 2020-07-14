@@ -61,13 +61,13 @@ class FileDialog(dialog.Dialog):
             if choice.startswith('<DIR>'):
                 (dirpath,dirnames,filenames) = get_dir(os.path.join(self.current_dir.getvalue(),choice[6:]))
                 focus_field.setvalue((0,dirnames+filenames))
-                self.current_dir.setvalue(os.path.abspath(dirpath))
+                self.setvalue({"dir":os.path.abspath(dirpath)}) # important to do it this way to work with history
                 os.chdir(os.path.abspath(dirpath))
                 self.current = focus_index
                 ret_ch = dialog.Component.CMP_KEY_NOP
             else:
                 self.file_name.setvalue(choice)
-        elif focus_field == self.current_dir and ch in [ord(' '),10]:
+        elif focus_field == self.current_dir and ch in [keytab.KEYTAB_TAB,keytab.KEYTAB_BTAB,keytab.KEYTAB_CR]:
             dir = focus_field.getvalue()
             (dirpath,dirnames,filenames) = get_dir(dir)
             self.file_list.setvalue((0,dirnames+filenames))
