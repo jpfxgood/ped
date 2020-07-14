@@ -1263,7 +1263,6 @@ table {
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; clean up our subwindow when we close &quot;&quot;&quot;</span>
         <span class="n">BaseFrame</span><span class="o">.</span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1293,10 +1292,10 @@ table {
 
     <span class="k">def</span> <span class="nf">seteditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">editor</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; installs a new editor into this frame, we copy it each time so we get independent scrolling &quot;&quot;&quot;</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="n">editor</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">setWin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">resize</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">setWin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">resize</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
 
 <span class="k">class</span> <span class="nc">DialogFrame</span> <span class="p">(</span> <span class="n">BaseFrame</span> <span class="p">):</span>
@@ -1349,6 +1348,9 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">scr</span> <span class="o">=</span> <span class="n">scr</span>
 
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">:</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">editors</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -1416,9 +1418,6 @@ table {
     <span class="k">def</span> <span class="nf">delEditor</span><span class="p">(</span> <span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; close an editor and remove it from the list, fall back to the previous editor in the current frame &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_frame</span><span class="p">],</span><span class="n">EditorFrame</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span>
-
             <span class="n">editor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">]</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">workfile</span><span class="o">.</span><span class="n">filename</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">editor</span><span class="p">)</span>
@@ -1426,7 +1425,13 @@ table {
                 <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setEditor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_frame</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">setEditor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setEditor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_frame</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">])</span>
 
             <span class="n">foundFilename</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -1443,7 +1448,7 @@ table {
                             <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">foundFilename</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">del</span> <span class="n">editor</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">nextEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; set the next editor to be current, wrap around in the list &quot;&quot;&quot;</span>
@@ -1780,7 +1785,7 @@ table {
             <span class="k">elif</span> <span class="n">cmd_id</span> <span class="o">==</span> <span class="n">cmd_names</span><span class="o">.</span><span class="n">CMD_HELP</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">addEditor</span><span class="p">(</span><span class="n">editor_common</span><span class="o">.</span><span class="n">StreamEditor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scr</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span>
                                                             <span class="s2">&quot;Help&quot;</span><span class="p">,</span>
-                                                            <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">ped_help</span><span class="o">.</span><span class="n">get_help</span><span class="p">())))</span>
+                                                            <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">ped_help</span><span class="o">.</span><span class="n">get_help</span><span class="p">()),</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
             <span class="k">elif</span> <span class="n">cmd_id</span> <span class="o">==</span> <span class="n">cmd_names</span><span class="o">.</span><span class="n">CMD_SHELLCMD</span><span class="p">:</span>
                 <span class="n">cmd</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scr</span><span class="p">,</span><span class="s2">&quot;Shell command&quot;</span><span class="p">,</span><span class="s2">&quot;&gt; &quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;shell&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">cmd</span><span class="p">:</span>
@@ -2420,7 +2425,6 @@ table {
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; clean up our subwindow when we close &quot;&quot;&quot;</span>
         <span class="n">BaseFrame</span><span class="o">.</span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2450,10 +2454,10 @@ table {
 
     <span class="k">def</span> <span class="nf">seteditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">editor</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; installs a new editor into this frame, we copy it each time so we get independent scrolling &quot;&quot;&quot;</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="n">editor</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">setWin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">resize</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">setWin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">resize</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 
@@ -2589,10 +2593,10 @@ table {
   <div id="source-ped_core.editor_manager.EditorFrame.seteditor" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">seteditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">editor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; installs a new editor into this frame, we copy it each time so we get independent scrolling &quot;&quot;&quot;</span>
-    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="n">editor</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">setWin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">resize</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">setWin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">resize</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 
@@ -2665,6 +2669,9 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">scr</span> <span class="o">=</span> <span class="n">scr</span>
 
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">:</span>
+                <span class="n">e</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">editors</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -2732,9 +2739,6 @@ table {
     <span class="k">def</span> <span class="nf">delEditor</span><span class="p">(</span> <span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; close an editor and remove it from the list, fall back to the previous editor in the current frame &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_frame</span><span class="p">],</span><span class="n">EditorFrame</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span>
-
             <span class="n">editor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">]</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">workfile</span><span class="o">.</span><span class="n">filename</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">editor</span><span class="p">)</span>
@@ -2742,7 +2746,13 @@ table {
                 <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setEditor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_frame</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">setEditor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setEditor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_frame</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">])</span>
 
             <span class="n">foundFilename</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -2759,7 +2769,7 @@ table {
                             <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">foundFilename</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">del</span> <span class="n">editor</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">nextEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; set the next editor to be current, wrap around in the list &quot;&quot;&quot;</span>
@@ -3096,7 +3106,7 @@ table {
             <span class="k">elif</span> <span class="n">cmd_id</span> <span class="o">==</span> <span class="n">cmd_names</span><span class="o">.</span><span class="n">CMD_HELP</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">addEditor</span><span class="p">(</span><span class="n">editor_common</span><span class="o">.</span><span class="n">StreamEditor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scr</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span>
                                                             <span class="s2">&quot;Help&quot;</span><span class="p">,</span>
-                                                            <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">ped_help</span><span class="o">.</span><span class="n">get_help</span><span class="p">())))</span>
+                                                            <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">ped_help</span><span class="o">.</span><span class="n">get_help</span><span class="p">()),</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
             <span class="k">elif</span> <span class="n">cmd_id</span> <span class="o">==</span> <span class="n">cmd_names</span><span class="o">.</span><span class="n">CMD_SHELLCMD</span><span class="p">:</span>
                 <span class="n">cmd</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scr</span><span class="p">,</span><span class="s2">&quot;Shell command&quot;</span><span class="p">,</span><span class="s2">&quot;&gt; &quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;shell&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">cmd</span><span class="p">:</span>
@@ -3271,8 +3281,6 @@ table {
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">delEditor</span><span class="p">(</span> <span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; close an editor and remove it from the list, fall back to the previous editor in the current frame &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_frame</span><span class="p">],</span><span class="n">EditorFrame</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span>
         <span class="n">editor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">]</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">workfile</span><span class="o">.</span><span class="n">filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">editor</span><span class="p">)</span>
@@ -3280,7 +3288,13 @@ table {
             <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setEditor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_frame</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setEditor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setEditor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_frame</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">editors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">])</span>
         <span class="n">foundFilename</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">while</span> <span class="n">foundFilename</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">)):</span>
@@ -3295,7 +3309,7 @@ table {
                         <span class="k">break</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">foundFilename</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">del</span> <span class="n">editor</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 
   </div>
@@ -3523,7 +3537,7 @@ from the current frame, only the key events that are released</p></div>
         <span class="k">elif</span> <span class="n">cmd_id</span> <span class="o">==</span> <span class="n">cmd_names</span><span class="o">.</span><span class="n">CMD_HELP</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">addEditor</span><span class="p">(</span><span class="n">editor_common</span><span class="o">.</span><span class="n">StreamEditor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scr</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span>
                                                         <span class="s2">&quot;Help&quot;</span><span class="p">,</span>
-                                                        <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">ped_help</span><span class="o">.</span><span class="n">get_help</span><span class="p">())))</span>
+                                                        <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">ped_help</span><span class="o">.</span><span class="n">get_help</span><span class="p">()),</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">elif</span> <span class="n">cmd_id</span> <span class="o">==</span> <span class="n">cmd_names</span><span class="o">.</span><span class="n">CMD_SHELLCMD</span><span class="p">:</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scr</span><span class="p">,</span><span class="s2">&quot;Shell command&quot;</span><span class="p">,</span><span class="s2">&quot;&gt; &quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;shell&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">cmd</span><span class="p">:</span>

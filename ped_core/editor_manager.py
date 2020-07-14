@@ -127,7 +127,6 @@ class EditorFrame ( BaseFrame ):
     def __del__(self):
         """ clean up our subwindow when we close """
         BaseFrame.__del__(self)
-        del self.editor
         self.editor = None
 
     def __copy__(self):
@@ -157,10 +156,10 @@ class EditorFrame ( BaseFrame ):
 
     def seteditor(self,editor):
         """ installs a new editor into this frame, we copy it each time so we get independent scrolling """
-        del self.editor
         self.editor = editor
-        self.editor.setWin(self.win)
-        self.editor.resize()
+        if self.editor:
+            self.editor.setWin(self.win)
+            self.editor.resize()
         self.changed = True
 
 class DialogFrame ( BaseFrame ):
@@ -213,6 +212,9 @@ class EditorManager:
         self.scr = scr
 
     def __del__(self):
+        if self.editors:
+            for e in self.editors:
+                e.close()
         self.editors = None
         self.frames = None
 
@@ -280,9 +282,6 @@ class EditorManager:
     def delEditor( self):
         """ close an editor and remove it from the list, fall back to the previous editor in the current frame """
         if isinstance(self.frames[self.current_frame],EditorFrame):
-            if len(self.editors) == 1:
-                return
-
             editor = self.editors[self.current]
             filename = editor.workfile.filename
             self.editors.remove(editor)
@@ -290,7 +289,13 @@ class EditorManager:
                 self.current = len(self.editors)-1
             if self.current < 0:
                 self.current = 0
-            self.setEditor(self.frames[self.current_frame],self.editors[self.current])
+            if not len(self.editors):
+                for f in self.frames:
+                    self.setEditor(f,None)
+                editor.close()
+                return
+            else:
+                self.setEditor(self.frames[self.current_frame],self.editors[self.current])
 
             foundFilename = True
 
@@ -307,7 +312,7 @@ class EditorManager:
                             break
                 else:
                     foundFilename = False
-            del editor
+            editor.close()
 
     def nextEditor(self):
         """ set the next editor to be current, wrap around in the list """
@@ -644,7 +649,7 @@ class EditorManager:
             elif cmd_id == cmd_names.CMD_HELP:
                 self.addEditor(editor_common.StreamEditor(self.scr,None,
                                                             "Help",
-                                                            io.StringIO(ped_help.get_help())))
+                                                            io.StringIO(ped_help.get_help()),wait=True))
             elif cmd_id == cmd_names.CMD_SHELLCMD:
                 cmd = prompt(self.scr,"Shell command","> ",-1,name="shell")
                 if cmd:

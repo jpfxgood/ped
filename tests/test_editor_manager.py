@@ -178,7 +178,7 @@ def test_EditorManager(testdir,capsys):
             assert(em.getCurrentEditor().getContent(2).startswith("Help for ped James' simple python editor"))
             em.getCurrentEditor().endfile()
             line = em.getCurrentEditor().getLine()
-            assert(em.getCurrentEditor().getContent(line-1).startswith("Copyright 2009-2014 James P Goodwin"))
+            assert(em.getCurrentEditor().getContent(line-1).startswith("Copyright 2020 James P Goodwin"))
             em.main(False)
             validate_screen(em.getCurrentEditor())
             play_macro(em,[keytab.KEYTAB_ALTN,keytab.KEYTAB_F10]+list("ls -l\n"))

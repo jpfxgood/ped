@@ -1,8 +1,8 @@
 #!/bin/bash
 OLDPYTHONPATH=$PYTHONPATH
 export PYTHONPATH="."
-coverage run --source=. --omit=bin/*,lib/*,tests/* -m pytest tests "$@" 2>&1 | tee runcoverage.out
-set status=${PIPESTATUS[0]}
+coverage run --source=. --omit=bin/*,lib/*,tests/* -m pytest tests "$@"
+set status=$?
 coverage report
 export PYTHONPATH=$OLDPYTHONPATH
 exit $status

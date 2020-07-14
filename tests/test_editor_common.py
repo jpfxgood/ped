@@ -10,6 +10,7 @@ from ped_core import keymap
 from ped_core import keytab
 from ped_core import clipboard
 from ped_test_util import read_str, match_attr, undo_all, window_pos, play_macro, validate_mark, validate_screen, editor_test_suite
+import subprocess
 
 def test_memline():
     m = editor_common.MemLine( "01234567890123456789" )
@@ -132,3 +133,34 @@ def test_Editor_unwrapped(testdir,capsys):
 def test_Editor_wrapped(testdir,capsys):
     with capsys.disabled():
         curses.wrapper(editor_test_suite,testdir,True,None)
+
+def test_StreamEditor(testdir,capsys):
+    with capsys.disabled():
+        def main(stdscr,testdir):
+            max_y,max_x = stdscr.getmaxyx()
+            generator_lines = [
+            "for i in range(0,1000000):",
+            "   print('Line %d of test file'%i)",
+            ]
+            generator_script = testdir.makepyfile(**{ "generator": "\n".join(generator_lines)})
+            cmd = 'python3 %s'%str(generator_script)
+            se = editor_common.StreamEditor(stdscr,stdscr.subwin(max_y,max_x,0,0),"Test Stream",subprocess.Popen(cmd,
+                                                                               shell=True,
+                                                                               bufsize=1024,
+                                                                               encoding="utf-8",
+                                                                               stdout=subprocess.PIPE,
+                                                                               stderr=subprocess.STDOUT).stdout)
+            starting_num_lines = se.numLines()
+            time.sleep(1)
+            for i in range(0,100):
+                se.main(False)
+                assert(se.getContent(i) == 'Line %d of test file'%i)
+
+            current_line = se.getLine()
+            se.follow = True
+            for i in range(0,200):
+                se.main(False)
+            assert(se.getLine() > current_line)
+            se.close()
+
+        curses.wrapper(main,testdir)

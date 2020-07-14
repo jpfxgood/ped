@@ -30,6 +30,9 @@ import traceback
 import locale
 import codecs
 import tempfile
+import threading
+import logging
+import time
 
 locale.setlocale(locale.LC_ALL,'')
 def_encoding = locale.getpreferredencoding()
@@ -161,7 +164,6 @@ class EditFile:
 
     def __del__(self):
         """ make sure we close file when we are destroyed """
-        del self.undo_mgr
         self.undo_mgr = None
         self.change_mgr = None
         self.close()
@@ -584,6 +586,10 @@ class Editor:
         self.workfile = None
         self.undo_mgr = None
 
+    def close(self):
+        """ by default it is a no-op but editors overriding this can hook the close to clean things up """
+        pass
+
     def pushUndo(self):
         """ push an undo action onto the current transaction """
         self.undo_mgr.get_transaction().push(self.applyUndo,(self.line,
@@ -935,7 +941,7 @@ class Editor:
         if self.scr:
             self.max_y,self.max_x = self.scr.getmaxyx()
             self.rewrap()
-            bottom_y = min((self.numLines(True)-1)-self.line,(self.max_y-2))
+            bottom_y = max(min((self.numLines(True)-1)-self.line,(self.max_y-2)),0)
             if self.vpos > bottom_y:
                 self.vpos = bottom_y
             right_x = self.max_x-1
@@ -2003,50 +2009,240 @@ class Editor:
                 if not blocking:
                     return keytab.KEYTAB_REFRESH
 
+class StreamThread:
+    """ Thread to read from a stream blocking as needed adding lines to the owning EditFile object """
+    def __init__(self, ef, stream ):
+        self.ef = ef
+        self.stream = stream
+        self.thread = None
+        self.read_worker_stop = False
+
+    def __del__( self ):
+        self.stop_stream()
+
+    def start_stream( self ):
+        self.thread = threading.Thread(target = self.read_worker)
+        self.thread.start()
+
+    def wait(self):
+        if self.thread:
+            self.thread.join()
+
+    def stop_stream( self ):
+        self.read_worker_stop = True
+        if self.thread and self.thread.is_alive():
+            self.thread.join()
+        if self.stream:
+            self.stream.close()
+        self.stream = None
+        self.thread = None
+        self.read_worker_stop = False
+
+    def read_worker( self ):
+        pos = 0
+        lidx = 0
+        while not self.read_worker_stop:
+            line = self.stream.readline()
+            if not line:
+                break
+            try:
+                self.ef.lines_lock.acquire()
+                self.ef.modref += 1
+                self.ef.working.seek(0,2)
+                self.ef.working.write(line)
+                line = line.rstrip()
+                self.ef.lines.append(FileLine(self.ef,pos,len(self.ef.expand_tabs(line))))
+                if self.ef.change_mgr:
+                    self.ef.change_mgr.changed(lidx,lidx)
+                pos = self.ef.working.tell()
+                lidx += 1
+            finally:
+                self.ef.lines_lock.release()
+                time.sleep( 0 )
+
+        try:
+            self.ef.lines_lock.acquire()
+
+            while len(self.ef.lines) and not self.ef.lines[-1].getContent().strip():
+                del self.ef.lines[-1]
+            if not len(self.ef.lines):
+                self.ef.lines.append(MemLine(""))
+        finally:
+            self.ef.lines_lock.release()
+
+        self.ef.changed = False
+        self.ef.modref = 0
+        if self.stream:
+            self.stream.close()
+            self.stream = None
+        self.thread = None
+        self.read_worker_stop = False
+
 class StreamFile(EditFile):
     """ Class reads a stream to the end and writes it to a temp file which
     is opened and loaded read only, used for capturing the output of
     shell commands to a read-only editor """
 
-    def __init__(self,name,stream):
+    def __init__(self,name,stream,wait=False):
         """ takes name which is a display name for this stream, stream is the input stream to read """
         self.stream = stream
-        EditFile.__init__(self,name)
+        self.stream_thread = None
+        self.lines_lock = threading.Lock()
+        self.wait = wait
+        # store the filename
+        self.filename = name
+        # the root of the backup directory
+        self.backuproot = EditFile.default_backuproot
+        # set the default tab stops
+        self.tabs = [ 4, 8 ]
+        # set the changed flag to false
+        self.changed = False
+        # read only flag
+        self.readonly = EditFile.default_readonly
+        # undo manager
+        self.undo_mgr = undo.UndoManager()
+        # change manager
+        self.change_mgr = changes.ChangeManager()
+        # modification reference incremented for each change
+        self.modref = 0
+        # the file object
+        self.working = None
+        # the lines in this file
+        self.lines = []
+        # load the file
+        self.load()
+
+    def __del__(self):
+        """ clean up stream thread and stream """
+        self.stream_thread = None
+        EditFile.__del__(self)
 
     def open(self):
-        """ override of the open method, reads the stream into a tempfile which then becomes the file for the editor """
-        if self.stream:
+        """ override of the open method, starts a thread that reads the stream into a tempfile which then becomes the file for the editor """
+        if self.stream and not self.working:
             self.working = tempfile.NamedTemporaryFile(mode="w+")
-            line = self.stream.readline()
-            while line:
-                self.working.write(line)
-                line = self.stream.readline()
-            self.working.seek(0,0)
-            self.stream.close()
-            self.stream = None
             self.setReadOnly(True)
+            self.stream_thread = StreamThread(self,self.stream)
+            self.stream_thread.start_stream()
+            if self.wait:
+                self.stream_thread.wait()
+                self.stream_thread = None
+            return
         else:
             EditFile.open(self)
 
+    def load(self):
+        if self.stream and not self.working:
+            self.open()
+            return
+        else:
+            EditFile.load()
+
     def close(self):
         """ override of close method, make sure the stream gets closed """
-        if self.stream:
+        if self.stream_thread:
+            self.stream_thread.stop_stream()
+            self.stream = None
+        elif self.stream:
             self.stream.close()
             self.stream = None
         EditFile.close(self)
+
+    def set_tabs(self, tabs):
+        try:
+            self.lines_lock.acquire()
+            EditFile.set_tabs(self, tabs)
+        finally:
+            self.lines_lock.release()
+
+    def numLines(self):
+        try:
+            self.lines_lock.acquire()
+            return EditFile.numLines(self)
+        finally:
+            self.lines_lock.release()
+
+    def length(self,line):
+        try:
+            self.lines_lock.acquire()
+            return EditFile.length(self,line)
+        finally:
+            self.lines_lock.release()
+
+    def getLine(self, line, pad = 0, trim = False ):
+        try:
+            self.lines_lock.acquire()
+            return EditFile.getLine(self,line,pad,trim)
+        finally:
+            self.lines_lock.release()
+
+    def getLines(self, line_start = 0, line_end = -1 ):
+        try:
+            self.lines_lock.acquire()
+            return EditFile.getLines(self,line_start,line_end)
+        finally:
+            self.lines_lock.release()
+
 
 class StreamEditor(Editor):
     """ this is a read only editor that wraps a stream it has a select
         option for use when embedding in a control to select lines
         from the stream """
-    def __init__(self, par, scr, name, stream, select = False, line_re = None ):
+    def __init__(self, par, scr, name, stream, select = False, line_re = None, follow = False, wait = False, workfile=None ):
         """ takes parent curses screen, screen to render to, name for
             stream, stream to read in, and select to indicate if
             line selection is requested """
         self.select = select
         self.line_re = line_re
-        sfile = StreamFile(name,stream)
-        Editor.__init__(self, par, scr, name, sfile)
+        self.follow = follow
+        self.wait = wait
+        self.o_nlines = 0
+        if workfile:
+            self.sfile = workfile
+        else:
+            self.sfile = StreamFile(name,stream,self.wait)
+
+        Editor.__init__(self, par, scr, self.sfile.getFilename(), self.sfile)
+
+    def __copy__(self):
+        """ override to just copy the editor state and not the underlying file object """
+        result = StreamEditor(self.parent,self.scr,None,None,self.select, self.line_re, self.follow, self.wait, self.workfile)
+        result.o_nlines = 0
+        result.line = self.line
+        result.pos = self.pos
+        result.vpos = self.vpos
+        result.left = self.left
+        result.prev_cmd = self.prev_cmd
+        result.cmd_id = self.cmd_id
+        result.home_count = self.home_count
+        result.end_count = self.end_count
+        result.line_mark = self.line_mark
+        result.span_mark = self.span_mark
+        result.rect_mark = self.rect_mark
+        result.search_mark = self.search_mark
+        result.mark_pos_start = self.mark_pos_start
+        result.mark_line_start = self.mark_line_start
+        result.last_search = self.last_search
+        result.last_search_dir = self.last_search_dir
+        result.mode = self.mode
+        result.wrap_lines = copy.copy(self.wrap_lines)
+        result.unwrap_lines = copy.copy(self.unwrap_lines)
+        result.wrap_modref = self.wrap_modref
+        result.wrap_width = self.wrap_width
+        result.show_cursor = self.show_cursor
+        result.focus = self.focus
+        result.prev_pos = copy.copy(self.prev_pos)
+        return result
+
+    def __del__(self):
+        """ clean up the StreamFile """
+        self.sfile = None
+
+    def close(self):
+        """ close and shut down the stream file """
+        if self.sfile:
+            self.sfile.close()
+            self.sfile = None
 
     def getFilename(self):
         """ override getFilename so we can return None to indicate no file stuff should be done """
@@ -2056,7 +2252,16 @@ class StreamEditor(Editor):
         """ override normal keystroke handling if in select mode
         and move about doing selection and return on enter """
 
-        if not self.select:
+        if self.follow:
+            nlines = self.numLines()
+            if self.o_nlines != nlines:
+                self.endfile()
+                self.o_nlines = nlines
+
+        if ch in keymap.keydef_map and keymap.keydef_map[ch][-1] == keytab.KEYTAB_CTRLF:
+            self.follow = not self.follow
+            return keytab.KEYTAB_NOKEY
+        elif not self.select:
             return Editor.handle(self,ch)
 
         o_line = self.getLine()
