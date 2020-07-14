@@ -19,6 +19,7 @@ setup(
     ],
     description='A code editor written in python',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     license = 'MIT',
     keywords= [
         'editor',
