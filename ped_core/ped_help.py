@@ -12,10 +12,11 @@ alt-l or ctrl-l:        begin marking lines
 keypad minus or ctrl-x: cut marked characters
 keypad plus or ctrl-c:  copy marked characters (also copies entire dialog prompt field)
 insert or ctrl-v:       paste marked characters (also works in dialog prompt fields)
-alt-g or ctrl-g:        goto a line by number               
-alt-w or ctrl-s:        save current file                   
+alt-g or ctrl-g:        goto a line by number
+alt-w or ctrl-s:        save current file
 alt-o or ctrl-w:        save current file to a different file
-ctrl-f:                 show full name of current buffer
+ctrl-f:                 show full name of current buffer or
+                         in a streaming shell buffer toggle follow
 alt-f:                  find files or search within files
 alt-b:                  buffer list, switch buffers directly
 all-d:                  kill the current buffer
@@ -77,10 +78,10 @@ Options:
   -p PASSWORD, --password=PASSWORD
                         svn password
   -d, --dumpkeymap      dump the default keymap to ~/.pedkeymap and default
-                        kedefs to ~/.pedkeydef and exit 
-                        
+                        kedefs to ~/.pedkeydef and exit
+
 --------------------------------------------------------------------------------------------------
-Copyright 2009-2014 James P Goodwin
+Copyright 2020 James P Goodwin
 --------------------------------------------------------------------------------------------------
 """
 
