@@ -10,6 +10,7 @@ from ped_core import keymap
 from ped_core import keytab
 from ped_core import clipboard
 from ped_test_util import read_str, match_attr, undo_all, window_pos, play_macro, validate_mark, validate_screen, editor_test_suite
+import subprocess
 
 def test_memline():
     m = editor_common.MemLine( "01234567890123456789" )
@@ -136,30 +137,24 @@ def test_Editor_wrapped(testdir,capsys):
 def test_StreamEditor(testdir,capsys):
     with capsys.disabled():
         def main(stdscr,testdir):
-            try:
-                max_y,max_x = stdscr.getmaxyx()
-                fifo_name = os.path.join(str(testdir.tmpdir),"testpipe.fifo")
-                os.mkfifo(fifo_name)
-                read_stream = open(fifo_name,"r+",encoding="utf-8",buffering=1)
-                write_stream = open(fifo_name,"w+",encoding="utf-8",buffering=1)
-                se = editor_common.StreamEditor(stdscr,stdscr.subwin(max_y,max_x,0,0),"Test Stream",read_stream)
-                starting_num_lines = se.numLines()
-                lines = []
-                for i in range(0,100):
-                    line = "This is line %d"%i
-                    print(line,file=write_stream)
-                    lines.append(line)
-                    time.sleep(0.1)
-                    assert(se.numLines() > starting_num_lines)
-                while se.numLines() < 100:
-                    time.sleep(0.1)
-                for i in range(0,100):
-                    assert(se.getContent(i) == lines[i])
-            finally:
-                os.remove(fifo_name)
-
-
-
-
+            max_y,max_x = stdscr.getmaxyx()
+            generator_lines = [
+            "for i in range(0,1000000):",
+            "   print('Line %d of test file'%i)",
+            ]
+            generator_script = testdir.makepyfile(**{ "generator": "\n".join(generator_lines)})
+            cmd = 'python3 %s'%str(generator_script)
+            se = editor_common.StreamEditor(stdscr,stdscr.subwin(max_y,max_x,0,0),"Test Stream",subprocess.Popen(cmd,
+                                                                               shell=True,
+                                                                               bufsize=1024,
+                                                                               encoding="utf-8",
+                                                                               stdout=subprocess.PIPE,
+                                                                               stderr=subprocess.STDOUT).stdout)
+            starting_num_lines = se.numLines()
+            time.sleep(1)
+            for i in range(0,100):
+                se.main(False)
+                assert(se.getContent(i) == 'Line %d of test file'%i)
+            se.close()
 
         curses.wrapper(main,testdir)

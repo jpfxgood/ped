@@ -2186,16 +2186,51 @@ class StreamEditor(Editor):
     """ this is a read only editor that wraps a stream it has a select
         option for use when embedding in a control to select lines
         from the stream """
-    def __init__(self, par, scr, name, stream, select = False, line_re = None, follow = False, wait = False ):
+    def __init__(self, par, scr, name, stream, select = False, line_re = None, follow = False, wait = False, workfile=None ):
         """ takes parent curses screen, screen to render to, name for
             stream, stream to read in, and select to indicate if
             line selection is requested """
         self.select = select
         self.line_re = line_re
         self.follow = follow
+        self.wait = wait
         self.o_nlines = 0
-        self.sfile = StreamFile(name,stream,wait)
-        Editor.__init__(self, par, scr, name, self.sfile)
+        if workfile:
+            self.sfile = workfile
+        else:
+            self.sfile = StreamFile(name,stream,wait)
+
+        Editor.__init__(self, par, scr, self.sfile.getFilename(), self.sfile)
+
+    def __copy__(self):
+        """ override to just copy the editor state and not the underlying file object """
+        result = StreamEditor(self.parent,self.scr,None,None,self.select, self.line_re, self.follow, self.wait, self.workfile)
+        result.o_nlines = 0
+        result.line = self.line
+        result.pos = self.pos
+        result.vpos = self.vpos
+        result.left = self.left
+        result.prev_cmd = self.prev_cmd
+        result.cmd_id = self.cmd_id
+        result.home_count = self.home_count
+        result.end_count = self.end_count
+        result.line_mark = self.line_mark
+        result.span_mark = self.span_mark
+        result.rect_mark = self.rect_mark
+        result.search_mark = self.search_mark
+        result.mark_pos_start = self.mark_pos_start
+        result.mark_line_start = self.mark_line_start
+        result.last_search = self.last_search
+        result.last_search_dir = self.last_search_dir
+        result.mode = self.mode
+        result.wrap_lines = copy.copy(self.wrap_lines)
+        result.unwrap_lines = copy.copy(self.unwrap_lines)
+        result.wrap_modref = self.wrap_modref
+        result.wrap_width = self.wrap_width
+        result.show_cursor = self.show_cursor
+        result.focus = self.focus
+        result.prev_pos = copy.copy(self.prev_pos)
+        return result
 
     def __del__(self):
         """ clean up the StreamFile """
