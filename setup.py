@@ -18,6 +18,7 @@ setup(
         'Operating System :: OS Independent',
     ],
     description='A code editor written in python',
+    long_description_content_type='text/markdown',
     long_description=long_description,
     license = 'MIT',
     keywords= [
