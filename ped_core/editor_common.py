@@ -2136,17 +2136,40 @@ class StreamFile(EditFile):
             self.open()
             return
         else:
-            EditFile.load()
+            EditFile.load(self)
 
     def close(self):
         """ override of close method, make sure the stream gets closed """
         if self.stream_thread:
             self.stream_thread.stop_stream()
             self.stream = None
+            self.stream_thread = None
         elif self.stream:
             self.stream.close()
             self.stream = None
         EditFile.close(self)
+
+    def save( self, filename = None ):
+        """ save the file, if filename is passed it'll be saved to that filename and reopened """
+        if filename:
+            if filename == self.filename and self.isReadOnly():
+                raise ReadOnlyError()
+
+            try:
+                self.lines_lock.acquire()
+                o = open(filename,"w",buffering=1,encoding="utf-8")
+                for l in self.lines:
+                    txt = l.getContent()+'\n'
+                    o.write(txt)
+                o.close()
+            finally:
+                self.lines_lock.release()
+            self.close()
+            self.filename = filename
+            self.load()
+        else:
+            if self.isReadOnly():
+                raise ReadOnlyError()
 
     def set_tabs(self, tabs):
         try:
@@ -2243,10 +2266,6 @@ class StreamEditor(Editor):
         if self.sfile:
             self.sfile.close()
             self.sfile = None
-
-    def getFilename(self):
-        """ override getFilename so we can return None to indicate no file stuff should be done """
-        return None
 
     def handle(self,ch):
         """ override normal keystroke handling if in select mode

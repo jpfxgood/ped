@@ -157,10 +157,18 @@ def test_StreamEditor(testdir,capsys):
                 assert(se.getContent(i) == 'Line %d of test file'%i)
 
             current_line = se.getLine()
-            se.follow = True
+            se.main(False,6) # ctrl-f
             for i in range(0,200):
                 se.main(False)
-            assert(se.getLine() > current_line)
+            assert(se.follow == True and se.getLine() > current_line)
+
+            se.main(False,6) # ctrl-f
+            current_line = se.getLine()
+            for i in range(0,200):
+                se.main(False)
+            assert(se.follow == False and se.getLine() == current_line)
+            play_macro(se, [keytab.KEYTAB_ALTO,keytab.KEYTAB_TAB,keytab.KEYTAB_DOWN]+list("testout.out")+[keytab.KEYTAB_CR,keytab.KEYTAB_CR])
+            assert(se.getFilename().endswith("testout.out") and os.path.exists(se.getFilename()))
             se.close()
 
         curses.wrapper(main,testdir)
