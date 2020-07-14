@@ -61,8 +61,16 @@ class FileBrowseComponent(dialog.Component):
         """ draw the frame for the component and the editor as needed """
         win = self.getparent()
         if win:
+            if self.isfocus:
+                attr = curses.A_BOLD
+            else:
+                attr = curses.A_NORMAL
+
+            dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr,False)
+
             if not self.ewin:
                 self.ewin = win.subwin(self.height-2,self.width-2,self.y+1,self.x+1)
+
             if not self.editor and self.filename:
                 self.editor = editor_common.ReadonlyEditor(win,self.ewin,self.filename, self.showname)
                 self.editor.goto(self.start_line,0)
@@ -70,12 +78,6 @@ class FileBrowseComponent(dialog.Component):
                 self.editor.invalidate_all()
                 self.editor.main(False)
 
-            if self.isfocus:
-                attr = curses.A_BOLD
-            else:
-                attr = curses.A_NORMAL
-
-            dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr,False)
             if self.editor:
                 self.editor.setfocus(self.isfocus)
                 self.editor.redraw()

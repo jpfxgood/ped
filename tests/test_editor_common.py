@@ -132,3 +132,34 @@ def test_Editor_unwrapped(testdir,capsys):
 def test_Editor_wrapped(testdir,capsys):
     with capsys.disabled():
         curses.wrapper(editor_test_suite,testdir,True,None)
+
+def test_StreamEditor(testdir,capsys):
+    with capsys.disabled():
+        def main(stdscr,testdir):
+            try:
+                max_y,max_x = stdscr.getmaxyx()
+                fifo_name = os.path.join(str(testdir.tmpdir),"testpipe.fifo")
+                os.mkfifo(fifo_name)
+                read_stream = open(fifo_name,"r+",encoding="utf-8",buffering=1)
+                write_stream = open(fifo_name,"w+",encoding="utf-8",buffering=1)
+                se = editor_common.StreamEditor(stdscr,stdscr.subwin(max_y,max_x,0,0),"Test Stream",read_stream)
+                starting_num_lines = se.numLines()
+                lines = []
+                for i in range(0,100):
+                    line = "This is line %d"%i
+                    print(line,file=write_stream)
+                    lines.append(line)
+                    time.sleep(0.1)
+                    assert(se.numLines() > starting_num_lines)
+                while se.numLines() < 100:
+                    time.sleep(0.1)
+                for i in range(0,100):
+                    assert(se.getContent(i) == lines[i])
+            finally:
+                os.remove(fifo_name)
+
+
+
+
+
+        curses.wrapper(main,testdir)

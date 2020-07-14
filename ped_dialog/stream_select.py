@@ -12,7 +12,7 @@ from ped_core import keytab
 class StreamSelectComponent(dialog.Component):
     """ Component subclass that embeds a StreamEditor in a dialog used for selecting
     from very long lists stored in temp files """
-    def __init__(self, name, order, x, y, width, height, label, stream, line_re = None ):
+    def __init__(self, name, order, x, y, width, height, label, stream, line_re = None, wait = True ):
         """ takes name, order is tab order, x, y are offset inside dialog, width,height are in characters,
         label is a title for the frame,and stream is a stream to select lines from """
         dialog.Component.__init__(self, name, order )
@@ -26,6 +26,7 @@ class StreamSelectComponent(dialog.Component):
         self.label = label
         self.isfocus = None
         self.line_re = line_re
+        self.wait = wait
 
     def __del__(self):
         """ clean up the curses window when we get deleted  and any streams when we get deleted """
@@ -68,20 +69,24 @@ class StreamSelectComponent(dialog.Component):
         """ draw the frame and embedded editor if needed """
         win = self.getparent()
         if win:
-            if not self.ewin:
-                self.ewin = win.subwin(self.height-2,self.width-2,self.y+1,self.x+1)
-            if not self.editor:
-                self.editor = editor_common.StreamEditor(win,self.ewin,self.name,self.stream,select=True,line_re = self.line_re)
-                self.editor.invalidate_all()
-                self.editor.main(False)
-
             if self.isfocus:
                 attr = curses.A_BOLD
             else:
                 attr = curses.A_NORMAL
-            self.editor.setfocus(self.isfocus)
+
             dialog.rect(win,self.x,self.y,self.width,self.height,self.label,attr,False)
+
+            if not self.ewin:
+                self.ewin = win.subwin(self.height-2,self.width-2,self.y+1,self.x+1)
+
+            if not self.editor:
+                self.editor = editor_common.StreamEditor(win,self.ewin,self.name,self.stream,select=True,line_re = self.line_re,wait=self.wait)
+                self.editor.invalidate_all()
+                self.editor.main(False)
+
+            self.editor.setfocus(self.isfocus)
             self.editor.redraw()
+
         self.isfocus = False
 
     def focus(self):

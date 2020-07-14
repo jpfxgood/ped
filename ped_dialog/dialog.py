@@ -526,9 +526,14 @@ class Prompt(Component):
         self.width = width
         self.value = value
         self.pos = 0
+        self.left = 0
         self.isfocus = False
-
-
+                            
+    def setvalue( self, value ):
+        self.pos = 0
+        self.left = 0
+        Component.setvalue(self,value)
+        
     def render(self):
         win = self.getparent()
         if self.isfocus:
@@ -544,9 +549,12 @@ class Prompt(Component):
                 self.width = max_x - (self.x+len(self.prompt)+2)
 
             win.addstr(self.y,self.x,self.prompt,pattr)
-            win.addstr(self.y,self.x+len(self.prompt),pad(self.value,self.width),fattr)
+            if not self.isfocus:
+                self.left = 0
+                self.pos = 0
+            win.addstr(self.y,self.x+len(self.prompt),pad(self.value[self.left:self.left+self.width],self.width),fattr)
             if self.isfocus:
-                win.move(self.y,self.x+len(self.prompt)+self.pos)
+                win.move(self.y,self.x+len(self.prompt)+(self.pos-self.left))
 
         self.isfocus = False
 
@@ -566,17 +574,21 @@ class Prompt(Component):
         self.pos -= 1
         if self.pos < 0:
             self.pos = 0
+        if self.pos < self.left:
+            self.left = self.pos
 
-    def cright(self):
-        self.pos += 1
+    def cright(self,offset = 1):
+        self.pos += offset
         if self.pos > self.width-1:
-            self.pos = self.width-1
+            self.left = self.pos - (self.width-1)
 
     def home(self):
         self.pos = 0
+        self.left = 0
 
     def end(self):
         self.pos = len(self.value)
+        self.left = self.pos - (self.width-1)
 
     def delc(self):
         if self.pos < len(self.value):
@@ -593,12 +605,11 @@ class Prompt(Component):
         return -1
 
     def insert(self,ch):
-        if len(self.value) < self.width:
-            if self.pos > len(self.value):
-                self.value = self.value + ' '*(self.pos-len(self.value)) + ch
-            else:
-                self.value = self.value[0:self.pos]+ch+self.value[self.pos:]
-            self.cright()
+        if self.pos > len(self.value):
+            self.value = self.value + ' '*(self.pos-len(self.value)) + ch
+        else:
+            self.value = self.value[0:self.pos]+ch+self.value[self.pos:]
+        self.cright(len(ch))
 
     def handle(self,ch):
         if len(ch) == 1 and curses.ascii.isprint(ord(ch[0])):
@@ -618,6 +629,7 @@ class Prompt(Component):
         elif ch == keytab.KEYTAB_DOWN:
             self.value = ""
             self.pos = 0
+            self.left = 0
         elif ch == keytab.KEYTAB_RESIZE:
             return ch
         elif ch == keytab.KEYTAB_CTRLV or ch == keytab.KEYTAB_INSERT:

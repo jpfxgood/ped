@@ -41,7 +41,7 @@ def main(stdscr, piped_stdin, options, args):
     EditFile.default_readonly = options.readonly
     EditFile.default_backuproot = options.backuproot
 
-    logging.basicConfig(filename=EditFile.get_backup_dir(EditFile.default_backuproot)+"/ped.log")
+    logging.basicConfig(filename=EditFile.get_backup_dir(EditFile.default_backuproot)+"/ped.log",level=logging.DEBUG)
 
     gc.enable()
     try:
@@ -74,6 +74,7 @@ def main(stdscr, piped_stdin, options, args):
 
         e.main()
         e = None
+        gc.collect()
     except Exception as e:
         logging.error(str(e))
         logging.error(traceback.format_exc())
@@ -84,7 +85,7 @@ if __name__ == '__main__':
     piped_stdin = None
     if not os.isatty(sys.stdin.fileno()):
         # grab the original stream
-        piped_stdin = os.fdopen(os.dup(0))
+        piped_stdin = os.fdopen(os.dup(0),encoding="utf-8",buffering=1)
         # open the terminal
         new_stdin = open(os.ttyname(sys.stdout.fileno()))
         # if it isn't on fd == 0 then force it to be
