@@ -837,7 +837,7 @@ class Editor:
         mark_right = self.getPos(True)
         mark_bottom = self.getLine(True)
 
-        if (self.rect_mark or self.line_mark) and mark_left > mark_right:
+        if (self.rect_mark or self.line_mark or (self.span_mark and mark_top == mark_bottom)) and mark_left > mark_right:
             mark = mark_left
             mark_left = mark_right
             mark_right = mark
@@ -1577,7 +1577,7 @@ class Editor:
         self.pushUndo()
 
         cp = self.get_marked(delete,nocopy)
-        if cp:
+        if cp and not (delete and nocopy):
             clipboard.clip_type = cp[0]
             clipboard.clip = cp[1]
 
@@ -1589,6 +1589,9 @@ class Editor:
             if self.wrap and clipboard.clip_type == clipboard.RECT_CLIP:
                 return
             self.pushUndo()
+
+            if self.isMark():
+                self.copy_marked(True,True) # delete the marked block first then insert
 
             if clipboard.clip_type == clipboard.LINE_CLIP:
                 target = self.getLine()
