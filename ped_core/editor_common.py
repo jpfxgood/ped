@@ -774,7 +774,7 @@ class Editor:
 
     def rewrap(self, force = False):
         """ compute the wrapped line array """
-        if self.wrap and (force or self.workfile.getModref() != self.wrap_modref or self.wrap_width != self.max_x-1):
+        if self.wrap and (force or self.workfile.getModref() != self.wrap_modref or self.wrap_width != self.max_x):
             self.wrap_modref = self.workfile.getModref()
             self.wrap_width = self.max_x
             self.wrap_lines = []
