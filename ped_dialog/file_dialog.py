@@ -48,6 +48,7 @@ class FileDialog(dialog.Dialog):
                                                               self.file_name,
                                           dialog.Button("Ok",3,2,16,"OK",dialog.Component.CMP_KEY_OK),
                                           dialog.Button("Cancel",4,9,16,"CANCEL",dialog.Component.CMP_KEY_CANCEL)])
+        self.set_history(False)
 
     def handle(self,ch):
         """ key handler for selection from the file and directory list,
